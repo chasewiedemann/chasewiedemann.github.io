@@ -1,3 +1,5 @@
+# Home
+
 ## Hello!
 
 This is Chase Wiedemann's Personal Webpage
