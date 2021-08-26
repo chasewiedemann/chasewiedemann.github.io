@@ -10,3 +10,5 @@ This is where I will list courses that I have taught or will be teaching
 This will have entirely too many pictures of my dogs
 
 I am working on this page
+
+The about page was before this
