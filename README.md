@@ -1,4 +1,4 @@
-![](https://user-images.githubusercontent.com/60712465/131029942-56989f78-4f40-4af2-b5f2-b7c7aae06924.jpg){:height="50%" width="50%"}
+![Chase](https://user-images.githubusercontent.com/60712465/131029942-56989f78-4f40-4af2-b5f2-b7c7aae06924.jpg){:height="50%" width="50%"}
 Hello!
 
 I am currently a Ph.D. Student at Olin Business School at Washington University in St. Louis
