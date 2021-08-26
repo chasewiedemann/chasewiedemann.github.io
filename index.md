@@ -9,4 +9,4 @@ This is where I will list courses that I have taught or will be teaching
 ## About Me
 This will have entirely too many pictures of my dogs
 
-I Have made Changes
+I am working on this page
