@@ -3,4 +3,4 @@ layout: default
 title: About Me
 ---
 
-This is an attempt at a page
+This is will have all my about me stuff
