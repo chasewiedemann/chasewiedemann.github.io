@@ -1,3 +1,4 @@
+markdown: kramdown
 theme: jekyll-theme-slate
 title: Chase Wiedemann
 email: c.j.wiedemann@wustl.edu
