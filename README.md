@@ -1,3 +1,4 @@
+```markdown
 ## Research
 
 This is where I will talk about past, current, and future research projects
