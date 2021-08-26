@@ -1,7 +1,7 @@
 ---
 title: Home
 layout: template
-filename: index.me
+filename: index.md
 ---
 ## Research
 
