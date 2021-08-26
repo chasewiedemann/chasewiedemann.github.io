@@ -11,4 +11,4 @@ This will have entirely too many pictures of my dogs
 
 I am working on this page
 
-The about page was before this
+Seeing when I get updates
