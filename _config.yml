@@ -1,5 +1,5 @@
 markdown: kramdown
-theme: jekyll-theme-slate
+theme: minima
 title: Chase Wiedemann
 email: c.j.wiedemann@wustl.edu
 description: A Personal Website for Chase Wiedemann
