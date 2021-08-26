@@ -1,4 +1,3 @@
-![louie](https://user-images.githubusercontent.com/60712465/131033913-b5bb698d-3356-49d6-8d7e-4f39883e6379.JPG)
 ---
 layout: default
 title: About Me
