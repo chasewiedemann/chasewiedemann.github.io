@@ -3,9 +3,9 @@
 
 Hello!
 
-I am currently a Ph.D. Student at Olin Business School at Washington University in St. Louis
+I am currently a Ph.D. Student attending Olin Business School at Washington University in St. Louis
 
-I am in my first year, so my research interests are not fully developed. However, I broadly know that I am interested in IO, specifically around the Healthcare Industry.
+I am in my first year, so my research interests are not fully developed. However, I broadly know that I am interested in discrete choice and IO.
 
 Come back often for updates to my CV and Research!
 
