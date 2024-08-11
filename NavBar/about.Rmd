@@ -36,4 +36,4 @@ The next two ingredients, in my opinion, are the most interesting. A lot of work
 I envision the third ingredient working as a very informal replication package. 
 
 
-Test Text
+Test Text (there should be a nav bar)
