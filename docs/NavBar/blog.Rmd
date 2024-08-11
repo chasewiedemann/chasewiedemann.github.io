@@ -85,7 +85,9 @@ rmarkdown::render_site()
 
 All it does is go into the NavBar directory, find all the files that end in .rmd, and then render them. It then runs the render_site() command that seems to be doing a lot of the backend work that I dont fully understand yet. One potential downside I see is that this will render literally everything. That could be an issue if I have a large project somewhere. I think I can probably just go and check to see if its different from the github page, and then not render it if it hasnt changed, but thats an issue for another day. Lets commit by running myRender in the terminal
 
+### Update
 
+I got it working. Sometimes i get a weird index.lock file that I can only delete once I'm outside of R. Theres obviously more going on here than I comprehend, but I think I'm getting the hang of it. I just updated the home page, lets see if that works
 
 
 

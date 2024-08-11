@@ -3,4 +3,4 @@ title: "Chase Wiedemann"
 output: html_document
 ---
 
-this is the front page
+this is the front page. Lets see if it updates like the blog.
