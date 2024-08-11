@@ -99,7 +99,37 @@ Two things. First, I should be need to rethink my commit messages. Just Going up
 
 The other thing is that I don't know if my changes do anything. Im gonna need to remember to add something like "test TExt" to the bottom of a page Im testing
 
+### Update 4
+
+Its not updating anything. I can see on the github page that it went from pending to deployed. Im gonna check again before commiting the next changes. What I did is change the _site.yml to "doc/NavBar/~" instead of "NavBar/~". Again, I think this is more because I don't know what render_site() is actually doing, but this seems like an easy fix for now
+
+Good thing I checked, the text loaded, but the about.html still doesn't have a navbar. Lets see if what I was previously planning on doing has a fix. I just have to be patient, and add a new Test Text 
 
 
+### Update 5
+
+I think I know what to do here. My last commit showed changes to the NavBar folder, but not to the docs folder. I need to port over my rendered stuff into the docs file. Heres the script
+
+```{r,eval = F}
+
+
+library(tools)
+all_files = list.files(paste0(getwd()),recursive = T)
+toRender = all_files[file_ext(all_files) == "Rmd"]
+toRender = toRender[toRender != "index.Rmd"] ### Because Render Site will do this
+
+
+
+for (files in toRender) {
+    rmarkdown::render(files)
+    file_name = gsub(file_ext(file),"",file)
+    file.copy(from = paste0(file_name,"html"),paste0("docs/",file_name,"html"))
+}
+
+
+rmarkdown::render_site()
+```
+
+Not very elegant, but it should work.
 
 

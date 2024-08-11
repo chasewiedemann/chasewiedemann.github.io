@@ -522,6 +522,40 @@ with a third hastag. So this one will be This Script_Update 3 081124</p>
 gonna need to remember to add something like “test TExt” to the bottom
 of a page Im testing</p>
 </div>
+<div id="update-4" class="section level3">
+<h3>Update 4</h3>
+<p>Its not updating anything. I can see on the github page that it went
+from pending to deployed. Im gonna check again before commiting the next
+changes. What I did is change the _site.yml to “doc/NavBar/~” instead of
+“NavBar/~”. Again, I think this is more because I don’t know what
+render_site() is actually doing, but this seems like an easy fix for
+now</p>
+<p>Good thing I checked, the text loaded, but the about.html still
+doesn’t have a navbar. Lets see if what I was previously planning on
+doing has a fix. I just have to be patient, and add a new Test Text</p>
+</div>
+<div id="update-5" class="section level3">
+<h3>Update 5</h3>
+<p>I think I know what to do here. My last commit showed changes to the
+NavBar folder, but not to the docs folder. I need to port over my
+rendered stuff into the docs file. Heres the script</p>
+<pre class="r"><code>library(tools)
+all_files = list.files(paste0(getwd()),recursive = T)
+toRender = all_files[file_ext(all_files) == &quot;Rmd&quot;]
+toRender = toRender[toRender != &quot;index.Rmd&quot;] ### Because Render Site will do this
+
+
+
+for (files in toRender) {
+    rmarkdown::render(files)
+    file_name = gsub(file_ext(file),&quot;&quot;,file)
+    file.copy(from = paste0(file_name,&quot;html&quot;),paste0(&quot;docs/&quot;,file_name,&quot;html&quot;))
+}
+
+
+rmarkdown::render_site()</code></pre>
+<p>Not very elegant, but it should work.</p>
+</div>
 </div>
 </div>
 

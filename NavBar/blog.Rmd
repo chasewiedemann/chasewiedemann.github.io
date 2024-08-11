@@ -106,5 +106,30 @@ Its not updating anything. I can see on the github page that it went from pendin
 Good thing I checked, the text loaded, but the about.html still doesn't have a navbar. Lets see if what I was previously planning on doing has a fix. I just have to be patient, and add a new Test Text 
 
 
+### Update 5
+
+I think I know what to do here. My last commit showed changes to the NavBar folder, but not to the docs folder. I need to port over my rendered stuff into the docs file. Heres the script
+
+```{r,eval = F}
+
+
+library(tools)
+all_files = list.files(paste0(getwd()),recursive = T)
+toRender = all_files[file_ext(all_files) == "Rmd"]
+toRender = toRender[toRender != "index.Rmd"] ### Because Render Site will do this
+
+
+
+for (files in toRender) {
+    rmarkdown::render(files)
+    file_name = gsub(file_ext(file),"",file)
+    file.copy(from = paste0(file_name,"html"),paste0("docs/",file_name,"html"))
+}
+
+
+rmarkdown::render_site()
+```
+
+Not very elegant, but it should work.
 
 
