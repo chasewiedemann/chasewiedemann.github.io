@@ -366,8 +366,8 @@ pre code {
 </div>
 
 
-<div id="making-this-site" class="section level2">
-<h2>8/11/2024: Making This Site</h2>
+<div id="making-this-site" class="section level1">
+<h1>8/11/2024: Making This Site</h1>
 <p>I am trying to get this site running. I’m hosting it on github pages
 through a Rproject. I like the simplicity of it so far, but the things I
 have read online have been suggesting a blogdown for larger projects.
@@ -472,8 +472,8 @@ NavBar/blog.html</p>
 search through the NavBar director, and render all the .rmd files in it.
 lets go!!</p>
 </div>
-<div id="the-script" class="section level3">
-<h3>The Script</h3>
+<div id="the-script" class="section level2">
+<h2>The Script</h2>
 <p>Ok heres the script. its title myRender.R and is found in the main
 files</p>
 <pre class="r"><code>library(tools)
@@ -493,7 +493,6 @@ project somewhere. I think I can probably just go and check to see if
 its different from the github page, and then not render it if it hasnt
 changed, but thats an issue for another day. Lets commit by running
 myRender in the terminal</p>
-</div>
 <div id="update" class="section level3">
 <h3>Update</h3>
 <p>I got it working. Sometimes i get a weird index.lock file that I can
@@ -509,7 +508,20 @@ files. That means that once you are on the about page, theres no way to
 get back to index or projects. Lets fix that now. What i am trying first
 is just to add a navbar like in the _site.yml file into the about.rmd.
 Hopefully when this renders, it will add a navbar. Lets commit and
-check</p>
+check. I forgot to run myRender first, so lets find out if I messed
+everything up</p>
+</div>
+<div id="update-3" class="section level3">
+<h3>Update 3</h3>
+<p>Two things. First, I should be need to rethink my commit messages.
+Just Going up 1 doesnt make sense. So What Im going to do is to go up 2
+and have both. So the day post will be a single hashtag, and then a
+topic will be a double. Then withing that topic i will be doing updates
+with a third hastag. So this one will be This Script_Update 3 081124</p>
+<p>The other thing is that I don’t know if my changes do anything. Im
+gonna need to remember to add something like “test TExt” to the bottom
+of a page Im testing</p>
+</div>
 </div>
 </div>
 

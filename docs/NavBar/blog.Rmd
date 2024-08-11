@@ -3,7 +3,7 @@ title: "Blog"
 output: html_document
 ---
 
-## 8/11/2024: Making This Site
+# 8/11/2024: Making This Site
 
 I am trying to get this site running. I'm hosting it on github pages through a Rproject. I like the simplicity of it so far, but the things I have read online have been suggesting a blogdown for larger projects. But I think I want to be the one whose doing all the background work, instead of relying on some blackbox to do it. Well, I am already relying on the blackbox of Rmarkdown, but I think I get that better.
 
@@ -66,7 +66,7 @@ TEsting on the terminal now. Lets see if i can get blog.rmd to create NavBar/blo
 
 That Worked. So What I need to Do is create my own script that will search through the NavBar director, and render all the .rmd files in it. lets go!!
 
-### The Script
+## The Script
 
 Ok heres the script. its title myRender.R and is found in the main files
 
@@ -92,6 +92,12 @@ I got it working. Sometimes i get a weird index.lock file that I can only delete
 ### Update 2
 
 I got everything running exactly as I have written it. The only issue is that the exact way I have written it removes all the links to other files. That means that once you are on the about page, theres no way to get back to index or projects. Lets fix that now. What i am trying first is just to add a navbar like in the _site.yml file into the about.rmd. Hopefully when this renders, it will add a navbar. Lets commit and check. I forgot to run myRender first, so lets find out if I messed everything up
+
+### Update 3
+
+Two things. First, I should be need to rethink my commit messages. Just Going up 1 doesnt make sense. So What Im going to do is to go up 2 and have both. So the day post will be a single hashtag, and then a topic will be a double. Then withing that topic i will be doing updates with a third hastag. So this one will be This Script_Update 3 081124
+
+The other thing is that I don't know if my changes do anything. Im gonna need to remember to add something like "test TExt" to the bottom of a page Im testing
 
 
 

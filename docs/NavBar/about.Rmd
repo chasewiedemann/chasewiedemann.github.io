@@ -34,3 +34,6 @@ The first two are what are typically considered academic research output, i.e. t
 The next two ingredients, in my opinion, are the most interesting. A lot of work goes into making the other two ingredients, but that is generally a background process that is unstructured and unseen. The goal of the third and fourth ingredients are to document this process. 
 
 I envision the third ingredient working as a very informal replication package. 
+
+
+Test Text
