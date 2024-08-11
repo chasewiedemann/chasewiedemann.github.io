@@ -1,9 +1,0 @@
----
-title: "Projects"
----
-
-Here Should be Links to the Stuff I am Working on. As a quick list lets have
-
-- Dynamic Subcenter Identification
-- Unobserved Hetrogenity On Grids
-- Dickstein - Morales Estimator
