@@ -1,10 +1,8 @@
 name: "Chase Wiedemann"
 output_dir: docs
 navbar:
-  title: "Stuff to Look at -->"
+  title: "Stuff to Look At $\Rightarrow$"
   left:
-    - text: "Home"
-      href: index.html
     - text: "About"
       href: about.html
     - text: "Projects"
