@@ -2,6 +2,15 @@
 title: "Blog"
 output: html_document
 ---
+|
+[Home](https://chasewiedemann.github.io/index.html) |
+[About](https://chasewiedemann.github.io/Site/about.html) |
+[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
+[Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
+[Blog](https://chasewiedemann.github.io/Site/blog.html) |
+
+
+8/11 full check
 
 # 8/11/2024: Making This Site
 
@@ -163,4 +172,6 @@ I think I found a (the?) issue. In the Setting page of Github, I had it building
 
 It works. This is as basic as I can get this site, and I think that probably for the best (for now). I think Im going to get all the links into the pages, figure out the projects page, and then call it a day. Next commit will be all the Site links, then onto the projects page
 
+### Update 5
 
+I'm not sure if I'm not being patient enough to let the changes go through, or if its fixed, or if I just broke it. Im going to go update every page and run it how I have it now. Then Ill let it sit for awhile and check if it ever updates
