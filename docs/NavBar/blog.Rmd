@@ -42,4 +42,10 @@ We want the 4 Files in here, working paper, working_slides, replication, and dia
 
 Let ~ denote chasewiedemann.github.io. So what do we want. We want to click on ~/Projects and see a list of Projects. We Then Want to click on ~/Projects/MuniProject/ and see a the 4 ingredients. Ok. Lets get ~/Projects Working. I lied. I want to do this for the MuniProject and the GridEstimators Project as an example to make sure it works for multiple. I should probably commit.  
 
+### Bad (But in the End Good) Idea
+I made a bunch of chagnes to the files structure, but didnt tell my _site.yml file about it. But fortunately, it seems like my output_dir docs file is really good at mimicing my file structure. I have everything fixed and will commit now. 
+
+### Structure Note
+When I say I am going to commit after immediately describing something. I will make the commit message the next highest header, underscore, and then the time in miltary. For example, I am going to commit now. the commit message will be strcuture note_1424
+
 

@@ -4,11 +4,11 @@ navbar:
   title: "Home"
   left:
     - text: "About"
-      href: about.html
+      href: NavBar/about.html
     - text: "Projects"
-      href: projects.html
+      href: NavBar/Projects/projects.html
     - text: "Paper Summaries"
-      href: summaries.html
-    - text: "Trying Stuff Out (Blog-ish)"
-      href: blog.html
+      href: NavBar/Summaries/summaries.html
+    - text: "Blog"
+      href: NavBar/blog.html
                         
