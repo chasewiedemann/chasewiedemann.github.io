@@ -89,6 +89,11 @@ All it does is go into the NavBar directory, find all the files that end in .rmd
 
 I got it working. Sometimes i get a weird index.lock file that I can only delete once I'm outside of R. Theres obviously more going on here than I comprehend, but I think I'm getting the hang of it. I just updated the home page, lets see if that works
 
+### Update 2
+
+I got everything running exactly as I have written it. The only issue is that the exact way I have written it removes all the links to other files. That means that once you are on the about page, theres no way to get back to index or projects. Lets fix that now. What i am trying first is just to add a navbar like in the _site.yml file into the about.rmd. Hopefully when this renders, it will add a navbar. Lets commit and check
+
+
 
 
 
