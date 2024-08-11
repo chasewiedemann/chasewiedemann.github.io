@@ -1,4 +1,4 @@
-name: "Chase Wiedemann"
+name: "A Website About Chase"
 output_dir: docs
 navbar:
   title: "Home"
@@ -11,4 +11,4 @@ navbar:
       href: NavBar/Summaries/summaries.html
     - text: "Blog"
       href: NavBar/blog.html
-                        
+

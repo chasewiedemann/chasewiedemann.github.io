@@ -1,5 +1,6 @@
 ---
-title: "Learning"
+title: "Blog"
+output: html_document
 ---
 
 ## 8/11/2024: Making This Site
@@ -46,6 +47,21 @@ Let ~ denote chasewiedemann.github.io. So what do we want. We want to click on ~
 I made a bunch of chagnes to the files structure, but didnt tell my _site.yml file about it. But fortunately, it seems like my output_dir docs file is really good at mimicing my file structure. I have everything fixed and will commit now. 
 
 ### Structure Note
-When I say I am going to commit after immediately describing something. I will make the commit message the next highest header, underscore, and then the time in miltary. For example, I am going to commit now. the commit message will be strcuture note_1424
+When I say I am going to commit after immediately describing something. I will make the commit message the next highest header, underscore, and then the date. For example, I am going to commit now. the commit message will be strcuture note_081124
+
+### Oh No
+It didn't work. I guess I have to figure out what this output_dir is actually doing. Or do I need to make them html? Lets see if I can find a link
+
+https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html
+
+This guy is saying (Right about 10.5.2) that all the .rmd or .md files in the ROOT of the directory will be rendered into HTML. Mine are in folders. 
+
+Looking more into the site, it seems like the entire reason that people recommend blogdown is for this reason. It will only render the .rmd into html that are on the front page. 
+
+I think what I need to do is output everything to a html_file. Im gonna try that with this the projects.rmd, about.rmd, projects.rmd page
+
+
+
+
 
 

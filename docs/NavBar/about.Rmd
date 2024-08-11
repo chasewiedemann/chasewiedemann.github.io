@@ -1,5 +1,6 @@
 ---
 title: "What Are We Doing Here?"
+output: html_document
 ---
 
 The goal for this site is a open and realtime look into my research.
