@@ -147,4 +147,14 @@ Lets look at the internet for help. It seems pretty easy. Heres there example [R
 
 It worked, but now I want to do something a little more basic. Lets get rid of the pre-built navbar in favor of more control. I removed all the stuff from the _site.yml file. Lets get links to all the other stuff into the index.rmd file
 
+### Update 2
+
+We ran into some issues. Without the additional help from the black box, we never create a index.html page. I had previously skipped over it, but now we need it. I commited before writing this under How to get Home unlabled 1. Lets see if it works
+
+### Update 3
+
+It still is failing its build. Im gonna look at the index.html that it loads in a local web browser to make sure its not something dumn about me doing links wrong. A possible problem is that when I run rmarkdown::render_site(), it is deleting some of my stuff. Lets try going full manual
+
+
+
 
