@@ -155,6 +155,12 @@ We ran into some issues. Without the additional help from the black box, we neve
 
 It still is failing its build. Im gonna look at the index.html that it loads in a local web browser to make sure its not something dumn about me doing links wrong. A possible problem is that when I run rmarkdown::render_site(), it is deleting some of my stuff. Lets try going full manual
 
+### Update 4
 
+I think I found a (the?) issue. In the Setting page of Github, I had it building from a file called docs because thats how the tutorial that I read told me to do it. Now that I am straying from the source, I need to make sure I dont have any of those old relics in there. Lets see if that fixes it.
+
+### Update 4 (updated)
+
+It works. This is as basic as I can get this site, and I think that probably for the best (for now). I think Im going to get all the links into the pages, figure out the projects page, and then call it a day. Next commit will be all the Site links, then onto the projects page
 
 
