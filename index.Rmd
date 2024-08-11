@@ -11,4 +11,4 @@ output: html_document
 
 this is the front page. Lets see if it updates like the blog.
 
-This has been updated. Will it build
+Another update. Another check
