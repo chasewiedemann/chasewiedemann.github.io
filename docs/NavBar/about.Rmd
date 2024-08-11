@@ -1,18 +1,9 @@
 ---
 title: "What Are We Doing Here?"
 output: html_document
-navbar:
-  title: "Home"
-  left:
-    - text: "About"
-      href: NavBar/about.html
-    - text: "Projects"
-      href: NavBar/Projects/projects.html
-    - text: "Paper Summaries"
-      href: NavBar/Summaries/summaries.html
-    - text: "Blog"
-      href: NavBar/blog.html
 ---
+
+[Home](https://chasewiedemann.github.io/index.html)
 
 The goal for this site is a open and realtime look into my research.
 

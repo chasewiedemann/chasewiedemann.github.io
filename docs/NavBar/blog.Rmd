@@ -133,3 +133,14 @@ rmarkdown::render_site()
 Not very elegant, but it should work.
 
 
+### Update 6 
+
+I scraped all that. The navBar idea is a non-starter at this point. I looked at the html code that was built, and hopefully at some point it isnt giberish to me, but for now its incomprehensible. Lets just build it statically. You should be able to get back home with a button click from every page. Thats gonna just need to be a template. I think thats what I will need to eventually do. Create a template directory that I can just add from. But lets start a new top and work on getting a link at the top of the page from the about page to the home page. This will create a pattern that we can replicate
+
+## How to get Home
+
+### Start 
+
+Lets look at the internet for help. It seems pretty easy. Heres there example [RStudio](https://www.rstudio.com). Lets add something similar to the about.rmd, but its gonna take us Home. I have no clue what its gonna look like, and i just added the url of the home page to it
+
+
