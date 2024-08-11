@@ -1,14 +1,13 @@
 name: "A Website About Chase"
-output_dir: docs
 navbar:
   title: "Home"
   left:
     - text: "About"
-      href: NavBar/about.html
+      href: Site/NavBar/about.html
     - text: "Projects"
-      href: NavBar/Projects/projects.html
+      href: Site/NavBar/Projects/projects.html
     - text: "Paper Summaries"
-      href: NavBar/Summaries/summaries.html
+      href: Site/NavBar/Summaries/summaries.html
     - text: "Blog"
-      href: NavBar/blog.html
+      href: Site/NavBar/blog.html
 
