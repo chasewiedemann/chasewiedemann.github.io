@@ -7,7 +7,7 @@ navbar:
       href: about.html
     - text: "Projects"
       href: projects.html
-    - text: "Paper Replications"
+    - text: "Paper Summaries"
       href: summaries.html
     - text: "Trying Stuff Out (Blog-ish)"
       href: blog.html
