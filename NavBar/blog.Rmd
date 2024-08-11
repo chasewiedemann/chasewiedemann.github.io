@@ -91,7 +91,7 @@ I got it working. Sometimes i get a weird index.lock file that I can only delete
 
 ### Update 2
 
-I got everything running exactly as I have written it. The only issue is that the exact way I have written it removes all the links to other files. That means that once you are on the about page, theres no way to get back to index or projects. Lets fix that now. What i am trying first is just to add a navbar like in the _site.yml file into the about.rmd. Hopefully when this renders, it will add a navbar. Lets commit and check
+I got everything running exactly as I have written it. The only issue is that the exact way I have written it removes all the links to other files. That means that once you are on the about page, theres no way to get back to index or projects. Lets fix that now. What i am trying first is just to add a navbar like in the _site.yml file into the about.rmd. Hopefully when this renders, it will add a navbar. Lets commit and check. I forgot to run myRender first, so lets find out if I messed everything up
 
 
 
