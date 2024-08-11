@@ -1,4 +1,5 @@
 name: "A Website About Chase"
+output_dir: docs
 navbar:
   title: "Home"
   left:
