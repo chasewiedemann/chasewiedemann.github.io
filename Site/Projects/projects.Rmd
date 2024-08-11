@@ -17,4 +17,4 @@ Here Should be Links to the Stuff I am Working on. As a quick list lets have
 - Unobserved Hetrogenity On Grids
 - Dickstein - Morales Estimator
 
-8/11 full check
+8/11 full check 2

@@ -12,4 +12,4 @@ output: html_document
 this is the front page. Lets see if it updates like the blog.
 
 
-8/11 full check
+8/11 full check 2
