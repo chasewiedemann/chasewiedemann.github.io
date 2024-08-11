@@ -1,7 +1,7 @@
 name: "Chase Wiedemann"
 output_dir: docs
 navbar:
-  title: "Stuff to Look At"
+  title: "Home"
   left:
     - text: "About"
       href: about.html
