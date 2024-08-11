@@ -1,9 +1,16 @@
-name: "my-website"
+name: "Chase Wiedemann"
 output_dir: docs
 navbar:
-  title: "Chase Wiedemann"
+  title: "Stuff to Look at -->"
   left:
     - text: "Home"
       href: index.html
     - text: "About"
       href: about.html
+    - text: "Projects"
+      href: projects.html
+    - text: "Paper Replications"
+      href: replications.html
+    - text: "Trying Stuff Out (Blog-ish)"
+      href: blog.html
+                        
