@@ -1,12 +1,6 @@
 ---
 title: "Chase Wiedemann"
+output: html_document
 ---
 
-
-## Hello!
-
-Welcome to my Personal Website.
-
-My name is Chase Wiedemann and I am currently a 4th Year PhD Student at Olin Business School at WUSTL. 
-
-The About Page has a lot more information about how I plan on using this page. Check back often to see more updates.
+this is the front page

@@ -11,7 +11,7 @@
 
 
 
-<title>Blog</title>
+<title>Paper Summaries</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -361,140 +361,12 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Blog</h1>
+<h1 class="title toc-ignore">Paper Summaries</h1>
 
 </div>
 
 
-<div id="making-this-site" class="section level2">
-<h2>8/11/2024: Making This Site</h2>
-<p>I am trying to get this site running. I’m hosting it on github pages
-through a Rproject. I like the simplicity of it so far, but the things I
-have read online have been suggesting a blogdown for larger projects.
-But I think I want to be the one whose doing all the background work,
-instead of relying on some blackbox to do it. Well, I am already relying
-on the blackbox of Rmarkdown, but I think I get that better.</p>
-<p>Alright, the plan for the rest of the day is to get my municipal
-project onto here. What does that look like.</p>
-<ul>
-<li>You click on Projects</li>
-<li>Its under working projects</li>
-<li>you click on the title</li>
-<li>it takes you to the replication page (or the diary page not sure
-yet)</li>
-<li>You can get to the other pages (working paper, working slides, and
-replication) from that initial page</li>
-</ul>
-<p>Lets go!</p>
-<div id="some-starters" class="section level3">
-<h3>Some starters</h3>
-<p>I think I want to document heavily, and to get that done, lets get a
-little formalism on how to do that. I imagine this isnt really where I
-should be doing stuff like this when working on a project, that should
-be on the diary page of that project, but this is like the diary of the
-website, so the rambling should go here. Lets say that all dated diary
-posts start with two hashtags and then any subsection start with 3. Lets
-see how this works in read time.</p>
-</div>
-<div id="site-rendering-reminder" class="section level3">
-<h3>Site rendering reminder</h3>
-<p>To render the site, save everything, rmarkdown::render_site(), commit
-and push.</p>
-</div>
-<div id="lets-try-some-code" class="section level3">
-<h3>Lets try some code</h3>
-<pre class="r"><code>2+2</code></pre>
-<pre><code>## [1] 4</code></pre>
-<pre class="r"><code>print(1+1)</code></pre>
-<pre><code>## [1] 2</code></pre>
-</div>
-<div id="it-worked" class="section level3">
-<h3>It worked!</h3>
-<p>Lets add some more stucutre before working on the projects. I want
-the files system that is running this website to mimic the website. So
-the only thing that is going to go in the main part of the file is the
-index.rmd that contains the text of the front page, and the _site.yaml
-file that controls the formatting. Everything else goes into a folder
-called NavBar</p>
-<p>In NavBar about.rmd and blog.rmd can hang out by themseleves because
-tthey are just static pages. But summaries and projects need additional
-filing. So in NavBar, there blog.rmd, about.rmd, a Projects Folder, and
-a Summaries Folder. We are gonna focus on the Projects folder, but it
-should be similar to summaries.</p>
-<p>Within the Projects folder, we have the projects.rmd. This need to
-list Links to all the actual projects. Right now I have three. each with
-its own folder. Again lets work with MuniProject, but the others should
-be similar.</p>
-<p>We want the 4 Files in here, working paper, working_slides,
-replication, and diary. Lets think about what the url should look like,
-which will hopefully get us a little closer to a good structure.</p>
-<p>Let ~ denote chasewiedemann.github.io. So what do we want. We want to
-click on ~/Projects and see a list of Projects. We Then Want to click on
-~/Projects/MuniProject/ and see a the 4 ingredients. Ok. Lets get
-~/Projects Working. I lied. I want to do this for the MuniProject and
-the GridEstimators Project as an example to make sure it works for
-multiple. I should probably commit.</p>
-</div>
-<div id="bad-but-in-the-end-good-idea" class="section level3">
-<h3>Bad (But in the End Good) Idea</h3>
-<p>I made a bunch of chagnes to the files structure, but didnt tell my
-_site.yml file about it. But fortunately, it seems like my output_dir
-docs file is really good at mimicing my file structure. I have
-everything fixed and will commit now.</p>
-</div>
-<div id="structure-note" class="section level3">
-<h3>Structure Note</h3>
-<p>When I say I am going to commit after immediately describing
-something. I will make the commit message the next highest header,
-underscore, and then the date. For example, I am going to commit now.
-the commit message will be strcuture note_081124</p>
-</div>
-<div id="oh-no" class="section level3">
-<h3>Oh No</h3>
-<p>It didn’t work. I guess I have to figure out what this output_dir is
-actually doing. Or do I need to make them html? Lets see if I can find a
-link</p>
-<p><a href="https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html" class="uri">https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html</a></p>
-<p>This guy is saying (Right about 10.5.2) that all the .rmd or .md
-files in the ROOT of the directory will be rendered into HTML. Mine are
-in folders.</p>
-<p>Looking more into the site, it seems like the entire reason that
-people recommend blogdown is for this reason. It will only render the
-.rmd into html that are on the front page.</p>
-<p>I think what I need to do is output everything to a html_file. Im
-gonna try that with this the projects.rmd, about.rmd, projects.rmd
-page</p>
-<p>What I need to do is write a script that goes through all of my rmds.
-renders them, and creates the html doc.</p>
-<p>TEsting on the terminal now. Lets see if i can get blog.rmd to create
-NavBar/blog.html</p>
-<p>That Worked. So What I need to Do is create my own script that will
-search through the NavBar director, and render all the .rmd files in it.
-lets go!!</p>
-</div>
-<div id="the-script" class="section level3">
-<h3>The Script</h3>
-<p>Ok heres the script. its title myRender.R and is found in the main
-files</p>
-<pre class="r"><code>library(tools)
-all_files = list.files(paste0(getwd()),recursive = T)
-toRender = all_files[file_ext(all_files) == &quot;Rmd&quot;]
-
-for (files in toRender) {
-  rmarkdown::render(files)  
-}
-rmarkdown::render_site()</code></pre>
-<p>All it does is go into the NavBar directory, find all the files that
-end in .rmd, and then render them. It then runs the render_site()
-command that seems to be doing a lot of the backend work that I dont
-fully understand yet. One potential downside I see is that this will
-render literally everything. That could be an issue if I have a large
-project somewhere. I think I can probably just go and check to see if
-its different from the github page, and then not render it if it hasnt
-changed, but thats an issue for another day. Lets commit by running
-myRender in the terminal</p>
-</div>
-</div>
+<p>Lets see if this will load</p>
 
 
 
