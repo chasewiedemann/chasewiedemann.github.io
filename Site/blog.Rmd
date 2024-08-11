@@ -143,4 +143,8 @@ I scraped all that. The navBar idea is a non-starter at this point. I looked at 
 
 Lets look at the internet for help. It seems pretty easy. Heres there example [RStudio](https://www.rstudio.com). Lets add something similar to the about.rmd, but its gonna take us Home. I have no clue what its gonna look like, and i just added the url of the home page to it
 
+### Update
+
+It worked, but now I want to do something a little more basic. Lets get rid of the pre-built navbar in favor of more control. I removed all the stuff from the _site.yml file. Lets get links to all the other stuff into the index.rmd file
+
 
