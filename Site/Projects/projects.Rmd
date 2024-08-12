@@ -13,9 +13,9 @@ output: html_document
 
 ## Current Projects
 
-- [Dynamic Subcenter Identification](https://chasewiedemann.github.io/Site/Project/MuniProject/Replication.html)
+- [Dynamic Subcenter Identification](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
   + A Description of the Project
-- [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Project/FKRB/Replication.html)
+- [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Projects/FKRB/Replication.html)
   + A Description of the Project
-- [Dickstein - Morales Estimator](https://chasewiedemann.github.io/Site/Project/dmEstimator/Replication.html)
+- [Dickstein - Morales Estimator](https://chasewiedemann.github.io/Site/Projects/dmEstimator/Replication.html)
   + A Description of the Project
