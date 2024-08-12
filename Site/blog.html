@@ -409,6 +409,34 @@ that I have a better idea of whats going on. The other thing is that it
 is rendering the templates, which obviously doesn’t need to happen, so I
 wrote a quick grepl to stop that. Lets see what happens</p>
 </div>
+<div id="update-2" class="section level3">
+<h3>Update 2</h3>
+<p>Everything is working. I have a couple commits that aren’t assigned
+to a blog post (I’m gonna start calling these unlabled commits) just to
+get it running. I had <sub>/Project/</sub> instead of
+<sub>/Projects/</sub> in the link for the projects.html page. Another
+thing I learned last night after reading about how the site updates is
+that my browser is caching the page and loading that instead of the
+newest version. If I want to see the newest version right away, I have
+to clear my browsers cache. Or I can just wait until it clears itself.
+This should appear along with the Mini-Blog and replication of the
+subcenter identification so lets go!</p>
+</div>
+<div id="update-3" class="section level3">
+<h3>Update 3</h3>
+<p>I got to working on the subcenter project and realized that I dont
+have a way to get around within the projects page. I think that the
+projects pages will get a secondary navigation bar that lets you cycle
+through the working paper, working slides, replication, and
+mini-blog.</p>
+<p>I also have no idea how the working slides are going to work, but
+thats a problem for a different day. Lets get to work.</p>
+<ul>
+<li>add navigation to the template files</li>
+<li>Remove the unstarted FKRB and dmEstimator Folders</li>
+<li>add the navigation into the Muni Project files on the fly</li>
+</ul>
+</div>
 </div>
 </div>
 <div id="making-this-site" class="section level1">
@@ -545,7 +573,7 @@ only delete once I’m outside of R. Theres obviously more going on here
 than I comprehend, but I think I’m getting the hang of it. I just
 updated the home page, lets see if that works</p>
 </div>
-<div id="update-2" class="section level3">
+<div id="update-2-1" class="section level3">
 <h3>Update 2</h3>
 <p>I got everything running exactly as I have written it. The only issue
 is that the exact way I have written it removes all the links to other
@@ -556,7 +584,7 @@ Hopefully when this renders, it will add a navbar. Lets commit and
 check. I forgot to run myRender first, so lets find out if I messed
 everything up</p>
 </div>
-<div id="update-3" class="section level3">
+<div id="update-3-1" class="section level3">
 <h3>Update 3</h3>
 <p>Two things. First, I should be need to rethink my commit messages.
 Just Going up 1 doesnt make sense. So What Im going to do is to go up 2
@@ -631,14 +659,14 @@ get rid of the pre-built navbar in favor of more control. I removed all
 the stuff from the _site.yml file. Lets get links to all the other stuff
 into the index.rmd file</p>
 </div>
-<div id="update-2-1" class="section level3">
+<div id="update-2-2" class="section level3">
 <h3>Update 2</h3>
 <p>We ran into some issues. Without the additional help from the black
 box, we never create a index.html page. I had previously skipped over
 it, but now we need it. I commited before writing this under How to get
 Home unlabled 1. Lets see if it works</p>
 </div>
-<div id="update-3-1" class="section level3">
+<div id="update-3-2" class="section level3">
 <h3>Update 3</h3>
 <p>It still is failing its build. Im gonna look at the index.html that
 it loads in a local web browser to make sure its not something dumn

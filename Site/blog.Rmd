@@ -33,6 +33,20 @@ Back to site refinements.
 
 I added a template for the Projects page, along with all the machinery to get the website to work. One thing I noticed is that the render now takes significantly longer. At some point, I'm going to need to have it check for changes in the Rmd files as compared to whats on Github before rendering. But, a more pressing issue is that it is doing double the work right now. The rmarkdown::render_site() creates a _site dir that has the entire site. Lets see what happens if I remove that now that I have a better idea of whats going on. The other thing is that it is rendering the templates, which obviously doesn't need to happen, so I wrote a quick grepl to stop that. Lets see what happens
 
+### Update 2
+
+Everything is working. I have a couple commits that aren't assigned to a blog post (I'm gonna start calling these unlabled commits) just to get it running. I had ~/Project/~ instead of ~/Projects/~ in the link for the projects.html page. Another thing I learned last night after reading about how the site updates is that my browser is caching the page and loading that instead of the newest version. If I want to see the newest version right away, I have to clear my browsers cache. Or I can just wait until it clears itself. This should appear along with the Mini-Blog and replication of the subcenter identification so lets go!
+
+### Update 3
+
+I got to working on the subcenter project and realized that I dont have a way to get around within the projects page. I think that the projects pages will get a secondary navigation bar that lets you cycle through the working paper, working slides, replication, and mini-blog. 
+
+I also have no idea how the working slides are going to work, but thats a problem for a different day. Lets get to work.
+
+- add navigation to the template files
+- Remove the unstarted FKRB and dmEstimator Folders
+- add the navigation into the Muni Project files on the fly
+
 
 
 # 8/11/2024: Making This Site
