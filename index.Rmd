@@ -9,7 +9,8 @@ output: html_document
 [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
-this is the front page. Lets see if it updates like the blog.
+# Hello!
 
+Welcome to my Personal Website. I am currently a 4th Yera PhD student at WUSTL Olin Business School. My field is Industrial Organization, focusing on exporting concepts from IO into Urban Economics.
 
-8/11 full check 2
+You can find all (most) of my personal workflow here. Check out the About Page to learn more about what I am doing on this site.

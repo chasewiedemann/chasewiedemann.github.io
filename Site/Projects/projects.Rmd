@@ -11,10 +11,11 @@ output: html_document
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
-Here Should be Links to the Stuff I am Working on. As a quick list lets have
+## Current Projects
 
-- Dynamic Subcenter Identification
-- Unobserved Hetrogenity On Grids
-- Dickstein - Morales Estimator
-
-8/11 full check 2
+- [Dynamic Subcenter Identification](https://chasewiedemann.github.io/Site/Project/MuniProject/Replication.html)
+  + A Description of the Project
+- [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Project/FKRB/Replication.html)
+  + A Description of the Project
+- [Dickstein - Morales Estimator](https://chasewiedemann.github.io/Site/Project/dmEstimator/Replication.html)
+  + A Description of the Project

@@ -1,0 +1,14 @@
+---
+title: "Mini-Blog"
+output: html_document
+---
+|
+[Home](https://chasewiedemann.github.io/index.html) |
+[About](https://chasewiedemann.github.io/Site/about.html) |
+[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
+[Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
+[Blog](https://chasewiedemann.github.io/Site/blog.html) |
+
+# Inital Post
+
+Created the subdirectories along with a template. Want to make sure this will all work!

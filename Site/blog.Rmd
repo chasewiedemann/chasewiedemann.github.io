@@ -21,6 +21,20 @@ The goal for today is to get the site to a point where its fully functional, but
 
 After that I will mostly be working on the mini blog within the subcenter identification page. The next update should be saying that its all done, and the one after that will be on the mini-blog. Quick idea, mini blog H1 headers should appear as links in the main blog page.
 
+## Site Refinements
+
+I also want to append the myRender.R script to run the standard git process. So it would do all the rendering that it does now, stage all the changes, take the commit message as an argument, commit and push just from one click. Is this where I make my functions folder?
+
+I should also mention that. I want to start doing weekly things. As I am currently talking to no one, its more of just a commitment device. I'm think the two things will be "GPU Function Friday" where I try to speed up a commonly used R function using the GPU, and Monday Paper Summaries. That gets me doing something over the weekend. 
+
+Back to site refinements.
+
+### Update
+
+I added a template for the Projects page, along with all the machinery to get the website to work. One thing I noticed is that the render now takes significantly longer. At some point, I'm going to need to have it check for changes in the Rmd files as compared to whats on Github before rendering. But, a more pressing issue is that it is doing double the work right now. The rmarkdown::render_site() creates a _site dir that has the entire site. Lets see what happens if I remove that now that I have a better idea of whats going on. The other thing is that it is rendering the templates, which obviously doesn't need to happen, so I wrote a quick grepl to stop that. Lets see what happens
+
+
+
 # 8/11/2024: Making This Site
 
 I am trying to get this site running. I'm hosting it on github pages through a Rproject. I like the simplicity of it so far, but the things I have read online have been suggesting a blogdown for larger projects. But I think I want to be the one whose doing all the background work, instead of relying on some blackbox to do it. Well, I am already relying on the blackbox of Rmarkdown, but I think I get that better.

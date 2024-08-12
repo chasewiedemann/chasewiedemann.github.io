@@ -384,6 +384,32 @@ functional, but still pretty ugly. That includes</p>
 subcenter identification page. The next update should be saying that its
 all done, and the one after that will be on the mini-blog. Quick idea,
 mini blog H1 headers should appear as links in the main blog page.</p>
+<div id="site-refinements" class="section level2">
+<h2>Site Refinements</h2>
+<p>I also want to append the myRender.R script to run the standard git
+process. So it would do all the rendering that it does now, stage all
+the changes, take the commit message as an argument, commit and push
+just from one click. Is this where I make my functions folder?</p>
+<p>I should also mention that. I want to start doing weekly things. As I
+am currently talking to no one, its more of just a commitment device.
+I’m think the two things will be “GPU Function Friday” where I try to
+speed up a commonly used R function using the GPU, and Monday Paper
+Summaries. That gets me doing something over the weekend.</p>
+<p>Back to site refinements.</p>
+<div id="update" class="section level3">
+<h3>Update</h3>
+<p>I added a template for the Projects page, along with all the
+machinery to get the website to work. One thing I noticed is that the
+render now takes significantly longer. At some point, I’m going to need
+to have it check for changes in the Rmd files as compared to whats on
+Github before rendering. But, a more pressing issue is that it is doing
+double the work right now. The rmarkdown::render_site() creates a _site
+dir that has the entire site. Lets see what happens if I remove that now
+that I have a better idea of whats going on. The other thing is that it
+is rendering the templates, which obviously doesn’t need to happen, so I
+wrote a quick grepl to stop that. Lets see what happens</p>
+</div>
+</div>
 </div>
 <div id="making-this-site" class="section level1">
 <h1>8/11/2024: Making This Site</h1>
@@ -512,7 +538,7 @@ project somewhere. I think I can probably just go and check to see if
 its different from the github page, and then not render it if it hasnt
 changed, but thats an issue for another day. Lets commit by running
 myRender in the terminal</p>
-<div id="update" class="section level3">
+<div id="update-1" class="section level3">
 <h3>Update</h3>
 <p>I got it working. Sometimes i get a weird index.lock file that I can
 only delete once I’m outside of R. Theres obviously more going on here
@@ -598,7 +624,7 @@ something similar to the about.rmd, but its gonna take us Home. I have
 no clue what its gonna look like, and i just added the url of the home
 page to it</p>
 </div>
-<div id="update-1" class="section level3">
+<div id="update-7" class="section level3">
 <h3>Update</h3>
 <p>It worked, but now I want to do something a little more basic. Lets
 get rid of the pre-built navbar in favor of more control. I removed all
