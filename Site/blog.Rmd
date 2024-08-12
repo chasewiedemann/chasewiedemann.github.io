@@ -64,6 +64,10 @@ Second, I had a good idea in the mini-blog for the muni project. My replication 
 - redo the directories for the uninitiated but built projects
 - reformat muni project to include sub nav
 
+### Update 6
+
+It didn't work. I have the working directory, but apparently the internet wants links to be actual urls not the location of the files on my local computer. Weird. Well lets fix that and get it to work. Maybe a little bit more debugging instead of just looking at it and saying its good would be warrented next time.
+
 
 # 8/11/2024: Making This Site
 

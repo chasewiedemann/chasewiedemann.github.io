@@ -5,10 +5,11 @@ output: html_document
 
 ```{r,echo = F}
 base_dir = getwd()
-wp_link = paste0(base_dir,"/WorkingPaper.html")
-ws_link = paste0(base_dir,"/WorkingSlide.html")
-rep_link = paste0(base_dir,"/Replication.html")
-miniblog_link = paste0(base_dir,"/MiniBlog.html")
+base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
+wp_link = paste0(base_url,"/WorkingPaper.html")
+ws_link = paste0(base_url,"/WorkingSlide.html")
+rep_link = paste0(base_url,"/Replication.html")
+miniblog_link = paste0(base_url,"/MiniBlog.html")
 ```
 
 [Home](https://chasewiedemann.github.io/index.html) |
