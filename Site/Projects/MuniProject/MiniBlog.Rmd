@@ -2,7 +2,6 @@
 title: "Mini-Blog"
 output: html_document
 ---
-
 ```{r,echo = F}
 base_dir = getwd()
 wp_link = paste0(base_dir,"/WorkingPaper.html")
@@ -17,11 +16,10 @@ miniblog_link = paste0(base_dir,"/MiniBlog.html")
 [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
-[Working Paper](`r wp_link`)
-[Working Slides](`r ws_link`)
-[Replication](`r rep_link`)
-[Mini-Blog](`r miniblog_link`)
-
+[Working Paper](`r wp_link`)|
+[Working Slides](`r ws_link`)|
+[Replication](`r rep_link`)|
+[Mini-Blog](`r miniblog_link`)|
 
 # Inital Post
 
