@@ -47,6 +47,9 @@ I also have no idea how the working slides are going to work, but thats a proble
 - Remove the unstarted FKRB and dmEstimator Folders
 - add the navigation into the Muni Project files on the fly
 
+### Update 4
+
+lol. I am trying some fixes and I did them on the miniblog.rmd side. But I dont have a way of checking that. So lets do it to the replicaiton.rmd, which actually displays. Lets go
 
 
 # 8/11/2024: Making This Site
