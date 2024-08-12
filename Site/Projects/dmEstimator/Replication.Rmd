@@ -6,7 +6,7 @@ output: html_document
 base_dir = getwd()
 base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
 wp_link = paste0(base_url,"/WorkingPaper.html")
-ws_link = paste0(base_url,"/WorkingSlide.html")
+ws_link = paste0(base_url,"/WorkingSlides.html")
 rep_link = paste0(base_url,"/Replication.html")
 miniblog_link = paste0(base_url,"/MiniBlog.html")
 ```
