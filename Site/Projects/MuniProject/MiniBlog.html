@@ -373,6 +373,8 @@ Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</
 Paper</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/WorkingSlides.html">Working
 Slides</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html">Replication</a>|
 <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/MiniBlog.html">Mini-Blog</a>|</p>
+<pre class="r"><code>library(dplyr)
+library(censusapi)</code></pre>
 <div id="inital-post" class="section level1">
 <h1>Inital Post</h1>
 <p>Created the subdirectories along with a template. Want to make sure
@@ -434,6 +436,161 @@ text, but it is somewhat noteworthy, Ill give it a comment, if can go
 without, it goes without, and if I want to talk about it in the text,
 Ill make some obvious flag and reference that flag in the text. Perfect.
 Lets go. to Lunch, but then were back</p>
+</div>
+<div id="were-back" class="section level3">
+<h3>Were Back</h3>
+<p>I just wrote something on the big blog about functions so that we
+dont have to run code every time. I also mentioned that I will be using
+binary files for some speed improvements (RDS). So lets see how that
+works here. I’m interested in how this is gonna look while I process
+through stuff. For example, Im gonna show how to do the basic api call
+first, and then write the function.</p>
+<p>Yikes. Do I even show that in the replicaiton? I should write the
+replication like Im doing it in real time, but when I go back and edit,
+will i be removing a bunch of stuff, and losing some detail. I guess
+yes. Thats the whole point of the mini-blog. Those kind of learning
+oportunities are documented here. A art form is gonna be finding the
+line between what goes in the mini blog and what gets editted out of the
+replication. But back to work. Lets go</p>
+</div>
+<div id="almost-back-to-work" class="section level3">
+<h3>Almost back to work</h3>
+<p>Where do I want to load libraries? I think it should be at the top.
+But when I call a function from a library I should be mentioning what
+its dependency is. Also that keeps normal formatting throughout, instead
+of placing it before the first code block. Lets go</p>
+</div>
+<div id="yikes" class="section level3">
+<h3>yikes</h3>
+<p>I have not even considered working directories yet. I went to call
+something, and I immediately got an error. Im gonna explore this a bit
+and then report back.</p>
+</div>
+<div id="change" class="section level3">
+<h3>Change</h3>
+<p>Ok. I have been working and it seems like I’m doing the blog in the
+replicaiton way to much. But I think this part is important to archive.
+So Im actually gonna work in here a bit more, and then export over to
+the replication once I am done.</p>
+</div>
+</div>
+<div id="working-in-the-mini-blog" class="section level2">
+<h2>Working in the Mini Blog</h2>
+<div id="historical-note" class="section level3">
+<h3>Historical Note</h3>
+<p>I hd been working on this is the replication file, and want to port
+it over, so its a bunch of text now.</p>
+</div>
+<div id="what-i-did-before" class="section level3">
+<h3>What I did before</h3>
+<p>We are going to be using the County Business Patterns Zipcode Files
+for this project. These are basically a summary statistic of the
+Business Registar at the zipcode level. The Business Registar has the
+data on every business that is registered with the IRS. So its about as
+good as your are gonna get. Our model is in terms of that, and our
+econometric strategy requires additional assumptions to use the zipcode
+level. But enough about things that are eventually gonna be moved out of
+this section and onto the data.</p>
+<p>We are gonna be using the census api to get this done. The website
+that its hosted at is</p>
+<p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
+<p>Were gonna try using the <code>censusapi</code> R package. I’m
+following a tutorial I found that can be accessed at</p>
+<p><a href="https://www.hrecht.com/censusapi/articles/getting-started.html" class="uri">https://www.hrecht.com/censusapi/articles/getting-started.html</a></p>
+<p>I first need to get a key. That is done through the following
+link</p>
+<p><a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a></p>
+<p>I got a key, it came in an email. Below is a non-echoed R chunk that
+assigns my key to the variable <code>MY_CENSUS_KEY</code> and then I
+have <code>Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)</code></p>
+<p>I wouldn’t really mind if you use my key. But Ill keep it private.
+But back to work. Heres code taken from the tutorial just to make sure
+it works on my end</p>
+<pre class="r"><code>sahie_counties &lt;- getCensus(
+    name = &quot;timeseries/healthins/sahie&quot;,
+    vars = c(&quot;NAME&quot;, &quot;PCTUI_PT&quot;, &quot;NUI_PT&quot;), 
+    region = &quot;county:*&quot;, 
+    time = 2021)
+head(sahie_counties)</code></pre>
+</div>
+<div id="start-realtime" class="section level3">
+<h3>Start Realtime</h3>
+<p>Ok now that we have that figured out. Lets get the zipcode level
+county business patterns. Theres 1621 rows, so Ill only do a head()</p>
+<pre class="r"><code>apis = listCensusApis()
+head(apis)
+colnames(apis)</code></pre>
+<p>But we need to find the county business pattern stuff. THe CBF
+Website is here</p>
+<p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
+<p>Looking at the json files <a href="https://api.census.gov/data/2022/cbp">here</a>, we see that the
+title variable is “2022 County Business Patterns”. After some exploring
+(looking at all the titles) I found</p>
+<pre class="r"><code>apis[1000,]</code></pre>
+<p>This tells us that we just need the filter by
+<code>name == &quot;zbp&quot;</code></p>
+<pre class="r"><code>zbp = apis %&gt;%
+  filter(name == &quot;zbp&quot;)</code></pre>
+</div>
+<div id="side-note" class="section level3">
+<h3>Side Note</h3>
+<p>I decided that its probably not a good idea to have this evaluate
+within the blog. When I’m working, Ill have eval = T, but when its up
+I’m gonna turn eval = F. So you wont see the output, and Ill try to keep
+that in mind while Im writing. The replication will obvious have the
+evals, but it wont ahve all this minor stuff. But you can probably
+download the page, and turn evals = T at the top if you’d like to see
+some of the nitty -gritty.</p>
+</div>
+<div id="back-to-regularly-scheduled-programming" class="section level3">
+<h3>Back to regularly scheduled programming</h3>
+<p>Heres the names of all we get</p>
+<pre class="r"><code>zbp$title</code></pre>
+<p>I know that it starts in 1994, but where is 2019-2024</p>
+<p>Lets look at a table of api names</p>
+<pre class="r"><code>table(apis$name)</code></pre>
+<p>Maybe its lumped into cbp. lets look at that and filter by year</p>
+<pre class="r"><code>cbp = apis %&gt;%
+  filter(name == &quot;cbp&quot;, vintage %in% 2019:2024)
+cbp$title</code></pre>
+<p>I think thats it. We only get to 2022, but that fine for now. Lets
+create a list of all the apis we want to use</p>
+<pre class="r"><code>zip_apis = apis %&gt;%
+  filter(name %in% c(&quot;zbp&quot;,&quot;cbp&quot;), vintage %in% 1994:2022)
+zip_apis</code></pre>
+</div>
+<div id="new-route" class="section level3">
+<h3>New Route</h3>
+<p>the census pretty much gives us this for free on a webpage. Then I
+dont need to worry about dependencies. Its worth trying.</p>
+<pre class="r"><code>library(rvest)
+tt = read_html(&quot;https://api.census.gov/data/2018/zbp?get=ESTAB,EMPSZES&amp;for=zipcode:20002&amp;NAICS2017=72&quot;) %&gt;% html_text()
+strsplit(tt,&quot;\n&quot;)</code></pre>
+<p>Honestly beautiful. Lets breakdown what that call is doing. Lets call
+the preamble “<a href="https://api.census.gov/data/" class="uri">https://api.census.gov/data/</a>”. The Next part is the
+year. and then we have “zbp?get=”. I want everything. So Im pretty sure
+I can just wildcard after that. Lets try for 2018</p>
+<pre class="r"><code>tt = read_html(&quot;https://api.census.gov/data/2018/zbp?&quot;) %&gt;% html_text()
+strsplit(tt,&quot;\n&quot;)</code></pre>
+<p>No dice, but it does give me the json. And in that json theres</p>
+<p><a href="http://api.census.gov/data/2018/zbp/variables.json" class="uri">http://api.census.gov/data/2018/zbp/variables.json</a></p>
+<p>There are so many NASICs codes. My personal favorite (of the ones I
+skimmed) is “51119100”: “Greeting card publishers”.</p>
+<p>Heres something useful</p>
+<p><a href="https://www.census.gov/content/dam/Census/data/developers/api-user-guide/api-user-guide.pdf" class="uri">https://www.census.gov/content/dam/Census/data/developers/api-user-guide/api-user-guide.pdf</a></p>
+<p>And</p>
+<p><a href="https://api.census.gov/data/2018/zbp/variables.html" class="uri">https://api.census.gov/data/2018/zbp/variables.html</a></p>
+<p>I got it working through trial and error, but it takes a while to
+load. But more importantly, we need a time series from 1994. So what was
+available back then is going to dictate what we can use now. Lets see
+what variables they had back then.</p>
+<pre class="r"><code>url = &quot;https://api.census.gov/data/2018/zbp?get=EMP,EMP_N,EMPSZES,ESTAB,GEO_ID,GEOCOMP,INDGROUP,INDLEVEL,NAICS2017&amp;for=zipcode:63112&quot;
+tt = read_html(url) %&gt;% html_text()
+strsplit(tt,&quot;\n&quot;)</code></pre>
+<p>Heres the website for 1994 variables</p>
+<p><a href="https://api.census.gov/data/1994/zbp/variables.html" class="uri">https://api.census.gov/data/1994/zbp/variables.html</a></p>
+<p>I’m looking at the other years now and it seems like this might be a
+larger issue. Lets commit and then get back to it.</p>
 </div>
 </div>
 </div>

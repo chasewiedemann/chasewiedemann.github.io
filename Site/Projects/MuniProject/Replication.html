@@ -373,6 +373,7 @@ Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</
 Paper</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/WorkingSlides.html">Working
 Slides</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html">Replication</a>|
 <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/MiniBlog.html">Mini-Blog</a>|</p>
+<pre class="r"><code>library(censusapi)</code></pre>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>When working in Urban Economics, we unsurprising focus on Urban
@@ -416,10 +417,26 @@ this section and onto the data.</p>
 <p>We are gonna be using the census api to get this done. The website
 that its hosted at is</p>
 <p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
-<p>And the example API call they provide is</p>
-<p>api.census.gov/data/2022/cbp?get=ESTAB,LFO,NAICS2017_LABEL,NAME&amp;for=state:06&amp;NAICS2017=72</p>
-<p>Lets start by getting that data into our system, and then we will
-start working on getting the data we want</p>
+<p>Were gonna try using the <code>censusapi</code> R package. I’m
+following a tutorial I found that can be accessed at</p>
+<p><a href="https://www.hrecht.com/censusapi/articles/getting-started.html" class="uri">https://www.hrecht.com/censusapi/articles/getting-started.html</a></p>
+<p>I first need to get a key. That is done through the following
+link</p>
+<p><a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a></p>
+<p>I got a key, it came in an email. Below is a non-echoed R chunk that
+assigns my key to the variable <code>MY_CENSUS_KEY</code> and then I
+have <code>Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)</code></p>
+<p>I wouldn’t really mind if you use my key. But Ill keep it private.
+But back to work. Heres code taken from the tutorial just to make sure
+it works on my end</p>
+<pre class="r"><code>sahie_counties &lt;- getCensus(
+    name = &quot;timeseries/healthins/sahie&quot;,
+    vars = c(&quot;NAME&quot;, &quot;PCTUI_PT&quot;, &quot;NUI_PT&quot;), 
+    region = &quot;county:*&quot;, 
+    time = 2021)
+head(sahie_counties)</code></pre>
+<p>Beautiful. Lets start changing it to what we need</p>
+<p>We can get the list of apis available by running</p>
 </div>
 
 

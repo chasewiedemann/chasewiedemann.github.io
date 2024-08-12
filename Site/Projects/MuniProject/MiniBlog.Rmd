@@ -2,6 +2,11 @@
 title: "Mini-Blog"
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = F)
+```
+
 ```{r,echo = F}
 base_dir = getwd()
 base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
@@ -21,6 +26,11 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Working Slides](`r ws_link`)|
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
+
+```{r}
+library(dplyr)
+library(censusapi)
+```
 
 # Inital Post
 
@@ -51,6 +61,164 @@ I through out some ideas about making my model based on the unobtainable Busines
 
 When I working with code, I am already annotating with the text around it. What should my code comments be? Probably flags that I can easily reference in the text instead of typing out what I'm doing in a comment. Or maybe a mix of both. If i dont want to talk about it in the text, but it is somewhat noteworthy, Ill give it a comment, if can go without, it goes without, and if I want to talk about it in the text, Ill make some obvious flag and reference that flag in the text. Perfect. Lets go. to Lunch, but then were back
 
+### Were Back
+
+I just wrote something on the big blog about functions so that we dont have to run code every time. I also mentioned that I will be using binary files for some speed improvements (RDS). So lets see how that works here. I'm interested in how this is gonna look while I process through stuff. For example, Im gonna show how to do the basic api call first, and then write the function. 
+
+Yikes. Do I even show that in the replicaiton? I should write the replication like Im doing it in real time, but when I go back and edit, will i be removing a bunch of stuff, and losing some detail. I guess yes. Thats the whole point of the mini-blog. Those kind of learning oportunities are documented here. A art form is gonna be finding the line between what goes in the mini blog and what gets editted out of the replication. But back to work. Lets go
+
+### Almost back to work
+Where do I want to load libraries? I think it should be at the top. But when I call a function from a library I should be mentioning what its dependency is. Also that keeps normal formatting throughout, instead of placing it before the first code block. Lets go
+
+### yikes
+
+I have not even considered working directories yet. I went to call something, and I immediately got an error. Im gonna explore this a bit and then report back.
+
+### Change
+
+Ok. I have been working and it seems like I'm doing the blog in the replicaiton way to much. But I think this part is important to archive. So Im actually gonna work in here a bit more, and then export over to the replication once I am done.
+
+## Working in the Mini Blog
+
+### Historical Note
+I hd been working on this is the replication file, and want to port it over, so its a bunch of text now.
+
+### What I did before
+
+We are going to be using the County Business Patterns Zipcode Files for this project. These are basically a summary statistic of the Business Registar at the zipcode level. The Business Registar has the data on every business that is registered with the IRS. So its about as good as your are gonna get. Our model is in terms of that, and our econometric strategy requires additional assumptions to use the zipcode level. But enough about things that are eventually gonna be moved out of this section and onto the data.
+
+We are gonna be using the census api to get this done. The website that its hosted at is 
+
+https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html
+
+Were gonna try using the `censusapi` R package. I'm following a tutorial I found that can be accessed at
+
+https://www.hrecht.com/censusapi/articles/getting-started.html
+
+I first need to get a key. That is done through the following link
+
+https://api.census.gov/data/key_signup.html
+
+I got a key, it came in an email. Below is a non-echoed R chunk that assigns my key to the variable `MY_CENSUS_KEY` and then I have `Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)`
+
+```{r,echo = F}
+MY_CENSUS_KEY = "c161ed0f016172a3598940df9853fe128705043e"
+Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)
+```
+
+I wouldn't really mind if you use my key. But Ill keep it private. But back to work. Heres code taken from the tutorial just to make sure it works on my end
+
+
+```{r}
+sahie_counties <- getCensus(
+    name = "timeseries/healthins/sahie",
+    vars = c("NAME", "PCTUI_PT", "NUI_PT"), 
+    region = "county:*", 
+    time = 2021)
+head(sahie_counties)
+```
+
+### Start Realtime
+
+Ok now that we have that figured out. Lets get the zipcode level county business patterns. Theres 1621 rows, so Ill only do a head()
+
+```{r}
+apis = listCensusApis()
+head(apis)
+colnames(apis)
+```
+But we need to find the county business pattern stuff. THe CBF Website is here
+
+https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html
+
+Looking at the json files [here](https://api.census.gov/data/2022/cbp), we see that the title variable is "2022 County Business Patterns". After some exploring (looking at all the titles) I found
+
+```{r}
+apis[1000,]
+```
+
+This tells us that we just need the filter by `name == "zbp"`
+
+```{r}
+zbp = apis %>%
+  filter(name == "zbp")
+```
+
+### Side Note
+
+I decided that its probably not a good idea to have this evaluate within the blog. When I'm working, Ill have eval = T, but when its up I'm gonna turn eval = F. So you wont see the output, and Ill try to keep that in mind while Im writing. The replication will obvious have the evals, but it wont ahve all this minor stuff. But you can probably download the page, and turn evals = T at the top if you'd like to see some of the nitty -gritty.
+
+### Back to regularly scheduled programming
+
+Heres the names of all we get
+
+```{r}
+zbp$title
+```
+I know that it starts in 1994, but where is 2019-2024
+
+Lets look at a table of api names
+
+```{r}
+table(apis$name)
+```
+Maybe its lumped into cbp. lets look at that and filter by year
+
+```{r}
+cbp = apis %>%
+  filter(name == "cbp", vintage %in% 2019:2024)
+cbp$title
+```
+
+I think thats it. We only get to 2022, but that fine for now. Lets create a list of all the apis we want to use
+
+```{r}
+zip_apis = apis %>%
+  filter(name %in% c("zbp","cbp"), vintage %in% 1994:2022)
+zip_apis
+```
+
+### New Route
+
+the census pretty much gives us this for free on a webpage. Then I dont need to worry about dependencies. Its worth trying.
+
+```{r}
+library(rvest)
+tt = read_html("https://api.census.gov/data/2018/zbp?get=ESTAB,EMPSZES&for=zipcode:20002&NAICS2017=72") %>% html_text()
+strsplit(tt,"\n")
+```
+Honestly beautiful. Lets breakdown what that call is doing. Lets call the preamble "https://api.census.gov/data/". The Next part is the year. and then we have "zbp?get=". I want everything. So Im pretty sure I can just wildcard after that. Lets try for 2018
+
+```{r}
+tt = read_html("https://api.census.gov/data/2018/zbp?") %>% html_text()
+strsplit(tt,"\n")
+```
+No dice, but it does give me the json. And in that json theres
+
+http://api.census.gov/data/2018/zbp/variables.json
+
+There are so many NASICs codes. My personal favorite (of the ones I skimmed) is  "51119100": "Greeting card publishers".
+
+Heres something useful
+
+https://www.census.gov/content/dam/Census/data/developers/api-user-guide/api-user-guide.pdf
+
+And 
+
+https://api.census.gov/data/2018/zbp/variables.html
+
+I got it working through trial and error, but it takes a while to load. But more importantly, we need a time series from 1994. So what was available back then is going to dictate what we can use now. Lets see what variables they had back then.
+
+```{r}
+url = "https://api.census.gov/data/2018/zbp?get=EMP,EMP_N,EMPSZES,ESTAB,GEO_ID,GEOCOMP,INDGROUP,INDLEVEL,NAICS2017&for=zipcode:63112"
+tt = read_html(url) %>% html_text()
+strsplit(tt,"\n")
+```
+Heres the website for 1994 variables
+
+https://api.census.gov/data/1994/zbp/variables.html
+
+I'm looking at the other years now and it seems like this might be a larger issue. Lets commit and then get back to it.
 
 
 

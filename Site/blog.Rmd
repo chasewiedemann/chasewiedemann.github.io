@@ -1,6 +1,7 @@
 ---
 title: "Blog"
 output: html_document
+theme: united
 ---
 |
 [Home](https://chasewiedemann.github.io/index.html) |
@@ -79,6 +80,15 @@ Am I basically just making CSS? Yeah probably. But at least its my CSS and I kno
 
 Ok, finally, back to work. Lets go
 
+## Quick Thoughts on Code
+
+What happens when I have something that takes a while to run? I don't want it to run everytime i recompile. Making sure only the current project recompiles is something on the todo list, but this is within that problem. 
+
+Obvious solution would be the run it, save it in a RDS, comment out the code block, and then load it. But thats very ugly and requires commenting and uncommenting. I think a better solution is to make everything a function. I can then either just comment out the function call, or I can write some if statements around it at the top. I like this solution and Im gonna implement it in the muniProject. I also need to figure out how the filing system is actually gonna work, but I think getting into the thick of it will tell me the best way. With that said, Ill report back from the thick of it. 
+
+
+## Lunch Thought
+GPU Function Friday is pretty restrictive. My thought at lunch was that it should be "Faster Function Friday". This incorporates a lot of different ways that I can make a function faster, instead of just using the GPU. Im gonna update the about page quick, and then carry on.
 
 
 
