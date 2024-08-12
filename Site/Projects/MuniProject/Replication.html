@@ -394,6 +394,33 @@ you normalize the utility of work outside the CBD to zero). A common
 assumption would also be that workers are symmetric, so that they all
 have to get the same utility.</p>
 </div>
+<div id="model-and-identification" class="section level1">
+<h1>Model and Identification</h1>
+<p>I think I need to be talking about the model in terms of the Census’s
+Business Register, instead of what we observe as the zipcode. So the
+model is based on each firms decisions, but we only observe this
+statistic about the groupings in a zipcode. That should help clarify
+what assumptions we are making that are solely a function of not having
+the business registrar data.</p>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<p>We are going to be using the County Business Patterns Zipcode Files
+for this project. These are basically a summary statistic of the
+Business Registar at the zipcode level. The Business Registar has the
+data on every business that is registered with the IRS. So its about as
+good as your are gonna get. Our model is in terms of that, and our
+econometric strategy requires additional assumptions to use the zipcode
+level. But enough about things that are eventually gonna be moved out of
+this section and onto the data.</p>
+<p>We are gonna be using the census api to get this done. The website
+that its hosted at is</p>
+<p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
+<p>And the example API call they provide is</p>
+<p>api.census.gov/data/2022/cbp?get=ESTAB,LFO,NAICS2017_LABEL,NAME&amp;for=state:06&amp;NAICS2017=72</p>
+<p>Lets start by getting that data into our system, and then we will
+start working on getting the data we want</p>
+</div>
 
 
 
