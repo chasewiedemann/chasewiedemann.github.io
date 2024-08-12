@@ -593,6 +593,66 @@ strsplit(tt,&quot;\n&quot;)</code></pre>
 larger issue. Lets commit and then get back to it.</p>
 </div>
 </div>
+<div id="back" class="section level2">
+<h2>Back</h2>
+<p>Ok. I got my commit back in and were ready to work. Lets loop through
+the variables for each year. It turns out that the zbp gets absorbed
+into the cbp in 2019, explaining the issue from before. lets get working
+with the 1994:2018 data, and we can always come back and get those last
+years (if we even want them. Covid ruined data)</p>
+<pre class="r"><code>years = 1994:2018
+names = matrix(nrow = length(years),ncol = 2)
+for (i in 1:length(years)) {
+ url = paste0(&quot;https://api.census.gov/data/&quot;,years[i],&quot;/zbp/variables.html&quot;)
+ tt = read_html(url) %&gt;% html_table() %&gt;% data.frame()
+ names[i,1] = years[i]
+ names[i,2] = paste0(tt$Name,collapse = &quot;,&quot;)
+  
+ }</code></pre>
+<p>Looking at it, 1994 and 2018 have the following variables in common -
+EMP,EMPSZES,ESTAB,GEO_ID,PAYANN, ZIP</p>
+<p>There theres the SIC codes 1994:1997 - SIC 1998:2002 - NAICS1997
+2003:2007 - NAICS2002 2008:2011 - NAICS2007 2012:2016 - NAICS2012
+2017:2018 - NAICS2017</p>
+<p>Lets write some code that extracts just this stuff</p>
+<pre class="r"><code>years = 1994:2018
+data = c()
+for (i in 1:length(years)) {
+cur_year = years[i]
+if (cur_year %in% 1994:1997) {
+  cur_sic = &quot;SIC&quot;
+} else if (cur_year %in% 1998:2002) {
+  cur_sic = &quot;NAICS1997&quot;
+} else if (cur_year %in% 2003:2007){
+  cur_sic = &quot;NAICS2002&quot;
+} else if (cur_year %in% 2008:2011){
+  cur_sic = &quot;NAICS2007&quot;
+} else if (cur_year %in% 2012:2016){
+  cur_sic = &quot;NAICS2012&quot;
+} else {
+  cur_sic = &quot;NAICS2017&quot;
+}
+
+url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,&quot;,cur_sic,&quot;&amp;for=zipcode:63112&quot;)
+tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,&quot;\n&quot;) %&gt;% unlist()
+data = c(data,tt)
+
+}
+getwd()
+saveRDS(data,file = &quot;Data/zbf1994_2018.rds&quot;)</code></pre>
+<p>Notice I saved to .rds. Lets see what that looks like on the other
+end</p>
+<pre class="r"><code>tt = readRDS(&quot;Data/zbf1994_2018.rds&quot;)</code></pre>
+<p>This seems like a good time to move all this over and clean it up in
+the Replication file.</p>
+</div>
+<div id="replication-file" class="section level2">
+<h2>Replication File</h2>
+<p>I have the Data section in the replication page up to the same point
+here. But I am actually running the whole years and zipcodes files and
+it is taking forever. I need to make sure to keep this file somewhere
+safe.</p>
+</div>
 </div>
 
 

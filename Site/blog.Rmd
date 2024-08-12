@@ -1,7 +1,7 @@
 ---
 title: "Blog"
 output: html_document
-theme: united
+theme: journal
 ---
 |
 [Home](https://chasewiedemann.github.io/index.html) |
@@ -90,6 +90,13 @@ Obvious solution would be the run it, save it in a RDS, comment out the code blo
 ## Lunch Thought
 GPU Function Friday is pretty restrictive. My thought at lunch was that it should be "Faster Function Friday". This incorporates a lot of different ways that I can make a function faster, instead of just using the GPU. Im gonna update the about page quick, and then carry on.
 
+## Excited
+
+I just commited and looked at the mini-blog. Thats a lot of work going on. Also, the no eval worked but it propagated through the entire system. Id imagine I need to turn it on for each thing? Idk. Burn that bridge when we get to it. 
+
+## Calling for the day
+
+Calling it for the day at work. The replication code is take forever to run, so I am going to commit and then let it run over night. Were back at it tomorrow.
 
 
 

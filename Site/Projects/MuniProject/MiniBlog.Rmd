@@ -220,6 +220,75 @@ https://api.census.gov/data/1994/zbp/variables.html
 
 I'm looking at the other years now and it seems like this might be a larger issue. Lets commit and then get back to it.
 
+## Back
+
+Ok. I got my commit back in and were ready to work. Lets loop through the variables for each year. It turns out that the zbp gets absorbed into the cbp in 2019, explaining the issue from before. lets get working with the 1994:2018 data, and we can always come back and get those last years (if we even want them. Covid ruined data)
+
+```{r}
+years = 1994:2018
+names = matrix(nrow = length(years),ncol = 2)
+for (i in 1:length(years)) {
+ url = paste0("https://api.census.gov/data/",years[i],"/zbp/variables.html")
+ tt = read_html(url) %>% html_table() %>% data.frame()
+ names[i,1] = years[i]
+ names[i,2] = paste0(tt$Name,collapse = ",")
+  
+ }
+
+```
+Looking at it, 1994 and 2018 have the following variables in common
+- EMP,EMPSZES,ESTAB,GEO_ID,PAYANN, ZIP
+
+There theres the SIC codes 
+1994:1997 - SIC
+1998:2002 - NAICS1997
+2003:2007 - NAICS2002
+2008:2011 - NAICS2007
+2012:2016 - NAICS2012
+2017:2018 - NAICS2017
+
+Lets write some code that extracts just this stuff
+
+```{r}
+years = 1994:2018
+data = c()
+for (i in 1:length(years)) {
+cur_year = years[i]
+if (cur_year %in% 1994:1997) {
+  cur_sic = "SIC"
+} else if (cur_year %in% 1998:2002) {
+  cur_sic = "NAICS1997"
+} else if (cur_year %in% 2003:2007){
+  cur_sic = "NAICS2002"
+} else if (cur_year %in% 2008:2011){
+  cur_sic = "NAICS2007"
+} else if (cur_year %in% 2012:2016){
+  cur_sic = "NAICS2012"
+} else {
+  cur_sic = "NAICS2017"
+}
+
+url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,",cur_sic,"&for=zipcode:63112")
+tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
+data = c(data,tt)
+
+}
+getwd()
+saveRDS(data,file = "Data/zbf1994_2018.rds")
+
+```
+
+Notice I saved to .rds. Lets see what that looks like on the other end
+
+```{r}
+tt = readRDS("Data/zbf1994_2018.rds")
+```
+
+This seems like a good time to move all this over and clean it up in the Replication file.
+
+## Replication File
+
+I have the Data section in the replication page up to the same point here. But I am actually running the whole years and zipcodes files and it is taking forever. I need to make sure to keep this file somewhere safe. 
 
 
 

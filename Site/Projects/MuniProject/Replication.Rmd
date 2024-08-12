@@ -22,9 +22,6 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
 
-```{r}
-library(censusapi)
-```
 
 # Introduction
 
@@ -43,48 +40,47 @@ I think I need to be talking about the model in terms of the Census's Business R
 
 # Data
 
-We are going to be using the County Business Patterns Zipcode Files for this project. These are basically a summary statistic of the Business Registar at the zipcode level. The Business Registar has the data on every business that is registered with the IRS. So its about as good as your are gonna get. Our model is in terms of that, and our econometric strategy requires additional assumptions to use the zipcode level. But enough about things that are eventually gonna be moved out of this section and onto the data.
+We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The Business Registrar has the data on every business that is registered with the IRS. 
 
-We are gonna be using the census api to get this done. The website that its hosted at is 
+As we are concerned with a timeseries, the data availability in 1994 will dictate what variables we use moving forward. We can look at the API's variables page to see what is available
 
-https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html
-
-Were gonna try using the `censusapi` R package. I'm following a tutorial I found that can be accessed at
-
-https://www.hrecht.com/censusapi/articles/getting-started.html
-
-I first need to get a key. That is done through the following link
-
-https://api.census.gov/data/key_signup.html
-
-I got a key, it came in an email. Below is a non-echoed R chunk that assigns my key to the variable `MY_CENSUS_KEY` and then I have `Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)`
-
-```{r,echo = F}
-MY_CENSUS_KEY = "c161ed0f016172a3598940df9853fe128705043e"
-Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)
+```{r,eval=T}
+library(kableExtra)
+url = "https://api.census.gov/data/1994/zbp/variables.html"
+read_html(url) %>% html_table() %>% data.frame %>% select(Name, Label) %>% kable()
 ```
+From this, we will take Total Number of Employees, Employment Size of Establishments, Total Number of Establishments, the Geography ID, Total Annual Payroll, and the SIC Code.
 
-I wouldn't really mind if you use my key. But Ill keep it private. But back to work. Heres code taken from the tutorial just to make sure it works on my end
+These are available for every year, but we do need to take take because the SIC Codes update every few years. This is handled in the code below which scrapes from the API for each of the years. Note that I write this in a function that saves the output into a .rds file. This takes a while, so I want to be able to get at this data without needing to scrape each time. So the function call gets commented out after I have already ran it.
 
+```{r,eval = F}
+scrape_zbp = function(){
+years = 1994:2018
+data = c()
+for (i in 1:length(years)) {
+cur_year = years[i]
+if (cur_year %in% 1994:1997) {
+  cur_sic = "SIC"
+} else if (cur_year %in% 1998:2002) {
+  cur_sic = "NAICS1997"
+} else if (cur_year %in% 2003:2007){
+  cur_sic = "NAICS2002"
+} else if (cur_year %in% 2008:2011){
+  cur_sic = "NAICS2007"
+} else if (cur_year %in% 2012:2016){
+  cur_sic = "NAICS2012"
+} else {
+  cur_sic = "NAICS2017"
+}
 
-```{r}
-sahie_counties <- getCensus(
-    name = "timeseries/healthins/sahie",
-    vars = c("NAME", "PCTUI_PT", "NUI_PT"), 
-    region = "county:*", 
-    time = 2021)
-head(sahie_counties)
+url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,",cur_sic,"&for=zipcode:*")
+tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
+filename = paste0("Data/zbp",cur_year,".rds")
+saveRDS(tt,filename)
+}
+}
+scrape_zbp()
 ```
-Beautiful. Lets start changing it to what we need
-
-We can get the list of apis available by running
-
-```{r}
-
-
-```
-
-
 
 
 

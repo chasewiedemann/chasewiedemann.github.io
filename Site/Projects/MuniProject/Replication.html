@@ -373,7 +373,6 @@ Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</
 Paper</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/WorkingSlides.html">Working
 Slides</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html">Replication</a>|
 <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/MiniBlog.html">Mini-Blog</a>|</p>
-<pre class="r"><code>library(censusapi)</code></pre>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>When working in Urban Economics, we unsurprising focus on Urban
@@ -407,36 +406,209 @@ the business registrar data.</p>
 <div id="data" class="section level1">
 <h1>Data</h1>
 <p>We are going to be using the County Business Patterns Zipcode Files
-for this project. These are basically a summary statistic of the
-Business Registar at the zipcode level. The Business Registar has the
-data on every business that is registered with the IRS. So its about as
-good as your are gonna get. Our model is in terms of that, and our
-econometric strategy requires additional assumptions to use the zipcode
-level. But enough about things that are eventually gonna be moved out of
-this section and onto the data.</p>
-<p>We are gonna be using the census api to get this done. The website
-that its hosted at is</p>
-<p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
-<p>Were gonna try using the <code>censusapi</code> R package. I’m
-following a tutorial I found that can be accessed at</p>
-<p><a href="https://www.hrecht.com/censusapi/articles/getting-started.html" class="uri">https://www.hrecht.com/censusapi/articles/getting-started.html</a></p>
-<p>I first need to get a key. That is done through the following
-link</p>
-<p><a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a></p>
-<p>I got a key, it came in an email. Below is a non-echoed R chunk that
-assigns my key to the variable <code>MY_CENSUS_KEY</code> and then I
-have <code>Sys.setenv(CENSUS_KEY=MY_CENSUS_KEY)</code></p>
-<p>I wouldn’t really mind if you use my key. But Ill keep it private.
-But back to work. Heres code taken from the tutorial just to make sure
-it works on my end</p>
-<pre class="r"><code>sahie_counties &lt;- getCensus(
-    name = &quot;timeseries/healthins/sahie&quot;,
-    vars = c(&quot;NAME&quot;, &quot;PCTUI_PT&quot;, &quot;NUI_PT&quot;), 
-    region = &quot;county:*&quot;, 
-    time = 2021)
-head(sahie_counties)</code></pre>
-<p>Beautiful. Lets start changing it to what we need</p>
-<p>We can get the list of apis available by running</p>
+1994-2022 for this project. These are basically a summary statistic of
+the Business Registrar at the zip code level. The Business Registrar has
+the data on every business that is registered with the IRS.</p>
+<p>As we are concerned with a timeseries, the data availability in 1994
+will dictate what variables we use moving forward. We can look at the
+API’s variables page to see what is available</p>
+<pre class="r"><code>library(kableExtra)
+url = &quot;https://api.census.gov/data/1994/zbp/variables.html&quot;
+read_html(url) %&gt;% html_table() %&gt;% data.frame %&gt;% select(Name, Label) %&gt;% kable()</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:left;">
+Label
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+17 variables
+</td>
+<td style="text-align:left;">
+17 variables
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMP
+</td>
+<td style="text-align:left;">
+Total Number of Employees
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMP_F
+</td>
+<td style="text-align:left;">
+Flag for Number of employees
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMPSZES
+</td>
+<td style="text-align:left;">
+Employment size of establishment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMPSZES_TTL
+</td>
+<td style="text-align:left;">
+Title of employment size
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ESTAB
+</td>
+<td style="text-align:left;">
+Total number of Establishments
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+for
+</td>
+<td style="text-align:left;">
+Census API FIPS ‘for’ clause
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GEO_ID
+</td>
+<td style="text-align:left;">
+ID of Geography
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GEO_TTL
+</td>
+<td style="text-align:left;">
+Title of Geography
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+in
+</td>
+<td style="text-align:left;">
+Census API FIPS ‘in’ clause
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYANN
+</td>
+<td style="text-align:left;">
+Total Annual Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYANN_F
+</td>
+<td style="text-align:left;">
+Flag for Total Annual Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYQTR1
+</td>
+<td style="text-align:left;">
+Total First Quarter Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYQTR1_F
+</td>
+<td style="text-align:left;">
+Flag for Total First Quarter Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIC
+</td>
+<td style="text-align:left;">
+SIC Industry Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIC_TTL
+</td>
+<td style="text-align:left;">
+Title of SIC Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ST
+</td>
+<td style="text-align:left;">
+FIPS State Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZIPCODE
+</td>
+<td style="text-align:left;">
+FIPS Zip
+</td>
+</tr>
+</tbody>
+</table>
+<p>From this, we will take Total Number of Employees, Employment Size of
+Establishments, Total Number of Establishments, the Geography ID, Total
+Annual Payroll, and the SIC Code.</p>
+<p>These are available for every year, but we do need to take take
+because the SIC Codes update every few years. This is handled in the
+code below which scrapes from the API for each of the years. Note that I
+write this in a function that saves the output into a .rds file. This
+takes a while, so I want to be able to get at this data without needing
+to scrape each time. So the function call gets commented out after I
+have already ran it.</p>
+<pre class="r"><code>scrape_zbp = function(){
+years = 1994:2018
+data = c()
+for (i in 1:length(years)) {
+cur_year = years[i]
+if (cur_year %in% 1994:1997) {
+  cur_sic = &quot;SIC&quot;
+} else if (cur_year %in% 1998:2002) {
+  cur_sic = &quot;NAICS1997&quot;
+} else if (cur_year %in% 2003:2007){
+  cur_sic = &quot;NAICS2002&quot;
+} else if (cur_year %in% 2008:2011){
+  cur_sic = &quot;NAICS2007&quot;
+} else if (cur_year %in% 2012:2016){
+  cur_sic = &quot;NAICS2012&quot;
+} else {
+  cur_sic = &quot;NAICS2017&quot;
+}
+
+url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,&quot;,cur_sic,&quot;&amp;for=zipcode:*&quot;)
+tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,&quot;\n&quot;) %&gt;% unlist()
+filename = paste0(&quot;Data/zbp&quot;,cur_year,&quot;.rds&quot;)
+saveRDS(tt,filename)
+}
+}
+scrape_zbp()</code></pre>
 </div>
 
 
