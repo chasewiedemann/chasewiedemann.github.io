@@ -11,6 +11,10 @@ theme: journal
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
+# 8/13/24 Another Day another Dollar
+
+Ok. So the plan for today is three fold. First, I want to do a paper summary on McMillan 2001. This is the subcenter identification paper that I will be extending with dynamics. After that, I want to work on some FKRB stuff. Probably get a data creation and estimation function going. I think that the data creation function is going to be the first Faster Function Friday. Third, the zbp scrape failed after 2004. I am having it run 2005 now, I think it might have just been a HTML timeout thing. If that finishes, Ill get it set up to run 2006:2018 overnight again. So thats the plan. Lets go.
+
 # 8/12/2024: Site Refinements and Some Actual Work
 
 The goal for today is to get the site to a point where its fully functional, but still pretty ugly. That includes

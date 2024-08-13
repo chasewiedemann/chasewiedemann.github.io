@@ -55,7 +55,7 @@ These are available for every year, but we do need to take take because the SIC 
 
 ```{r,eval = F}
 scrape_zbp = function(){
-years = 1994:2018
+years = 2005:2005
 data = c()
 for (i in 1:length(years)) {
 cur_year = years[i]
@@ -75,7 +75,7 @@ if (cur_year %in% 1994:1997) {
 
 url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,",cur_sic,"&for=zipcode:*")
 tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
-filename = paste0("Data/zbp",cur_year,".rds")
+filename = paste0("Data/zbp_test",cur_year,".rds")
 saveRDS(tt,filename)
 }
 }
