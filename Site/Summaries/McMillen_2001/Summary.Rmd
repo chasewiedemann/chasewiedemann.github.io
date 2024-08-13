@@ -19,3 +19,77 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Summary](`r sum_link`)|
 [Mini-Blog](`r miniblog_link`)|
 
+# McMillen (2001)
+
+*McMillen, D. Nonparametric employment subcenter identification. J. Urban Econ. 2001, 50, 448–473.*
+
+## Introduction 
+
+This paper is all about exploring a methodology for identifying urban subcenters without relying on previous knowledge or arbitrarily choose criteria. But what is an urban subcenter and more importantly why should we care? McMillen defines a subcenter as fufilling two criteria
+
+- Significantly larger employment density than nearby locations
+- A significant effect on the overall employment density function
+
+Its perhaps most useful to contrast the idea of a subcenter with the idea of a monocentric city. The monocentric city would state that there is one centeral business district where firms decide to collocate. Why do they collocate? Because agglomeroration economies exist. All else equal, having more firms closer to you augments your productive capacity in a positive fashion. But as every firm wants to be as close as possible to the CBD, the land rents in the CBD increase causing firms to spread out, seeking lower land rents. This spreading out is what McMillen is referencing when he says the employment density function.
+
+The polycentric model, of which subcenters are born, relaxes the assumption that there is one and only one location that is the peak of the employment density function. As firms spread out, they eventually get to a point where the agglomeration effects of the CBD are less pronounced, but they are able to form a separate cluster to generate their own agglomeration effect. Once these clusters get large enough, they create a new peak in the employment density function. These new peaks are the subcenters that McMillen is trying to identify.
+
+## Data
+
+McMillen talks about his data later on in the paper, but I think its important to talk about it before moving onto the model. He uses Transportation Analysis Zones (TAZ) which are more granular than zipcodes or even census tracts. The TAZ dataset gives him the three variables he uses in his analysis. First is employment, which is the total number of employees within the TAZ. Next is location, which he takes to be the centroid of the TAZ. Finally, he gets the area of the TAZ, which allows him to get a density (Employment/Area). He then states that he is going to run the analysis for Chicago, Dallas, Houston, LA, New Orleans, and San Francisco.
+
+This section could use a bit more explaination. An important aspect of TAZ is that they are only defined in metropolitan areas. This means that each TAZ observation comes built in with an urban area identifier. Contrast that with a different dataset that provides the same information, such as the Zipcode County Business Patterns. When we get that area, we have to decide what zipcode goes to what urban area, and for the vast majority of zipcodes we don't assign them to any urban area. 
+
+This may seem like a minor point, but our results are dependent on that choice. Definitions of what is an isn't urban is an arbitrary choice, something that McMillen's method is trying to reduce. End Rant.  
+
+With that said, before we move onto the method section. You can think of each urban area as being its own separate analysis. In the coming section, all the points refered to are points within an urban area. All the regressions are done only using data from that urban area.
+
+## Method
+
+McMillen's states that his method is appealing for 5 reasons
+
+- It is appropriate for different units of analysis (census tracts, zipcode, TAZ, ect. )
+- Identifies significant rises in employment density
+- Is conditioned on distance from the CBD because the rise in employment density required to produce a subcenter is higher closer to the CBD
+- Allows for local variation in the effect of distance form the CBD on employment density
+- Provides a measure of the geographic area covered by the subcenters
+
+These are all very appealing. As the subcenters are a real-world object, its makes sense that their existance (is identification existance) is invariant to the type of data used. The second point should have *significant* bolded and underlined. His methods are going to use statistical tests to determine the whether or not a peak on the employment density funciton is should be classified as a true subcenter, or as a statistical anonmoly. The third point is very important as well. For two non-CBD data points with the same employment level, one could be classifed as a subcenter while the other is not, only because one of the points is further away from the CBD. The fourth point makes his method robust to non-symetric employment gradients. For example, Chicago is located next to Lake Michigan. Obviously we cannot have subcenters in the middle of the lake, and that restricts also makes the areas around Chicago absorb the density that (counterfactually) would have gone into the lake. McMillen states that his method actually does not provide the fifth point, but later shows how it can be modified to obtain it. 
+
+### Stage One
+
+His method comes in two stages. We are going to cover stage one in this first section. Most of the math for this stage is actually delegated to the appendix in the actual paper. I'm going to move it out here as the math for the second stage is not delegated to the appendix, and on my first (second, and lets be honest third) read I got very confused as to what math went with what stage.
+
+First, a locally weighted regression (LWR) is used to smooth the natural logarithm of employment density over space. Why do we need to do this? Because we are trying to estimate a surface, but we only observe points. The LWR smoothing allows us to go from a collection of points to a surface without imposing a parametric form, such as exponential decay, that has been often used in the literature. The bird's eye view is that we allow the density of nearby points to inform what the density at a given point ought to be. Convientently, because we are talking about geography, nearby as a concept (as opposed to an actual value) has a natural interpretation as the actual distance. 
+
+Lets get some notation going. This isn't in the paper but I think it should help. Let $\mathcal X$ be a grid of points covering the urban area. The LWR gives us a prediction of the density $\hat y(x)$  and a estimated standard deviation $\hat\sigma(x)$ at every point $x \in \mathcal X$. For a subset  of $\mathcal X$, we observe the pair $(x_i,y_i)$ which we can denote for ease as $y(x_i)$. $\hat y(x)$ is estimated as 
+
+
+With this, we are able to form residuals $\epsilon_i = \frac{\hat y(x_i) - y(x_i)}{\hat\sigma(x_i)}$. Candidate *sites* are the subset of our observed points with $\epsilon_i > c(\alpha)$. McMillen uses $\alpha = .95$, which gives the critical value of 1.96. 
+
+McMillen notes that this procedure will give clusters (in terms of distance) of points. This is not surprising, its exactly what our model would predict under positive agglomeration effects. A new subcenter has created a new peak in the employment density function, and that peak is not just a one location blip. To deal with this, McMillen singles out the largest $y_i$ of all positive $\epsilon_i$ in a 3 mile radius. This designates one of our candidate *sites* as a candidate *subcenters*. The difference here is small, easy to miss, but is important later. McMillen admits that the 3 mile radius is completely arbitrary, but reasonable. He compares it favorably to the existing method, visual inspection. 
+
+
+### Stage Two
+
+We now move on to the second stage. McMillen notes here that we have only detected significant local rises in the employment density function, but have yet to determine whether these candidate subcenters have a statistically significant effect on the overall shape of the empyment density function. So we have satisfied the first part of his definition, but we have not yet check the second. 
+
+Critical to this next part is that we know the identity of the CBD. This is one of the weaknesses I see in the paper. The goal was to "let the data talk" but we now need to tell the data the identity of the CBD. I think a quick way around this problem would be to simply rerun the analysis and give each candidate subcenter a turn at "playing" CBD. You could then taking some average, possibly dependent on the size of $\epsilon_i$, of the result. But we carry on. 
+
+Assume the first stage yielded $S$ candidate sites (sites not subcenters). Lets focus on an arbitrary observed point $i$ and its observed density $y(x_i)$.  Let $D_{ij}$ be the distance between $i$ and a candidate site $j$. Let the distance between $i$ and the CBD be $D^{CBD}_i$. McMillen then runs the semi-parametric regression
+$$ y(x_i) = g(D^{CBD}_i) + \sum_{j=1}^S (\delta_{1j}D^{-1}_{ij} + \delta_{2j}D_{ij}) + u_i $$
+Let me give you a birds eye view before going into the details. We are going to estimate the equation above. Each pair ($\delta_{1j},\delta_{2j}$) are associated with a candidate site. After running the regression, some of the $\delta$ terms are going to turn out to be insignificant. We are then going to remove the least significant $\delta$ term, and run the regression again. We continue doing this until all the cofficents are significant at some level. If both of a candidate sites $\delta$ have been removed, we consider it removed. If a candidate subcenter has all its candidate sites removed, then it fails to become a true subcenter. You should be screaming "LASSO" at the top of your lungs right now.
+
+Now, lets focus on the summation. McMillen says that distance between $i$ and the candidate site $j$ enters in both levels ($D_{ij}$) and inverse form ($D^{-1}_{ij} = \frac{1}{D_{ij}}$). Quoting here (and in other places but specifically here) "Levels are preferable when a subcenter's effect is spread over a large area, whereas the inverse form is better suited to modeling a subcenter that has a more local effect." This is essentially allowing for the possiblity of two different "types" of subcenter. The first type (associated with $D_{ij}^{-1}$) is a small area that has a ton of employment. If we are to consider that a subcenter, it better have a very large effect on its immediate neighbors, even if it has little effect on points that are far away. The other type is the exact opposite. This is a large area with a modest level of employment. It was enough such that it was picked up in the first stage, but still low. For this to be considered a subcenter, we cannot rely on its effects on its immediate neighbors as they are small, but we would require that it had effects on points that are a good distance away as well. To deal with some bias, McMillen actually removes the candidate subcenters from the estimation routine. 
+
+Lets now move onto $g(D_i^{CBD})$. McMillen uses a flexible Fourier form (fancy). First, we transform $D^{CBD}_i$ into $z \in (0,2\pi)$. McMillen doesnt state how he does this, but it can be done a multitude of ways. An interesting thing to think about is how the choice of a map will effect local distance information. We then calibrate the following Fourier expanision
+$$ g(D^{CBD}_i) \approx \lambda_0 + \lambda_1z_i + \lambda_2 z_i^2 + \sum_{q=1}^Q(\gamma_q cos(qz_i) + \delta_q sin(qz_i)) $$
+By calibrate, I mean we run this regression for various $Q = 1,2,\dots$ until we find a minimizer for some set criterion, McMillen uses Schwarz infomation criterion (SIC) where, for this form with 3 $\lambda$ and $2Q$ terms in the sum, $SIC(Q) = log(\hat\sigma^2) + \frac{log(n)3+2Q}{n}$. After calibrating this value, it is simply placed into the regression from above.
+
+### Rest of the Paper 
+
+And thats the main part of the paper I wanted to summarise. Note that theres more in the actual test. The rest of the text goes into his results for the cities in the study. Theres also a part where he looks at the effect of aggregation by combining some of his TAZ observations together. As you would imagine, the estimates are less precise and he find less subcenters. The order in which I presented this information is not the same as he does either. After looking at the method, he then introduces the data he is using. Also, the math behind the LWR is delegated to the appendix but I wanted to bring it out into the front as this summary was more focused on the methods. 
+
+
+
+
