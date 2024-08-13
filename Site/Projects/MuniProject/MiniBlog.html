@@ -512,14 +512,50 @@ it works on my end</p>
     region = &quot;county:*&quot;, 
     time = 2021)
 head(sahie_counties)</code></pre>
+<pre><code>##   time state county               NAME PCTUI_PT NUI_PT
+## 1 2021    01    001 Autauga County, AL     10.0   4912
+## 2 2021    01    003 Baldwin County, AL     11.0  20432
+## 3 2021    01    005 Barbour County, AL     12.7   2150
+## 4 2021    01    007    Bibb County, AL     11.4   1905
+## 5 2021    01    009  Blount County, AL     12.8   6145
+## 6 2021    01    011 Bullock County, AL     12.2    824</code></pre>
 </div>
 <div id="start-realtime" class="section level3">
 <h3>Start Realtime</h3>
 <p>Ok now that we have that figured out. Lets get the zipcode level
 county business patterns. Theres 1621 rows, so Ill only do a head()</p>
 <pre class="r"><code>apis = listCensusApis()
-head(apis)
-colnames(apis)</code></pre>
+head(apis)</code></pre>
+<pre><code>##                                      title          name vintage      type        temporal                                           url
+## 1 Current Population Survey: Basic Monthly cps/basic/apr    2024 Microdata 2024-04/2024-04 http://api.census.gov/data/2024/cps/basic/apr
+## 2 Current Population Survey: Basic Monthly cps/basic/feb    2024 Microdata 2024-02/2024-02 http://api.census.gov/data/2024/cps/basic/feb
+## 3 Current Population Survey: Basic Monthly cps/basic/jan    2024 Microdata 2024-01/2024-01 http://api.census.gov/data/2024/cps/basic/jan
+## 4 Current Population Survey: Basic Monthly cps/basic/jul    2024 Microdata 2024-07/2024-07 http://api.census.gov/data/2024/cps/basic/jul
+## 5 Current Population Survey: Basic Monthly cps/basic/jun    2024 Microdata 2024-06/2024-06 http://api.census.gov/data/2024/cps/basic/jun
+## 6 Current Population Survey: Basic Monthly cps/basic/mar    2024 Microdata 2024-03/2024-03 http://api.census.gov/data/2024/cps/basic/mar
+##                modified
+## 1 2024-01-11 15:35:41.0
+## 2 2024-01-11 15:35:41.0
+## 3 2024-01-11 15:35:41.0
+## 4 2024-01-11 15:35:41.0
+## 5 2024-01-11 15:35:41.0
+## 6 2024-01-11 15:35:41.0
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               description
+## 1 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+## 2 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+## 3 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+## 4 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+## 5 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+## 6 To provide estimates of employment, unemployment, and other characteristics of the general labor force, of the population as a whole, and of various subgroups of the population. Monthly labor force data for the country are used by the  Bureau of Labor Statistics (BLS) to determine the distribution of funds under the Job Training Partnership Act. These data are collected through combined computer-assisted personal interviewing (CAPI) and computer-assisted telephone interviewing (CATI). In addition to the labor force data, the CPS basic funding provides annual data on work experience, income, health insurance, and migration data from the Annual Social and Economic Supplement (ASEC), and on school enrollment of the population from the October Supplement. Other supplements, some of which are sponsored by other agencies, are conducted biennially or intermittently.
+##              contact
+## 1 dsd.cps@census.gov
+## 2 dsd.cps@census.gov
+## 3 dsd.cps@census.gov
+## 4 dsd.cps@census.gov
+## 5 dsd.cps@census.gov
+## 6 dsd.cps@census.gov</code></pre>
+<pre class="r"><code>colnames(apis)</code></pre>
+<pre><code>## [1] &quot;title&quot;       &quot;name&quot;        &quot;vintage&quot;     &quot;type&quot;        &quot;temporal&quot;    &quot;url&quot;         &quot;modified&quot;    &quot;description&quot; &quot;contact&quot;</code></pre>
 <p>But we need to find the county business pattern stuff. THe CBF
 Website is here</p>
 <p><a href="https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html" class="uri">https://www.census.gov/data/developers/data-sets/cbp-zbp/cbp-api.html</a></p>
@@ -527,6 +563,14 @@ Website is here</p>
 title variable is “2022 County Business Patterns”. After some exploring
 (looking at all the titles) I found</p>
 <pre class="r"><code>apis[1000,]</code></pre>
+<pre><code>##                                                                               title name vintage      type  temporal                                 url
+## 1000 2007 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2007 Aggregate 2007/2007 http://api.census.gov/data/2007/zbp
+##        modified
+## 1000 2018-01-25
+##                                                                                                                                                                                                                                                                                                                                                                        description
+## 1000 ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+##                                      contact
+## 1000 ewd.county.business.patterns@census.gov</code></pre>
 <p>This tells us that we just need the filter by
 <code>name == &quot;zbp&quot;</code></p>
 <pre class="r"><code>zbp = apis %&gt;%
@@ -546,18 +590,630 @@ some of the nitty -gritty.</p>
 <h3>Back to regularly scheduled programming</h3>
 <p>Heres the names of all we get</p>
 <pre class="r"><code>zbp$title</code></pre>
+<pre><code>##  [1] &quot;2018 Economic Annual Surveys: Business Patterns: Zipcode Business Patterns&quot;                                                             
+##  [2] &quot;2017 County Business Patterns&quot;                                                                                                          
+##  [3] &quot;2016 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment&quot;
+##  [4] &quot;2015 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment&quot;
+##  [5] &quot;2014 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment&quot;
+##  [6] &quot;2013 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment&quot;
+##  [7] &quot;2012 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment&quot;
+##  [8] &quot;2011 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+##  [9] &quot;2010 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [10] &quot;2009 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [11] &quot;2008 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [12] &quot;2007 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [13] &quot;2006 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [14] &quot;2005 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [15] &quot;2004 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [16] &quot;2003 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [17] &quot;2002 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [18] &quot;2001 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [19] &quot;2000 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [20] &quot;1999 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [21] &quot;1998 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [22] &quot;1997 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [23] &quot;1996 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [24] &quot;1995 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;                                                         
+## [25] &quot;1994 County Business Patterns - Zip Code Business Patterns: Total For Zip Code&quot;</code></pre>
 <p>I know that it starts in 1994, but where is 2019-2024</p>
 <p>Lets look at a table of api names</p>
 <pre class="r"><code>table(apis$name)</code></pre>
+<pre><code>## 
+##                                         abscb                                        abscbo                                         abscs 
+##                                             5                                             5                                             5 
+##                                        absmcb                                       absnesd                                      absnesdo 
+##                                             2                                             4                                             4 
+##                                        abstcb                                      acs/acs1                             acs/acs1/cprofile 
+##                                             1                                            17                                            12 
+##                              acs/acs1/profile                                 acs/acs1/pums                               acs/acs1/pumspr 
+##                                            17                                            18                                            17 
+##                                  acs/acs1/spp                              acs/acs1/subject                                      acs/acs3 
+##                                            14                                            12                                             6 
+##                             acs/acs3/cprofile                              acs/acs3/profile                                  acs/acs3/spp 
+##                                             2                                             7                                             5 
+##                              acs/acs3/subject                                      acs/acs5                                 acs/acs5/aian 
+##                                             4                                            14                                             3 
+##                          acs/acs5/aianprofile                             acs/acs5/cprofile                                  acs/acs5/eeo 
+##                                             3                                             8                                             1 
+##                              acs/acs5/profile                                 acs/acs5/pums                               acs/acs5/pumspr 
+##                                            14                                            14                                            14 
+##                                  acs/acs5/spt                           acs/acs5/sptprofile                              acs/acs5/subject 
+##                                             3                                             2                                            13 
+##                                     acs/acsse                                     acs/flows                                    acs1/cd113 
+##                                             8                                            12                                             1 
+##                                    acs1/cd115                                          acs5                                       ase/csa 
+##                                             1                                             1                                             3 
+##                                      ase/cscb                                     ase/cscbo                                           cbp 
+##                                             3                                             3                                            37 
+##                                       cfsarea                                     cfsexport                                     cfshazmat 
+##                                             2                                             2                                             2 
+##                                     cfsprelim                                       cfstemp                                  cps/arts/feb 
+##                                             2                                             1                                             6 
+##                                  cps/asec/mar                                 cps/basic/apr                                 cps/basic/aug 
+##                                            32                                            36                                            35 
+##                                 cps/basic/dec                                 cps/basic/feb                                 cps/basic/jan 
+##                                            35                                            36                                            36 
+##                                 cps/basic/jul                                 cps/basic/jun                                 cps/basic/mar 
+##                                            36                                            36                                            36 
+##                                 cps/basic/may                                 cps/basic/nov                                 cps/basic/oct 
+##                                            36                                            35                                            35 
+##                                 cps/basic/sep                                 cps/civic/nov                            cps/contworker/feb 
+##                                            35                                             5                                             5 
+##                            cps/contworker/may                            cps/disability/jul                            cps/disability/may 
+##                                             1                                             2                                             1 
+##                                  cps/dwjt/feb                                  cps/dwjt/jan                             cps/fertility/jun 
+##                                             3                                            11                                            13 
+##                               cps/foodsec/apr                               cps/foodsec/aug                               cps/foodsec/dec 
+##                                             4                                             1                                            22 
+##                               cps/foodsec/sep                           cps/immigration/aug                              cps/internet/aug 
+##                                             1                                             1                                             1 
+##                              cps/internet/dec                              cps/internet/jul                              cps/internet/nov 
+##                                             1                                             3                                             4 
+##                              cps/internet/oct                              cps/internet/sep                               cps/library/oct 
+##                                             6                                             1                                             1 
+##                               cps/marital/jun                               cps/pubarts/aug                               cps/pubarts/jul 
+##                                             1                                             1                                             3 
+##                                  cps/race/may                                cps/school/oct                               cps/tobacco/aug 
+##                                             1                                            29                                             2 
+##                               cps/tobacco/jan                               cps/tobacco/jul                               cps/tobacco/may 
+##                                             4                                             2                                             4 
+##                               cps/tobacco/sep                                cps/unbank/jan                                cps/unbank/jun 
+##                                             1                                             1                                             6 
+##                                  cps/vets/aug                                  cps/vets/jul                                  cps/vets/sep 
+##                                            19                                             1                                             2 
+##                             cps/volunteer/sep                                cps/voting/nov                             cps/worksched/may 
+##                                            16                                            15                                             3 
+##                                           cre                                 crepuertorico                                      dec/aian 
+##                                             3                                             3                                             2 
+##                               dec/aianprofile                                        dec/as                                     dec/asyoe 
+##                                             1                                             2                                             1 
+##                                    dec/cd110h                             dec/cd110hprofile                                    dec/cd110s 
+##                                             1                                             1                                             1 
+##                             dec/cd110sprofile                                     dec/cd113                              dec/cd113profile 
+##                                             1                                             1                                             1 
+##                                     dec/cd115                              dec/cd115profile                                     dec/cd116 
+##                                             1                                             1                                             1 
+##                                     dec/cd118                                       dec/cqr                                dec/crosstabas 
+##                                             1                                             1                                             1 
+##                                dec/crosstabgu                                dec/crosstabmp                                dec/crosstabvi 
+##                                             1                                             1                                             1 
+##                                     dec/ddhca                                     dec/ddhcb                                       dec/dhc 
+##                                             1                                             1                                             1 
+##                                     dec/dhcas                                     dec/dhcgu                                     dec/dhcmp 
+##                                             1                                             1                                             1 
+##                                     dec/dhcvi                                        dec/dp                                      dec/dpas 
+##                                             1                                             1                                             1 
+##                                      dec/dpgu                                      dec/dpmp                                      dec/dpvi 
+##                                             1                                             1                                             1 
+##                                        dec/gu                                     dec/guyoe                                        dec/mp 
+##                                             2                                             1                                             2 
+##                                     dec/mpyoe                                       dec/pes                                        dec/pl 
+##                                             1                                             1                                             3 
+##                                     dec/plnat                              dec/responserate                          dec/selfresponserate 
+##                                             1                                             2                                             1 
+##                                       dec/sf1                                       dec/sf2                                dec/sf2profile 
+##                                             2                                             2                                             1 
+##                                       dec/sf3                                dec/sf3profile                                       dec/sf4 
+##                                             1                                             1                                             1 
+##                                dec/sf4profile                                      dec/sldh                               dec/sldhprofile 
+##                                             1                                             1                                             1 
+##                                      dec/slds                               dec/sldsprofile                                        dec/vi 
+##                                             1                                             1                                             2 
+##                               ecn/islandareas                          ecn/islandareas/comp                           ecn/islandareas/ind 
+##                                             3                                             3                                             2 
+##                         ecn/islandareas/lines                         ecn/islandareas/napcs                                   ecnadbnprop 
+##                                             1                                             2                                             1 
+##                                     ecnadmben                                      ecnbasic                                  ecnbranddeal 
+##                                             2                                             3                                             2 
+##                                    ecnbridge1                                    ecnbridge2                                   ecnbrordeal 
+##                                             2                                             2                                             2 
+##                                    ecncashadv                                      ecnccard                                     ecnclcust 
+##                                             1                                             2                                             2 
+##                                       ecncomm                                       ecncomp                                     ecnconact 
+##                                             2                                             2                                             2 
+##                                    ecnconcess                                      ecncrfin                                    ecndirprem 
+##                                             1                                             2                                             1 
+##                                    ecndissmed                                     ecnelmenu                                    ecnempfunc 
+##                                             2                                             1                                             2 
+##                                     ecnentsup                                     ecneoyinv                                   ecneoyinvwh 
+##                                             2                                             2                                             2 
+##                                      ecnequip                                     ecnexpnrg                                     ecnexpsvc 
+##                                             1                                             2                                             2 
+##                                    ecnflspace                                    ecnfoodsvc                                       ecnfran 
+##                                             2                                             2                                             2 
+##                                      ecngrant                                      ecnguest                                  ecnguestsize 
+##                                             2                                             1                                             1 
+##                                       ecnhosp                                      ecnhotel                                      ecninstr 
+##                                             2                                             1                                             1 
+##                                     ecninvval                                        ecnipa                                        ecnkob 
+##                                             2                                             1                                             2 
+##                                      ecnlabor                                    ecnlifomfg                                   ecnlifomine 
+##                                             2                                             2                                             2 
+##                                    ecnlifoval                                      ecnlines                                       ecnloan 
+##                                             1                                             1                                             2 
+##                                    ecnloccons                                     ecnlocmfg                                    ecnlocmine 
+##                                             1                                             2                                             2 
+##                                     ecnmargin                                    ecnmatfuel                                   ecnmealcost 
+##                                             2                                             2                                             1 
+##                                   ecnmenutype                                   ecnnapcsind                                   ecnnapcsprd 
+##                                             1                                             1                                             1 
+##                                    ecnpatient                                    ecnpetrfac                                   ecnpetrprod 
+##                                             2                                             2                                             2 
+##                                    ecnpetrrec                                   ecnpetrstat                                     ecnprofit 
+##                                             2                                             2                                             2 
+##                                    ecnpurelec                                     ecnpurgas                                    ecnpurmode 
+##                                             2                                             1                                             2 
+##                                      ecnrdacq                                      ecnrdofc                                       ecnseat 
+##                                             1                                             2                                             1 
+##                                       ecnsize                                     ecnsocial                                       ecntype 
+##                                             2                                             2                                             2 
+##                                  ecntypepayer                                      ecntypop                                     ecnvalcon 
+##                                             1                                             2                                             2 
+##                                          ewks                             intltrade/imp_exp                                      language 
+##                                             4                                             5                                             1 
+##                                        nonemp                                pdb/blockgroup                               pdb/statecounty 
+##                                            25                                             8                                             1 
+##                                     pdb/tract                                    pep/agesex                               pep/agespecial5 
+##                                             8                                             1                                             1 
+##                               pep/agespecial6                              pep/agespecialpr                                   pep/charage 
+##                                             1                                             1                                             5 
+##                             pep/charagegroups                                   pep/cochar5                                   pep/cochar6 
+##                                             5                                             2                                             2 
+##                                pep/components                                       pep/cty                                   pep/housing 
+##                                             5                                             2                                             7 
+##                               pep/int_charage                         pep/int_charagegroups                          pep/int_housingunits 
+##                                             1                                             2                                             1 
+##                             pep/int_natcivpop                            pep/int_natmonthly                             pep/int_natresafo 
+##                                             1                                             1                                             1 
+##                             pep/int_natrespop                            pep/int_population                           pep/monthlynatchar5 
+##                                             1                                             1                                             2 
+##                           pep/monthlynatchar6                                pep/natmonthly                                  pep/natstprc 
+##                                             2                                             6                                             2 
+##                                pep/natstprc18                                pep/population                                 pep/prcagesex 
+##                                             2                                             6                                             2 
+##                                       pep/prm                                 pep/prmagesex                             pep/projagegroups 
+##                                             2                                             2                                             1 
+##                                pep/projbirths                                pep/projdeaths                                   pep/projnat 
+##                                             1                                             1                                             1 
+##                                   pep/projnim                                   pep/projpop                                   pep/stchar5 
+##                                             1                                             1                                             2 
+##                                   pep/stchar6                                    pep/subcty                             popproj/agegroups 
+##                                             2                                             2                                             1 
+##                                popproj/births                                popproj/deaths                                   popproj/nat 
+##                                             2                                             2                                             1 
+##                                   popproj/nim                                   popproj/pop                                    pubschlfin 
+##                                             2                                             2                                             1 
+##                                        sbo/cs                                      sbo/cscb                                     sbo/cscbo 
+##                                             1                                             1                                             1 
+##                                          sipp                        sipp/benefit/1990panel                        sipp/benefit/1991panel 
+##                                             1                                             1                                             1 
+##                     sipp/core/1990panel/wave1                     sipp/core/1990panel/wave2                     sipp/core/1990panel/wave3 
+##                                             1                                             1                                             1 
+##                     sipp/core/1990panel/wave4                     sipp/core/1990panel/wave5                     sipp/core/1990panel/wave6 
+##                                             1                                             1                                             1 
+##                     sipp/core/1990panel/wave7                     sipp/core/1990panel/wave8                     sipp/core/1991panel/wave1 
+##                                             1                                             1                                             1 
+##                     sipp/core/1991panel/wave2                     sipp/core/1991panel/wave3                     sipp/core/1991panel/wave4 
+##                                             1                                             1                                             1 
+##                     sipp/core/1991panel/wave5                     sipp/core/1991panel/wave6                     sipp/core/1991panel/wave7 
+##                                             1                                             1                                             1 
+##                     sipp/core/1991panel/wave8                     sipp/core/1992panel/wave1                     sipp/core/1992panel/wave2 
+##                                             1                                             1                                             1 
+##                     sipp/core/1992panel/wave3                     sipp/core/1992panel/wave4                     sipp/core/1992panel/wave5 
+##                                             1                                             1                                             1 
+##                     sipp/core/1992panel/wave6                     sipp/core/1992panel/wave7                     sipp/core/1992panel/wave8 
+##                                             1                                             1                                             1 
+##                     sipp/core/1992panel/wave9                     sipp/core/1993panel/wave1                     sipp/core/1993panel/wave2 
+##                                             1                                             1                                             1 
+##                     sipp/core/1993panel/wave3                     sipp/core/1993panel/wave4                     sipp/core/1993panel/wave5 
+##                                             1                                             1                                             1 
+##                     sipp/core/1993panel/wave6                     sipp/core/1993panel/wave7                     sipp/core/1993panel/wave8 
+##                                             1                                             1                                             1 
+##                     sipp/core/1993panel/wave9                     sipp/core/1996panel/wave1                    sipp/core/1996panel/wave10 
+##                                             1                                             1                                             1 
+##                    sipp/core/1996panel/wave11                    sipp/core/1996panel/wave12                     sipp/core/1996panel/wave2 
+##                                             1                                             1                                             1 
+##                     sipp/core/1996panel/wave3                     sipp/core/1996panel/wave4                     sipp/core/1996panel/wave5 
+##                                             1                                             1                                             1 
+##                     sipp/core/1996panel/wave6                     sipp/core/1996panel/wave7                     sipp/core/1996panel/wave8 
+##                                             1                                             1                                             1 
+##                     sipp/core/1996panel/wave9                     sipp/core/2001panel/wave1                     sipp/core/2001panel/wave2 
+##                                             1                                             1                                             1 
+##                     sipp/core/2001panel/wave3                     sipp/core/2001panel/wave4                     sipp/core/2001panel/wave5 
+##                                             1                                             1                                             1 
+##                     sipp/core/2001panel/wave6                     sipp/core/2001panel/wave7                     sipp/core/2001panel/wave8 
+##                                             1                                             1                                             1 
+##                     sipp/core/2001panel/wave9                     sipp/core/2004panel/wave1                    sipp/core/2004panel/wave10 
+##                                             1                                             1                                             1 
+##                    sipp/core/2004panel/wave11                    sipp/core/2004panel/wave12                     sipp/core/2004panel/wave2 
+##                                             1                                             1                                             1 
+##                     sipp/core/2004panel/wave3                     sipp/core/2004panel/wave4                     sipp/core/2004panel/wave5 
+##                                             1                                             1                                             1 
+##                     sipp/core/2004panel/wave6                     sipp/core/2004panel/wave7                     sipp/core/2004panel/wave8 
+##                                             1                                             1                                             1 
+##                     sipp/core/2004panel/wave9                     sipp/core/2008panel/wave1                    sipp/core/2008panel/wave10 
+##                                             1                                             1                                             1 
+##                    sipp/core/2008panel/wave11                    sipp/core/2008panel/wave12                    sipp/core/2008panel/wave13 
+##                                             1                                             1                                             1 
+##                    sipp/core/2008panel/wave14                    sipp/core/2008panel/wave15                    sipp/core/2008panel/wave16 
+##                                             1                                             1                                             1 
+##                     sipp/core/2008panel/wave2                     sipp/core/2008panel/wave3                     sipp/core/2008panel/wave4 
+##                                             1                                             1                                             1 
+##                     sipp/core/2008panel/wave5                     sipp/core/2008panel/wave6                     sipp/core/2008panel/wave7 
+##                                             1                                             1                                             1 
+##                     sipp/core/2008panel/wave8                     sipp/core/2008panel/wave9                  sipp/topical/1990panel/wave2 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1990panel/wave3                  sipp/topical/1990panel/wave4                  sipp/topical/1990panel/wave6 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1990panel/wave7                  sipp/topical/1990panel/wave8                  sipp/topical/1991panel/wave2 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1991panel/wave3                  sipp/topical/1991panel/wave4                  sipp/topical/1991panel/wave5 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1991panel/wave6                  sipp/topical/1991panel/wave7                  sipp/topical/1992panel/wave1 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1992panel/wave2                  sipp/topical/1992panel/wave3                  sipp/topical/1992panel/wave4 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1992panel/wave6                  sipp/topical/1992panel/wave7                  sipp/topical/1992panel/wave9 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1993panel/wave1                  sipp/topical/1993panel/wave2                  sipp/topical/1993panel/wave3 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1993panel/wave4                  sipp/topical/1993panel/wave6                  sipp/topical/1993panel/wave7 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1993panel/wave9                  sipp/topical/1996panel/wave1                 sipp/topical/1996panel/wave10 
+##                                             1                                             1                                             1 
+##                 sipp/topical/1996panel/wave11                 sipp/topical/1996panel/wave12                  sipp/topical/1996panel/wave2 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1996panel/wave3                  sipp/topical/1996panel/wave4                  sipp/topical/1996panel/wave5 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1996panel/wave6                  sipp/topical/1996panel/wave7                  sipp/topical/1996panel/wave8 
+##                                             1                                             1                                             1 
+##                  sipp/topical/1996panel/wave9                  sipp/topical/2001panel/wave1                  sipp/topical/2001panel/wave2 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2001panel/wave3                  sipp/topical/2001panel/wave4                  sipp/topical/2001panel/wave5 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2001panel/wave6                  sipp/topical/2001panel/wave7                  sipp/topical/2001panel/wave8 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2001panel/wave9                  sipp/topical/2004panel/wave1                  sipp/topical/2004panel/wave2 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2004panel/wave3                  sipp/topical/2004panel/wave4                  sipp/topical/2004panel/wave5 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2004panel/wave6                  sipp/topical/2004panel/wave7                  sipp/topical/2004panel/wave8 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2008panel/wave1                 sipp/topical/2008panel/wave10                 sipp/topical/2008panel/wave11 
+##                                             1                                             1                                             1 
+##                 sipp/topical/2008panel/wave13                  sipp/topical/2008panel/wave2                  sipp/topical/2008panel/wave3 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2008panel/wave4                  sipp/topical/2008panel/wave5                  sipp/topical/2008panel/wave6 
+##                                             1                                             1                                             1 
+##                  sipp/topical/2008panel/wave7                  sipp/topical/2008panel/wave8                  sipp/topical/2008panel/wave9 
+##                                             1                                             1                                             1 
+##                sipp/topicaled/1990panel/wave5                sipp/topicaled/1991panel/wave8                sipp/topicaled/1992panel/wave5 
+##                                             1                                             1                                             1 
+##                sipp/topicaled/1992panel/wave8                sipp/topicaled/1993panel/wave5                sipp/topicaled/1993panel/wave8 
+##                                             1                                             1                                             1 
+##              sipp/topicaledex/1990panel/wave5              sipp/topicaledex/1990panel/wave8              sipp/topicaledex/1991panel/wave5 
+##                                             1                                             1                                             1 
+##              sipp/topicaledex/1991panel/wave8              sipp/topicaledex/1992panel/wave5              sipp/topicaledex/1992panel/wave8 
+##                                             1                                             1                                             1 
+##              sipp/topicaledex/1993panel/wave5              sipp/topicaledex/1993panel/wave8                sipp/topicalex/1992panel/wave6 
+##                                             1                                             1                                             1 
+##                sipp/topicalex/1993panel/wave3               sipp/topicalres/1990panel/wave5               sipp/topicalres/1991panel/wave8 
+##                                             1                                             1                                             1 
+##               sipp/topicalres/1992panel/wave5               sipp/topicalres/1992panel/wave8               sipp/topicalres/1993panel/wave5 
+##                                             1                                             1                                             1 
+##               sipp/topicalres/1993panel/wave8               sipp/topicalres/2001panel/wave8                                       surname 
+##                                             1                                             1                                             2 
+##                       timeseries/asm/area2012                       timeseries/asm/area2017                  timeseries/asm/benchmark2017 
+##                                             1                                             1                                             1 
+##                       timeseries/asm/industry                        timeseries/asm/product                          timeseries/asm/state 
+##                                             1                                             1                                             1 
+##                      timeseries/asm/value2012                      timeseries/asm/value2017                                timeseries/bds 
+##                                             1                                             1                                             1 
+##                         timeseries/eits/advm3                           timeseries/eits/bfs                           timeseries/eits/ftd 
+##                                             1                                             1                                             1 
+##                        timeseries/eits/ftdadv                            timeseries/eits/hv                            timeseries/eits/m3 
+##                                             1                                             1                                             1 
+##                         timeseries/eits/marts                           timeseries/eits/mhs                          timeseries/eits/mhs2 
+##                                             1                                             1                                             1 
+##                          timeseries/eits/mrts                       timeseries/eits/mrtsadv                          timeseries/eits/mtis 
+##                                             1                                             1                                             1 
+##                          timeseries/eits/mwts                       timeseries/eits/mwtsadv                           timeseries/eits/qfr 
+##                                             1                                             1                                             1 
+##                           timeseries/eits/qpr                           timeseries/eits/qss                          timeseries/eits/qtax 
+##                                             1                                             1                                             1 
+##                      timeseries/eits/resconst                      timeseries/eits/ressales                           timeseries/eits/vip 
+##                                             1                                             1                                             1 
+##                               timeseries/govs                    timeseries/healthins/sahie                            timeseries/hhpulse 
+##                                             1                                             1                                             1 
+##                                timeseries/hps                          timeseries/idb/1year                          timeseries/idb/5year 
+##                                             1                                             1                                             1 
+##           timeseries/intltrade/exports/enduse     timeseries/intltrade/exports/enduseexport           timeseries/intltrade/exports/hitech 
+##                                             1                                             1                                             1 
+##     timeseries/intltrade/exports/hitechexport               timeseries/intltrade/exports/hs         timeseries/intltrade/exports/hsexport 
+##                                             1                                             1                                             1 
+##            timeseries/intltrade/exports/naics      timeseries/intltrade/exports/naicsexport           timeseries/intltrade/exports/porths 
+##                                             1                                             1                                             1 
+##     timeseries/intltrade/exports/porthsexport             timeseries/intltrade/exports/sitc       timeseries/intltrade/exports/sitcexport 
+##                                             1                                             1                                             1 
+##          timeseries/intltrade/exports/statehs    timeseries/intltrade/exports/statehsexport       timeseries/intltrade/exports/statenaics 
+##                                             1                                             1                                             1 
+## timeseries/intltrade/exports/statenaicsexport             timeseries/intltrade/exports/usda       timeseries/intltrade/exports/usdaexport 
+##                                             1                                             1                                             1 
+##           timeseries/intltrade/imports/enduse     timeseries/intltrade/imports/enduseimport           timeseries/intltrade/imports/hitech 
+##                                             1                                             1                                             1 
+##     timeseries/intltrade/imports/hitechimport               timeseries/intltrade/imports/hs         timeseries/intltrade/imports/hsimport 
+##                                             1                                             1                                             1 
+##            timeseries/intltrade/imports/naics      timeseries/intltrade/imports/naicsimport           timeseries/intltrade/imports/porths 
+##                                             1                                             1                                             1 
+##     timeseries/intltrade/imports/porthsimport             timeseries/intltrade/imports/sitc       timeseries/intltrade/imports/sitcimport 
+##                                             1                                             1                                             1 
+##          timeseries/intltrade/imports/statehs    timeseries/intltrade/imports/statehsimport       timeseries/intltrade/imports/statenaics 
+##                                             1                                             1                                             1 
+## timeseries/intltrade/imports/statenaicsimport             timeseries/intltrade/imports/usda       timeseries/intltrade/imports/usdaimport 
+##                                             1                                             1                                             1 
+##                   timeseries/poverty/histpov2                      timeseries/poverty/saipe              timeseries/poverty/saipe/schdist 
+##                                             1                                             1                                             1 
+##                      timeseries/pseo/earnings                         timeseries/pseo/flows                             timeseries/qwi/rh 
+##                                             1                                             1                                             1 
+##                             timeseries/qwi/sa                             timeseries/qwi/se                               timeseries/soma 
+##                                             1                                             1                                             1 
+##                                         viusa                                         viusb                                         viusc 
+##                                             1                                             1                                             1 
+##                                         viusd                                         viuse                                         viusf 
+##                                             1                                             1                                             1 
+##                                       viuspuf                                           zbp 
+##                                             1                                            25</code></pre>
 <p>Maybe its lumped into cbp. lets look at that and filter by year</p>
 <pre class="r"><code>cbp = apis %&gt;%
   filter(name == &quot;cbp&quot;, vintage %in% 2019:2024)
 cbp$title</code></pre>
+<pre><code>## [1] &quot;2022 County Business Patterns&quot;                                 &quot;Economic Surveys: Business Patterns: County Business Patterns&quot;
+## [3] &quot;Economic Surveys: Business Patterns: County Business Patterns&quot; &quot;Economic Surveys: Business Patterns: County Business Patterns&quot;</code></pre>
 <p>I think thats it. We only get to 2022, but that fine for now. Lets
 create a list of all the apis we want to use</p>
 <pre class="r"><code>zip_apis = apis %&gt;%
   filter(name %in% c(&quot;zbp&quot;,&quot;cbp&quot;), vintage %in% 1994:2022)
 zip_apis</code></pre>
+<pre><code>##                                                                                                                                      title name vintage
+## 1                                                                                                            2022 County Business Patterns  cbp    2022
+## 2                                                                            Economic Surveys: Business Patterns: County Business Patterns  cbp    2021
+## 3                                                                            Economic Surveys: Business Patterns: County Business Patterns  cbp    2020
+## 4                                                                            Economic Surveys: Business Patterns: County Business Patterns  cbp    2019
+## 5                                                                            Economic Surveys: Business Patterns: County Business Patterns  cbp    2018
+## 6                                                               2018 Economic Annual Surveys: Business Patterns: Zipcode Business Patterns  zbp    2018
+## 7                                                                     Annual Economic Surveys: Business Patterns: County Business Patterns  cbp    2017
+## 8                                                                                                            2017 County Business Patterns  zbp    2017
+## 9                                                                                                            2016 County Business Patterns  cbp    2016
+## 10 2016 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment  zbp    2016
+## 11                                                                                                           2015 County Business Patterns  cbp    2015
+## 12 2015 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment  zbp    2015
+## 13                                                                                                           2014 County Business Patterns  cbp    2014
+## 14 2014 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment  zbp    2014
+## 15                                                                                                           2013 County Business Patterns  cbp    2013
+## 16 2013 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment  zbp    2013
+## 17                                                                    Annual Economic Surveys: Business Patterns: County Business Patterns  cbp    2012
+## 18 2012 County Business Patterns - Zip Code Business Patterns: ZIP Code Business Patterns by Industry and Employment Size of Establishment  zbp    2012
+## 19                                                                                        2011 County Business Patterns: Business Patterns  cbp    2011
+## 20                                                          2011 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2011
+## 21                                                                                        2010 County Business Patterns: Business Patterns  cbp    2010
+## 22                                                          2010 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2010
+## 23                                                                                        2009 County Business Patterns: Business Patterns  cbp    2009
+## 24                                                          2009 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2009
+## 25                                                                                        2008 County Business Patterns: Business Patterns  cbp    2008
+## 26                                                          2008 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2008
+## 27                                                                                        2007 County Business Patterns: Business Patterns  cbp    2007
+## 28                                                          2007 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2007
+## 29                                                                                        2006 County Business Patterns: Business Patterns  cbp    2006
+## 30                                                          2006 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2006
+## 31                                                                                        2005 County Business Patterns: Business Patterns  cbp    2005
+## 32                                                          2005 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2005
+## 33                                                                                        2004 County Business Patterns: Business Patterns  cbp    2004
+## 34                                                          2004 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2004
+## 35                                                                                        2003 County Business Patterns: Business Patterns  cbp    2003
+## 36                                                          2003 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2003
+## 37                                                                                        2002 County Business Patterns: Business Patterns  cbp    2002
+## 38                                                          2002 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2002
+## 39                                                                                        2001 County Business Patterns: Business Patterns  cbp    2001
+## 40                                                          2001 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2001
+## 41                                                                                        2000 County Business Patterns: Business Patterns  cbp    2000
+## 42                                                          2000 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    2000
+## 43                                                                                        1999 County Business Patterns: Business Patterns  cbp    1999
+## 44                                                          1999 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1999
+## 45                                                                                        1998 County Business Patterns: Business Patterns  cbp    1998
+## 46                                                          1998 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1998
+## 47                                                                                        1997 County Business Patterns: Business Patterns  cbp    1997
+## 48                                                          1997 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1997
+## 49                                                                                        1996 County Business Patterns: Business Patterns  cbp    1996
+## 50                                                          1996 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1996
+## 51                                                                                        1995 County Business Patterns: Business Patterns  cbp    1995
+## 52                                                          1995 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1995
+## 53                                                                                        1994 County Business Patterns: Business Patterns  cbp    1994
+## 54                                                          1994 County Business Patterns - Zip Code Business Patterns: Total For Zip Code  zbp    1994
+##         type  temporal                                 url              modified
+## 1  Aggregate 2022/2022 http://api.census.gov/data/2022/cbp 2024-02-28 15:13:01.0
+## 2  Aggregate 2021/2021 http://api.census.gov/data/2021/cbp 2023-01-25 12:34:43.0
+## 3  Aggregate 2020/2020 http://api.census.gov/data/2020/cbp 2022-01-05 00:00:00.0
+## 4  Aggregate 2019/2019 http://api.census.gov/data/2019/cbp 2021-01-21 00:00:00.0
+## 5  Aggregate 2018/2018 http://api.census.gov/data/2018/cbp 2020-05-07 00:00:00.0
+## 6  Aggregate 2018/2018 http://api.census.gov/data/2018/zbp 2020-05-07 00:00:00.0
+## 7  Aggregate      &lt;NA&gt; http://api.census.gov/data/2017/cbp 2019-11-07 14:49:23.0
+## 8  Aggregate 2017/2017 http://api.census.gov/data/2017/zbp 2019-12-05 14:23:04.0
+## 9  Aggregate      &lt;NA&gt; http://api.census.gov/data/2016/cbp 2018-04-20 00:00:00.0
+## 10 Aggregate      &lt;NA&gt; http://api.census.gov/data/2016/zbp 2018-05-24 00:00:00.0
+## 11 Aggregate      &lt;NA&gt; http://api.census.gov/data/2015/cbp 2018-04-20 00:00:00.0
+## 12 Aggregate      &lt;NA&gt; http://api.census.gov/data/2015/zbp 2018-04-04 13:17:23.0
+## 13 Aggregate      &lt;NA&gt; http://api.census.gov/data/2014/cbp 2018-04-20 00:00:00.0
+## 14 Aggregate      &lt;NA&gt; http://api.census.gov/data/2014/zbp 2018-04-04 13:17:23.0
+## 15 Aggregate      &lt;NA&gt; http://api.census.gov/data/2013/cbp 2018-04-20 00:00:00.0
+## 16 Aggregate      &lt;NA&gt; http://api.census.gov/data/2013/zbp 2018-04-04 13:17:23.0
+## 17 Aggregate      &lt;NA&gt; http://api.census.gov/data/2012/cbp 2018-04-20 00:00:00.0
+## 18 Aggregate      &lt;NA&gt; http://api.census.gov/data/2012/zbp 2018-04-04 13:17:23.0
+## 19 Aggregate 2011/2011 http://api.census.gov/data/2011/cbp            2017-02-22
+## 20 Aggregate 2011/2011 http://api.census.gov/data/2011/zbp            2018-01-25
+## 21 Aggregate 2010/2010 http://api.census.gov/data/2010/cbp            2017-02-22
+## 22 Aggregate 2010/2010 http://api.census.gov/data/2010/zbp            2018-01-25
+## 23 Aggregate 2009/2009 http://api.census.gov/data/2009/cbp            2017-02-22
+## 24 Aggregate 2009/2009 http://api.census.gov/data/2009/zbp            2018-01-25
+## 25 Aggregate 2008/2008 http://api.census.gov/data/2008/cbp            2017-02-22
+## 26 Aggregate 2008/2008 http://api.census.gov/data/2008/zbp            2018-01-25
+## 27 Aggregate 2007/2007 http://api.census.gov/data/2007/cbp            2019-02-13
+## 28 Aggregate 2007/2007 http://api.census.gov/data/2007/zbp            2018-01-25
+## 29 Aggregate 2006/2006 http://api.census.gov/data/2006/cbp            2019-02-13
+## 30 Aggregate 2006/2006 http://api.census.gov/data/2006/zbp            2018-01-25
+## 31 Aggregate 2005/2005 http://api.census.gov/data/2005/cbp            2019-02-13
+## 32 Aggregate 2005/2005 http://api.census.gov/data/2005/zbp            2018-01-25
+## 33 Aggregate 2004/2004 http://api.census.gov/data/2004/cbp            2019-02-13
+## 34 Aggregate 2004/2004 http://api.census.gov/data/2004/zbp            2018-01-25
+## 35 Aggregate 2003/2003 http://api.census.gov/data/2003/cbp            2019-02-13
+## 36 Aggregate 2003/2003 http://api.census.gov/data/2003/zbp            2018-01-25
+## 37 Aggregate 2002/2002 http://api.census.gov/data/2002/cbp            2019-02-13
+## 38 Aggregate 2002/2002 http://api.census.gov/data/2002/zbp            2018-01-25
+## 39 Aggregate 2001/2001 http://api.census.gov/data/2001/cbp            2019-02-13
+## 40 Aggregate 2001/2001 http://api.census.gov/data/2001/zbp            2018-01-25
+## 41 Aggregate 2000/2000 http://api.census.gov/data/2000/cbp            2019-02-13
+## 42 Aggregate 2000/2000 http://api.census.gov/data/2000/zbp            2018-01-25
+## 43 Aggregate 1999/1999 http://api.census.gov/data/1999/cbp            2019-02-13
+## 44 Aggregate 1999/1999 http://api.census.gov/data/1999/zbp            2018-01-25
+## 45 Aggregate 1998/1998 http://api.census.gov/data/1998/cbp            2019-02-13
+## 46 Aggregate 1998/1998 http://api.census.gov/data/1998/zbp            2018-01-25
+## 47 Aggregate 1997/1997 http://api.census.gov/data/1997/cbp            2019-02-13
+## 48 Aggregate 1997/1997 http://api.census.gov/data/1997/zbp            2018-01-25
+## 49 Aggregate 1996/1996 http://api.census.gov/data/1996/cbp            2019-02-13
+## 50 Aggregate 1996/1996 http://api.census.gov/data/1996/zbp            2018-01-25
+## 51 Aggregate 1995/1995 http://api.census.gov/data/1995/cbp            2019-02-13
+## 52 Aggregate 1995/1995 http://api.census.gov/data/1995/zbp            2018-01-25
+## 53 Aggregate 1994/1994 http://api.census.gov/data/1994/cbp            2019-02-13
+## 54 Aggregate 1994/1994 http://api.census.gov/data/1994/zbp            2018-01-25
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    description
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry for establishments with paid employees. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. Data for establishments are presented by geographic area, 2- through 6-digit NAICS industry, Legal Form of Organization (U.S. and state only), and employment size of the establishment.
+## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry for establishments with paid employees. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. Data for establishments are presented by geographic area, 2- thru 6-digit NAICS industry, Legal Form of Organization (U.S. and state only), and employment size of the establishment.
+## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry for establishments with paid employees. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. Data for establishments are presented by geographic area, 2- thru 6-digit NAICS industry, Legal Form of Organization (U.S. and state only), and employment size of the establishment.
+## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry for establishments with paid employees. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. Data for establishments are presented by geographic area, 2- thru 6-digit NAICS industry, Legal Form of Organization (U.S. and state only), and employment size of the establishment.
+## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry for establishments with paid employees. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. Data for establishments are presented by geographic area, 2- thru 6-digit NAICS industry, Legal Form of Organization (U.S. and state only), and employment size of the establishment.
+## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 7                                                                                                                                                                                                                                                                                                                                                        County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 9                                                                                                                                                                                                                                                                                                                                                        County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 11                                                                                                                                                                                                                                                                                                                                                       County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 12                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 13                                                                                                                                                                                                                                                                                                                                                       County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 14                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 15                                                                                                                                                                                                                                                                                                                                                       County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 16                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 17                                                                                                                                                                                                                                                                                                                                                       County Business Patterns (CBP) is an annual series that provides sub-national economic data by industry. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. This data is useful for studying the economic activity of small areas, analyzing economic changes over time, and as a benchmark for other statistical series, surveys, and databases between economic censuses. Businesses use the data for analyzing market potential, measuring the effectiveness of sales and advertising programs, setting sales quotas, and developing budgets. Government agencies use the data for administration and planning.
+## 18                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code. This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries (NAICS 00) by 5-digit ZIP Code.
+## 19 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 21 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 22                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 23 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 24                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 25 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 26                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 27 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 28                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 29 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 30                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 31 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 32                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 33 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 34                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 35 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 36                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 37 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 38                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 39 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 40                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 41 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 43 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 44                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 45 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 46                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 47 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 48                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 49 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 50                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 51 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 52                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+## 53 County Business Patterns (CBP) is an annual series that provides economic data by industry at the U.S., State, County and Metropolitan Area levels. This series includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll. CBP provides statistics for businesses with paid employees for the U.S., Puerto Rico, and the Island Areas. Census Bureau staff identified a processing error that affects selected data from the 2014 County Business Patterns (CBP). As a result, we suppressed 2014 employment and payroll totals in the Health Care and Social Assistance sector (Sector 62) for the following geographies: U.S.; Michigan; Battle Creek, MI metro area; Calhoun County, MI; and the 3rd congressional district of Michigan. This processing error did not affect other sectors. While suppressed values can be derived by subtraction, we do not recommend using the derived values in any analyses.  The Census Bureau plans to release revised statistics at a later date.
+## 54                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ZIP Code Business Patterns (ZBP) is an annual series that provides economic data by ZIP Code.  This table includes the number of establishments, employment during the week of March 12, first quarter payroll, and annual payroll for All Industries by 5-digit ZIP Code.  All Industries is set using SIC=00 from 1994 to 1997 and then with NAICS=00 from 1998 to present.
+##                                     contact
+## 1             econ.dissemination@census.gov
+## 2             econ.dissemination@census.gov
+## 3             econ.dissemination@census.gov
+## 4             econ.dissemination@census.gov
+## 5             econ.dissemination@census.gov
+## 6             Econ.dissemination@census.gov
+## 7             Econ.dissemination@census.gov
+## 8             econ.dissemination@census.gov
+## 9             econ.dissemination@census.gov
+## 10            econ.dissemination@census.gov
+## 11            econ.dissemination@census.gov
+## 12            econ.dissemination@census.gov
+## 13            econ.dissemination@census.gov
+## 14            econ.dissemination@census.gov
+## 15            econ.dissemination@census.gov
+## 16            econ.dissemination@census.gov
+## 17            econ.dissemination@census.gov
+## 18            econ.dissemination@census.gov
+## 19 epcd.county.business.patterns@census.gov
+## 20  ewd.county.business.patterns@census.gov
+## 21 epcd.county.business.patterns@census.gov
+## 22  ewd.county.business.patterns@census.gov
+## 23 epcd.county.business.patterns@census.gov
+## 24  ewd.county.business.patterns@census.gov
+## 25 epcd.county.business.patterns@census.gov
+## 26  ewd.county.business.patterns@census.gov
+## 27  ewd.county.business.patterns@census.gov
+## 28  ewd.county.business.patterns@census.gov
+## 29  ewd.county.business.patterns@census.gov
+## 30  ewd.county.business.patterns@census.gov
+## 31  ewd.county.business.patterns@census.gov
+## 32  ewd.county.business.patterns@census.gov
+## 33  ewd.county.business.patterns@census.gov
+## 34  ewd.county.business.patterns@census.gov
+## 35  ewd.county.business.patterns@census.gov
+## 36  ewd.county.business.patterns@census.gov
+## 37  ewd.county.business.patterns@census.gov
+## 38  ewd.county.business.patterns@census.gov
+## 39  ewd.county.business.patterns@census.gov
+## 40  ewd.county.business.patterns@census.gov
+## 41  ewd.county.business.patterns@census.gov
+## 42  ewd.county.business.patterns@census.gov
+## 43  ewd.county.business.patterns@census.gov
+## 44  ewd.county.business.patterns@census.gov
+## 45  ewd.county.business.patterns@census.gov
+## 46  ewd.county.business.patterns@census.gov
+## 47  ewd.county.business.patterns@census.gov
+## 48  ewd.county.business.patterns@census.gov
+## 49  ewd.county.business.patterns@census.gov
+## 50  ewd.county.business.patterns@census.gov
+## 51  ewd.county.business.patterns@census.gov
+## 52  ewd.county.business.patterns@census.gov
+## 53  ewd.county.business.patterns@census.gov
+## 54  ewd.county.business.patterns@census.gov</code></pre>
 </div>
 <div id="new-route" class="section level3">
 <h3>New Route</h3>
@@ -566,6 +1222,11 @@ dont need to worry about dependencies. Its worth trying.</p>
 <pre class="r"><code>library(rvest)
 tt = read_html(&quot;https://api.census.gov/data/2018/zbp?get=ESTAB,EMPSZES&amp;for=zipcode:20002&amp;NAICS2017=72&quot;) %&gt;% html_text()
 strsplit(tt,&quot;\n&quot;)</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;[[\&quot;ESTAB\&quot;,\&quot;EMPSZES\&quot;,\&quot;NAICS2017\&quot;,\&quot;zip code\&quot;],&quot; &quot;[\&quot;250\&quot;,\&quot;001\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;],&quot;                 
+## [3] &quot;[\&quot;71\&quot;,\&quot;210\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;],&quot;                   &quot;[\&quot;36\&quot;,\&quot;220\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;],&quot;                  
+## [5] &quot;[\&quot;68\&quot;,\&quot;230\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;],&quot;                   &quot;[\&quot;56\&quot;,\&quot;241\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;],&quot;                  
+## [7] &quot;[\&quot;17\&quot;,\&quot;242\&quot;,\&quot;72\&quot;,\&quot;20002\&quot;]]&quot;</code></pre>
 <p>Honestly beautiful. Lets breakdown what that call is doing. Lets call
 the preamble “<a href="https://api.census.gov/data/" class="uri">https://api.census.gov/data/</a>”. The Next part is the
 year. and then we have “zbp?get=”. I want everything. So Im pretty sure
@@ -615,34 +1276,23 @@ EMP,EMPSZES,ESTAB,GEO_ID,PAYANN, ZIP</p>
 2003:2007 - NAICS2002 2008:2011 - NAICS2007 2012:2016 - NAICS2012
 2017:2018 - NAICS2017</p>
 <p>Lets write some code that extracts just this stuff</p>
-<pre class="r"><code>years = 1994:2018
-data = c()
-for (i in 1:length(years)) {
-cur_year = years[i]
-if (cur_year %in% 1994:1997) {
-  cur_sic = &quot;SIC&quot;
-} else if (cur_year %in% 1998:2002) {
-  cur_sic = &quot;NAICS1997&quot;
-} else if (cur_year %in% 2003:2007){
-  cur_sic = &quot;NAICS2002&quot;
-} else if (cur_year %in% 2008:2011){
-  cur_sic = &quot;NAICS2007&quot;
-} else if (cur_year %in% 2012:2016){
-  cur_sic = &quot;NAICS2012&quot;
-} else {
-  cur_sic = &quot;NAICS2017&quot;
-}
+<p>```{r.eval =F} years = 1994:2018 data = c() for (i in
+1:length(years)) { cur_year = years[i] if (cur_year %in% 1994:1997) {
+cur_sic = “SIC” } else if (cur_year %in% 1998:2002) { cur_sic =
+“NAICS1997” } else if (cur_year %in% 2003:2007){ cur_sic = “NAICS2002” }
+else if (cur_year %in% 2008:2011){ cur_sic = “NAICS2007” } else if
+(cur_year %in% 2012:2016){ cur_sic = “NAICS2012” } else { cur_sic =
+“NAICS2017” }</p>
+<p>url = paste0(“<a href="https://api.census.gov/data/" class="uri">https://api.census.gov/data/</a>”,cur_year,“/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,”,cur_sic,“&amp;for=zipcode:63112”)
+tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,“”) %&gt;%
+unlist() data = c(data,tt)</p>
+<p>} getwd() saveRDS(data,file = “Data/zbf1994_2018.rds”)</p>
+<pre><code>
+Notice I saved to .rds. Lets see what that looks like on the other end
 
-url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,&quot;,cur_sic,&quot;&amp;for=zipcode:63112&quot;)
-tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,&quot;\n&quot;) %&gt;% unlist()
-data = c(data,tt)
 
-}
-getwd()
-saveRDS(data,file = &quot;Data/zbf1994_2018.rds&quot;)</code></pre>
-<p>Notice I saved to .rds. Lets see what that looks like on the other
-end</p>
-<pre class="r"><code>tt = readRDS(&quot;Data/zbf1994_2018.rds&quot;)</code></pre>
+```r
+tt = readRDS(&quot;Data/zbf1994_2018.rds&quot;)</code></pre>
 <p>This seems like a good time to move all this over and clean it up in
 the Replication file.</p>
 </div>

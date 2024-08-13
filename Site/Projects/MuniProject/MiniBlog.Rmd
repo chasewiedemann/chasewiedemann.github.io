@@ -3,9 +3,6 @@ title: "Mini-Blog"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = F)
-```
 
 ```{r,echo = F}
 base_dir = getwd()
@@ -189,7 +186,7 @@ strsplit(tt,"\n")
 ```
 Honestly beautiful. Lets breakdown what that call is doing. Lets call the preamble "https://api.census.gov/data/". The Next part is the year. and then we have "zbp?get=". I want everything. So Im pretty sure I can just wildcard after that. Lets try for 2018
 
-```{r}
+```{r,eval = F}
 tt = read_html("https://api.census.gov/data/2018/zbp?") %>% html_text()
 strsplit(tt,"\n")
 ```
@@ -209,7 +206,7 @@ https://api.census.gov/data/2018/zbp/variables.html
 
 I got it working through trial and error, but it takes a while to load. But more importantly, we need a time series from 1994. So what was available back then is going to dictate what we can use now. Lets see what variables they had back then.
 
-```{r}
+```{r,eval =F}
 url = "https://api.census.gov/data/2018/zbp?get=EMP,EMP_N,EMPSZES,ESTAB,GEO_ID,GEOCOMP,INDGROUP,INDLEVEL,NAICS2017&for=zipcode:63112"
 tt = read_html(url) %>% html_text()
 strsplit(tt,"\n")
@@ -224,7 +221,7 @@ I'm looking at the other years now and it seems like this might be a larger issu
 
 Ok. I got my commit back in and were ready to work. Lets loop through the variables for each year. It turns out that the zbp gets absorbed into the cbp in 2019, explaining the issue from before. lets get working with the 1994:2018 data, and we can always come back and get those last years (if we even want them. Covid ruined data)
 
-```{r}
+```{r,eval = F}
 years = 1994:2018
 names = matrix(nrow = length(years),ncol = 2)
 for (i in 1:length(years)) {
@@ -249,7 +246,7 @@ There theres the SIC codes
 
 Lets write some code that extracts just this stuff
 
-```{r}
+```{r.eval =F}
 years = 1994:2018
 data = c()
 for (i in 1:length(years)) {
@@ -280,7 +277,7 @@ saveRDS(data,file = "Data/zbf1994_2018.rds")
 
 Notice I saved to .rds. Lets see what that looks like on the other end
 
-```{r}
+```{r,eval = F}
 tt = readRDS("Data/zbf1994_2018.rds")
 ```
 

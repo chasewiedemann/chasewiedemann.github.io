@@ -2,7 +2,9 @@
 title: "Working Slides"
 output: html_document
 ---
-|
+
+
+
 ```{r,echo = F}
 base_dir = getwd()
 base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))

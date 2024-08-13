@@ -3,7 +3,8 @@ title: "Blog"
 output: html_document
 theme: journal
 ---
-|
+
+
 [Home](https://chasewiedemann.github.io/index.html) |
 [About](https://chasewiedemann.github.io/Site/about.html) |
 [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
@@ -19,6 +20,10 @@ Ok. So the plan for today is three fold. First, I want to do a paper summary on 
 ## End of Day
 
 I did not finish any of my three goals. But the paper summary is looking very good. Thank god for my blog or I definiately would not have remember to start the scrape again. Go check the McMillen summary. I still need to finishe the LWR portion, but its pretty good so far. I definitely have learned alot.
+
+## Or so I thought
+
+The eval stuff is really getting me. Some stuff runs, so doesnt
 
 # 8/12/2024: Site Refinements and Some Actual Work
 

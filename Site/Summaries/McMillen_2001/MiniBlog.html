@@ -371,6 +371,147 @@ pre code {
 Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</a> |</p>
 <p><a href="https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/Summary.html">Summary</a>|
 <a href="https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/MiniBlog.html">Mini-Blog</a>|</p>
+<div id="reading-notes" class="section level1">
+<h1>Reading Notes</h1>
+<ul>
+<li>Subcenters get agglomeration economies but with lower commuting
+costs for works and lower land costs for firms</li>
+<li>Subcenters can effect non-CBD employment density, housing prices,
+land rents, and population density</li>
+<li>Definition of a subcenter
+<ul>
+<li>Significantly larger employment density than nearby locations</li>
+<li>a significant effect on the overall employment density function</li>
+</ul></li>
+<li>Standard appraoches use cutoff points which are arbitrary and depend
+on an examination of each site</li>
+<li>Let <span class="math inline">\(D_{ij}\)</span> be the distance
+between observation <span class="math inline">\(i\)</span> and a
+candidate subcenter site <span class="math inline">\(j\)</span>, and let
+<span class="math inline">\(DCBD_i\)</span> represent the distance from
+observation <span class="math inline">\(i\)</span> to the central
+business district
+<ul>
+<li>Does that mean we already have to define a central business
+district?</li>
+</ul></li>
+<li>Suppose that we have <span class="math inline">\(S\)</span>
+candidate subcenter sites, we then estimate <span class="math display">\[ y_i = g(DCBD_i) + \sum_{j=1}^S
+(\delta_{1j}D_{ij}^{-1} + \delta_{2j}D_{ij}) + u_i \]</span></li>
+<li><span class="math inline">\(g(DCBD)\)</span> is some non-parametric
+nuisance estimator</li>
+<li><span class="math inline">\(D_{ij}\)</span> enters in levels and in
+inverse form.</li>
+<li>“Candidate subscenter site - the observations with highestt
+estimated density among all rearby sites with positive residuals- are
+omitted” (from the above equation)
+<ul>
+<li>What does this mean?</li>
+</ul></li>
+<li>Any site within a mile of the CBD is not considered a subcenter</li>
+<li><span class="math inline">\(g(DCBD)\)</span> is apparently a
+flexible Fourier form</li>
+<li>How that works
+<ul>
+<li>Transform <span class="math inline">\(DCBD\)</span> into <span class="math inline">\(z \in (0,2\pi)\)</span></li>
+<li>Estimate <span class="math display">\[ g(DCBD_i) = \lambda_0 +
+\lambda_1z_i + \lambda_2 z_i^2 + \sum_{q=1}^Q (\gamma_q cos(qz_i) +
+\delta_q sin(qz_i)) \]</span></li>
+</ul></li>
+<li>How to choose candidate subcenter sites
+<ul>
+<li>Estimate on everything</li>
+<li>Remove the lowest candidate site passed on t-score</li>
+<li>Reestimate and repeat</li>
+<li>Is this a job for LASSO?</li>
+<li>Would that let me include a ton more candidate sites?</li>
+</ul></li>
+<li>Why are cutoff bad? Because a cutoff for LA is probably very
+different than a cutoff for Kansas City</li>
+</ul>
+<div id="the-appendix" class="section level2">
+<h2>The Appendix</h2>
+<ul>
+<li>Starting point is the expression <span class="math display">\[ y_i =
+m(X_i) + u_i \]</span></li>
+<li><span class="math inline">\(x_i\)</span> is a set of explantory
+variables</li>
+<li>Take a Taylor series about <span class="math inline">\(x\)</span> to
+get <span class="math display">\[ m(x_i) = m(x) + \frac{dm}{dx}(x^*)(x_i
+- x), x^* \in [x_i,x] \]</span></li>
+<li>Let <span class="math inline">\(\beta(x^*) =
+\frac{dm}{dx}(x^*)\)</span> and <span class="math inline">\(m(x) \equiv
+m\)</span></li>
+<li>Objextive function for LWR estimator becomes <span class="math display">\[ Q(m,\beta(x^*)) = \sum_{i=1}^n (y_i - m -
+\beta(x^*)(x_i - x))^2K_i \]</span></li>
+<li><span class="math inline">\(K_i\)</span> determines the weight given
+to observation <span class="math inline">\(i\)</span> in forming the
+prediction at <span class="math inline">\(x\)</span>
+<ul>
+<li><span class="math inline">\(K_i\)</span> is large when an
+observation is close to the target point <span class="math inline">\(x\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\beta(x^*)\)</span> are the coefficents
+from a regression of <span class="math inline">\(K_i^{1/2}y_i\)</span>
+on <span class="math inline">\(K_i^{1/2}\)</span> and <span class="math inline">\(K_i^{1/2}(x_i - x)\)</span></li>
+<li><span class="math inline">\(\hat m(x)\)</span> is the predicted
+value at <span class="math inline">\(x\)</span></li>
+<li>Assume <span class="math inline">\(K_i\)</span> is estimated with a
+tricube kernel <span class="math display">\[ K_i =
+(1-(\frac{d_i(x)}{d_q(x)})^3)^2 \mathbb I(d_i(x) &lt; d_q(x))
+\]</span></li>
+<li>The indicator function is basically a window that gives zero weight
+to observations far enough away</li>
+</ul>
+</div>
+<div id="getting-to-it" class="section level2">
+<h2>Getting to it</h2>
+<p>Ok. This paper has a bit more too it then I originally thought. Its
+pretty interesting, and honestly just applying the updated methods to it
+might be a contribution in its own right. I think I want to try to use
+the 1994 zbp as working data for this. Lets get to the summary</p>
+</div>
+<div id="checking-in" class="section level2">
+<h2>Checking in</h2>
+<p>The summary is going well. I wrote the intro and then rewrote a bit.
+I again should probably be doing more in here, but ill probably just
+drop a draft into here once I have a good structure, and then live blog
+the editing. If I decide to do a major edit, ill try to document that in
+here.</p>
+</div>
+<div id="i-wish-i-had-time-codes" class="section level2">
+<h2>I wish I had time codes</h2>
+<p>I think i finished writing the last section, went to go back to work,
+and then realized I need to change something. Im gonna contradict myself
+immediately. I want to talk about their data before I get into the
+model. The data is important because they are going to choose the set of
+locations that they consider in the Urban area, and I have some thoughts
+on that.</p>
+</div>
+<div id="end-rant" class="section level2">
+<h2>End Rant</h2>
+<p>I should probably remove that at some point. But we will see.</p>
+</div>
+<div id="i-caught-something" class="section level2">
+<h2>I caught something</h2>
+<p>Sites and subcenters have very different meanings. That changes a
+lot.</p>
+</div>
+<div id="moving-the-lwr-out-of-the-appendix" class="section level2">
+<h2>Moving the LWR out of the appendix</h2>
+<p>I think I should move the discussion of the LWR out of the appendix
+and right after I describe the surface. That should make it a little
+more clear that the LWR is doing the first part of the definition, and
+the second stage is the second part of the definition.</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>I have no idea how to conclude. Do I even want to conclude? I got
+what I wanted from this paper summary. Who am i concluding for? It would
+probably be good practice, but I think I can spend my time a bit more
+wisely</p>
+</div>
+</div>
 
 
 
