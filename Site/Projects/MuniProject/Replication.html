@@ -377,7 +377,7 @@ Slides</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/
 <h1>Introduction</h1>
 <p>When working in Urban Economics, we unsurprising focus on Urban
 areas. But what is an Urban area? We tend to take this as some
-predefined object, such as a MSA, a group of countys, or whatever level
+predefined object, such as a MSA, a group of counties, or whatever level
 of data that we have. The goal of this paper is to let the data identify
 what an Urban Area should be, and really to go beyond that.</p>
 <p>For a long time, and still somewhat currently, the workhorse model of
@@ -385,47 +385,205 @@ urban economics was the Alonzo-Mills-Muth Model of the Central Business
 District (CBD). What that theory says is that all urban areas are built
 around CBD’s which are historically the major city that has been around
 the longest. So the St. Louis CBD would be centered by the city of
-St. Louis and the surrounding area would fall into the urbn area around
+St. Louis and the surrounding area would fall into the urban area around
 that CBD.</p>
-<p>What do CBD’s do? Well they produce. A standard model would have the
-assumption that all people living in the urban area work in the CBD.
-These workers can only access utility through working in the CBD (Maybe
-you normalize the utility of work outside the CBD to zero). A common
-assumption would also be that workers are symmetric, so that they all
-have to get the same utility.</p>
-</div>
-<div id="model-and-identification" class="section level1">
-<h1>Model and Identification</h1>
-<p>I think I need to be talking about the model in terms of the Census’s
-Business Register, instead of what we observe as the zipcode. So the
-model is based on each firms decisions, but we only observe this
-statistic about the groupings in a zipcode. That should help clarify
-what assumptions we are making that are solely a function of not having
-the business registrar data.</p>
 </div>
 <div id="data" class="section level1">
 <h1>Data</h1>
 <p>We are going to be using the County Business Patterns Zipcode Files
 1994-2022 for this project. These are basically a summary statistic of
-the Business Registrar at the zip code level. The Business Registrar has
-the data on every business that is registered with the IRS.</p>
+the Business Registrar at the zip code level. The zip codes used here
+are not <em>exactly</em> the same as the zip codes you are probably
+thinking of. I should be more precise and say that they are ZCTA codes.
+Traditional zip codes are used by the postal service and are frequently
+changed. The census uses ZCTA codes to maintain data continuity through
+years. I will be using zip code and ZCTA interchangeably here, but
+technically I always mean the ZCTA.</p>
+<div id="getting-the-data" class="section level2">
+<h2>Getting the Data</h2>
 <p>As we are concerned with a timeseries, the data availability in 1994
 will dictate what variables we use moving forward. We can look at the
 API’s variables page to see what is available</p>
-<p><code>{r.eval = F} library(kableExtra) url = &quot;https://api.census.gov/data/1994/zbp/variables.html&quot; read_html(url) %&gt;% html_table() %&gt;% data.frame %&gt;% select(Name, Label) %&gt;% kable()</code>
-From this, we will take Total Number of Employees, Employment Size of
-Establishments, Total Number of Establishments, the Geography ID, Total
-Annual Payroll, and the SIC Code.</p>
+<pre class="r"><code>library(kableExtra)</code></pre>
+<pre><code>## Warning: package &#39;kableExtra&#39; was built under R version 4.1.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;kableExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     group_rows</code></pre>
+<pre class="r"><code>url = &quot;https://api.census.gov/data/1994/zbp/variables.html&quot;
+read_html(url) %&gt;% html_table() %&gt;% data.frame %&gt;% select(Name, Label) %&gt;% kable()</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:left;">
+Label
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+17 variables
+</td>
+<td style="text-align:left;">
+17 variables
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMP
+</td>
+<td style="text-align:left;">
+Total Number of Employees
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMP_F
+</td>
+<td style="text-align:left;">
+Flag for Number of employees
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMPSZES
+</td>
+<td style="text-align:left;">
+Employment size of establishment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+EMPSZES_TTL
+</td>
+<td style="text-align:left;">
+Title of employment size
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ESTAB
+</td>
+<td style="text-align:left;">
+Total number of Establishments
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+for
+</td>
+<td style="text-align:left;">
+Census API FIPS ‘for’ clause
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GEO_ID
+</td>
+<td style="text-align:left;">
+ID of Geography
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+GEO_TTL
+</td>
+<td style="text-align:left;">
+Title of Geography
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+in
+</td>
+<td style="text-align:left;">
+Census API FIPS ‘in’ clause
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYANN
+</td>
+<td style="text-align:left;">
+Total Annual Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYANN_F
+</td>
+<td style="text-align:left;">
+Flag for Total Annual Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYQTR1
+</td>
+<td style="text-align:left;">
+Total First Quarter Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PAYQTR1_F
+</td>
+<td style="text-align:left;">
+Flag for Total First Quarter Payroll
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIC
+</td>
+<td style="text-align:left;">
+SIC Industry Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SIC_TTL
+</td>
+<td style="text-align:left;">
+Title of SIC Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ST
+</td>
+<td style="text-align:left;">
+FIPS State Code
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZIPCODE
+</td>
+<td style="text-align:left;">
+FIPS Zip
+</td>
+</tr>
+</tbody>
+</table>
+<p>From this, we will take Total Number of Employees, Total Number of
+Establishments, Total Annual Payroll, and the SIC Code.</p>
 <p>These are available for every year, but we do need to take take
 because the SIC Codes update every few years. This is handled in the
-code below which scrapes from the API for each of the years. Note that I
-write this in a function that saves the output into a .rds file. This
-takes a while, so I want to be able to get at this data without needing
-to scrape each time. So the function call gets commented out after I
-have already ran it.</p>
+code below which scrapes from the API for each of the years and then
+cleans it. Note that I write this in a function that saves the output
+into a .rds file. This takes a while, so I want to be able to get at
+this data without needing to scrape each time. So the function call gets
+commented out after I have already ran it.</p>
+<pre class="r"><code>library(dplyr)
+library(rvest)
+years = 1994:2018</code></pre>
 <pre class="r"><code>scrape_zbp = function(){
-years = 2006:2018
-data = c()
 for (i in 1:length(years)) {
 cur_year = years[i]
 if (cur_year %in% 1994:1997) {
@@ -442,13 +600,104 @@ if (cur_year %in% 1994:1997) {
   cur_sic = &quot;NAICS2017&quot;
 }
 
-url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,&quot;,cur_sic,&quot;&amp;for=zipcode:*&quot;)
+url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,ESTAB,PAYANN&amp;for=zipcode:*&amp;&quot;,cur_sic,&quot;=00 &quot;)
 tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,&quot;\n&quot;) %&gt;% unlist()
-filename = paste0(&quot;Data/zbp_test&quot;,cur_year,&quot;.rds&quot;)
+
+filename = paste0(&quot;Data/Scrape/zbp_scrape&quot;,cur_year,&quot;.rds&quot;)
 saveRDS(tt,filename)
 }
-}
-scrape_zbp()</code></pre>
+
+}</code></pre>
+<pre class="r"><code>scrape_zbp()</code></pre>
+</div>
+<div id="additional-data" class="section level2">
+<h2>Additional Data</h2>
+<p>We need to bring in additional information about the area of each
+zipcode. I found a very useful crosswalk from the National Neighborhood
+Data Archive which can be accessed <a href="https://www.openicpsr.org/openicpsr/project/128862/version/V1/view">here</a>.
+The citation for this project is</p>
+<p><em>Melendez, Robert, Li, Mao, Khan, Anam, Gomez-Lopez, Iris, Clarke,
+Philippa, and Chenoweth, Megan. National Neighborhood Data Archive
+(NaNDA): Land Cover by ZIP Code Tabulation Area, United States,
+2001-2016. Ann Arbor, MI: Inter-university Consortium for Political and
+Social Research [distributor], 2020-12-14. <a href="https://doi.org/10.3886/E128862V1" class="uri">https://doi.org/10.3886/E128862V1</a></em></p>
+<p>This crosswalk is immensely helpful and I am very grateful. I have
+save their crosswalk in a file under in the Data folder for this project
+under the name <code>zip_area_crosswalk.csv</code>. We are going to take
+the following variables from this dataset</p>
+<ul>
+<li><code>zcta19</code>: The zipcode value used to merge into ZBP</li>
+<li><code>zcta_area</code>: The area of the zipcode in square meters (we
+will divide by 1000 to interpret as square kilometers)</li>
+<li><code>year_intp</code>: Year</li>
+<li><code>intp_flap</code>: Flag for interpolated data</li>
+<li><code>prop_value_*</code>: Proportion of the zipcode that is
+developed in bins (* = 21:Open,22:Low,23:Medium,24:High)</li>
+</ul>
+<p>The final set of variables are very interesting. This data is derived
+from the National Land Cover Database, which classifies each square
+meter of the United States. This process is done for years 2001, 2003,
+2006, 2008, 2011,2013, and 2016. The fourth variable, the interpolation
+flag, tells us if the data is from one of those years, or if it comes
+from a simple linear interpolation of the closest two points.</p>
+<p>The following code cleans the scraped census data and appends</p>
+<pre class="r"><code>clean_zbp = function(){
+### Read Cross In at the Top
+cross = read.csv(&quot;Data/zip_area_crosswalk.csv&quot;) %&gt;%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24)
+cross$zcta_area = cross$zcta_area/1000 #convert to km
+
+for (i in 1:length(years)) {
+  print(years[i])
+  if (years[i] &lt; 2001) {
+      cross_year = 2001
+  } else if (years[i] &gt; 2016) {
+    cross_year = 2016
+  } else{
+    cross_year = years[i]
+  }
+
+  thisCross = cross %&gt;% filter(year_intp == cross_year)
+  
+  file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+  tt = readRDS(file_location)
+  var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+  data = tt[-1]
+  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;%
+          gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.)  %&gt;% gsub(&quot;\\[&quot;,&quot;&quot;,.) %&gt;%
+          matrix(ncol =5,byrow = T) %&gt;% data.frame()
+  
+  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  data$year = years[i]
+  filename = paste0(&quot;Data/Cleaned/zbp&quot;,years[i],&quot;.rds&quot;)
+  saveRDS(merge(data,thisCross,all.x = T, by.x = &quot;zipcode&quot;, by.y = &quot;zcta19&quot;),filename)
+  }
+}</code></pre>
+<pre class="r"><code>clean_zbp()</code></pre>
+</div>
+</div>
+<div id="mcmillan-2001-redux" class="section level1">
+<h1>McMillan (2001) Redux</h1>
+<p>McMillan (2001) gives a procedure for non-parametrically identifying
+employment subcenters. A summary of that paper can be found <a href="https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/Summary.html">here</a>.</p>
+<p>In this section, we are going to use his method on our data.
+Specifically, we are going to look at Dallas in 1994. Here is a snip
+from the paper showing the subcenters that McMillen identified.</p>
+<p><img src="/Figures/McMillen2001_Dallas.PNG" /></p>
+<p>Our goal is to produce something similar to this plot.</p>
+<div id="data-selection" class="section level2">
+<h2>Data Selection</h2>
+<p>Our data is not the same as the data used by McMillen. He uses
+Transportation Analysis Zones, we are going to use zipcodes. His data is
+from 1990, ours is from 1994. That being said, we actually observe more
+that what McMillen uses. The variable used in McMillen is equivalent to
+our <code>EMP</code> variable. We will be restricting ourselves to that
+variable, but we have the ability to get much more into much more
+detail.</p>
+<p>Further, we</p>
+<pre class="r"><code>tt = readRDS(&quot;Data/Cleaned/zbp1994.rds&quot;)</code></pre>
+</div>
 </div>
 
 

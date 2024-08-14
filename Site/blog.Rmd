@@ -12,6 +12,47 @@ theme: journal
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
+# 8/14/24 Same Stuff Different Day
+
+I had three things on my to do list yesterday and I almost finished 1 1/2. As a quick recap, I am almost done with the McMillen 2001 paper summary. I just need to finish the LWR part that is in the appendix. The census scrape is doing something weird after 2004, I cant get anything to run after that year. I'll have to figure that out. Finally, I want to get some work down on FKRB. 
+
+Before laying out my schedule, Ill mention that I'm trying to get a Linux distro on my home laptop. In my struggles, I got weak and went with a pretty large distro, Linux Mint: XFCE. The install didn't go great, something about the wifi drivers. So to make progress there, I'm going to go back to my guiding, No Black Boxes, principle and try to install tinyLinux CorePlus. I know, I should be using the Micro, but baby steps.
+
+With that out of the way, lets talk schedule. 
+
+- Finish McMillen Paper summary
+- Get some work done to present tomorrow with the Reading Group
+  + Replicate McMillen on zbp1994 data?
+  + His method and then the improvments I have in mind
+  + Do it for St. Louis? Or should I do one of the metros he does to compare? Probably the second one
+- FKRB
+  + go back and get my old data creation and estimation scripts
+  + implement one of the counterfactuals (see mini-blog)
+- Flash the usb with Tiny Linux CorePlus
+
+The last thing is for the absolute end of the day so I can work on it at home. If I get the first two done, I would also like to figure out whats going on with the rest of the scrape.
+
+Ok. Lets go
+
+## Rendering
+
+Yesterday I ran into a bunch of issue with rendering. I should probably figure that out. I'm thinking thats a weekend project though.
+
+## McMillen Paper Summary
+I just finished the draft of the McMillen Paper summary. Should I edit now? Probably, but fresh eyes will help right? Onto stuff for the reading group.
+
+## EOD Reminders
+I was just working on the muniproject and I had a good idea. Theres a lot of things that I want to do at the end of the day, just because its going to take a lot of computational time, and I can just let it run overnight. I should create a section at the end of each days post that collects that. At the end of the day, I will do those, and write a little sign off, and then commit. Love it
+
+## Code in Mini-Blogs
+The code in mini-blogs is becoming an issue and I don't know if the rendering is going to fix anything once I figure that out. I think a better idea is just to use longer code blocks and just have comments in the code. That should make it a bit easier. Once I get to an obvious stopping place I will go back to text.
+
+### An improvement
+When I want to go back and change the code, Ill just comment it out. That at least keeps some sort of record, and i dont have to re run things.
+
+## EOD 8/14/24
+- Change names of zbpYEAR to zbpYEAR_scrape. That way I have a nice name to save the cleaned version to.
+
 # 8/13/24 Another Day another Dollar
 
 Ok. So the plan for today is three fold. First, I want to do a paper summary on McMillan 2001. This is the subcenter identification paper that I will be extending with dynamics. After that, I want to work on some FKRB stuff. Probably get a data creation and estimation function going. I think that the data creation function is going to be the first Faster Function Friday. Third, the zbp scrape failed after 2004. I am having it run 2005 now, I think it might have just been a HTML timeout thing. If that finishes, Ill get it set up to run 2006:2018 overnight again. So thats the plan. Lets go.

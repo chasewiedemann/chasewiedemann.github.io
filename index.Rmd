@@ -14,3 +14,4 @@ output: html_document
 Welcome to my Personal Website. I am currently a 4th Year PhD student at WUSTL Olin Business School. My field is Industrial Organization, focusing on exporting concepts from IO into Urban Economics.
 
 Check out the About Page to learn more about what I am doing on this site.
+

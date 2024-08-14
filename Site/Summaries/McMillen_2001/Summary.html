@@ -480,20 +480,53 @@ points. The LWR smoothing allows us to go from a collection of points to
 a surface without imposing a parametric form, such as exponential decay,
 that has been often used in the literature. The bird’s eye view is that
 we allow the density of nearby points to inform what the density at a
-given point ought to be. Convientently, because we are talking about
+given point ought to be. Conveniently, because we are talking about
 geography, nearby as a concept (as opposed to an actual value) has a
 natural interpretation as the actual distance.</p>
 <p>Lets get some notation going. This isn’t in the paper but I think it
 should help. Let <span class="math inline">\(\mathcal X\)</span> be a
 grid of points covering the urban area. The LWR gives us a prediction of
 the density <span class="math inline">\(\hat y(x)\)</span> and a
-estimated standard deviation <span class="math inline">\(\hat\sigma(x)\)</span> at every point <span class="math inline">\(x \in \mathcal X\)</span>. For a subset of <span class="math inline">\(\mathcal X\)</span>, we observe the pair <span class="math inline">\((x_i,y_i)\)</span> which we can denote for ease as
-<span class="math inline">\(y(x_i)\)</span>. <span class="math inline">\(\hat y(x)\)</span> is estimated as</p>
-<p>With this, we are able to form residuals <span class="math inline">\(\epsilon_i = \frac{\hat y(x_i) -
-y(x_i)}{\hat\sigma(x_i)}\)</span>. Candidate <em>sites</em> are the
-subset of our observed points with <span class="math inline">\(\epsilon_i &gt; c(\alpha)\)</span>. McMillen uses
+estimated standard deviation <span class="math inline">\(\hat\sigma(x)\)</span> at every point <span class="math inline">\(x \in \mathcal X\)</span>. For a subset of <span class="math inline">\(\mathcal X\)</span>, we observe <span class="math inline">\(n\)</span> pairs <span class="math inline">\((x_i,y_i)\)</span> (we don’t observe log density,
+but we can calculate it in stage 0) which we can denote for ease as
+<span class="math inline">\(y(x_i)\)</span>.</p>
+<p>As a quick motivation, we are first going to go through the steps to
+recover <span class="math inline">\(\hat y(x), \hat\sigma^2(x), \forall
+x \in \mathcal X\)</span>. We will then be able to form residuals <span class="math inline">\(\epsilon_i = \frac{\hat y(x_i) -
+y(x_i)}{\hat\sigma(x_i)}\)</span>. We will then take candidate
+<em>sites</em> as the subset of our observed points with <span class="math inline">\(\epsilon_i &gt; c(\alpha)\)</span>. McMillen uses
 <span class="math inline">\(\alpha = .95\)</span>, which gives the
-critical value of 1.96.</p>
+critical value of 1.96. With these candidate sites in hand, we will be
+able to move onto stage 2.</p>
+<p>We start with the objective function <span class="math display">\[
+Q(\hat y(x),\beta) = \sum_{i=1}^n (y(x_i) - \hat y(x)
+-\beta)^2K_i  \]</span> To gain some intuition, setting <span class="math inline">\(\beta =0\)</span> gives us the Nadaraya-Watson
+kernel estimator. Then for every <span class="math inline">\(x \in
+\mathcal X\)</span>, we would then take <span class="math inline">\(\hat
+y(x)\)</span> as the minimizer of <span class="math inline">\(Q\)</span>. While this is a valid estimator of the
+surface, McMillen goes a step further. He wants to incorporate
+information about distance from the CBD. For this, he treats <span class="math inline">\(\beta_1, \beta_2\)</span> as coefficients to be
+estimated in the regression <span class="math display">\[ y_i = m(x_i) +
+\beta_1(N^{CBD}_{i}) + \beta_2(E^{CBD}_i) + \epsilon_i \]</span> where
+<span class="math inline">\(N_i^{CBD},E_i^{CBD}\)</span> are the
+distances north and east between point <span class="math inline">\(i\)</span> and the CBD. This breaks the symmetry
+about the CBD, which gives us appealing property 4 discussed above.</p>
+<p>Next, we need to calculate <span class="math inline">\(K_i\)</span>.
+This value determines the weight that is placed on observation <span class="math inline">\(i\)</span> when calculating target point <span class="math inline">\(x\)</span>. Intuitively, <span class="math inline">\(i\)</span> should get more wieght the closer it is
+to <span class="math inline">\(x\)</span>. Let <span class="math inline">\(d_i(x)\)</span> be the distance from target <span class="math inline">\(x\)</span> to observation <span class="math inline">\(i\)</span>. The kernel <span class="math inline">\(K_i\)</span> is then given as <span class="math display">\[ K_i = (1- (\frac{d_i(x)}{h_1})^3)^3\mathbb
+I(d_i(x) &lt; h_1) \]</span> The value <span class="math inline">\(h_1\)</span> is a bandwidth parameter that
+controls the window. McMillen chooses <span class="math inline">\(h_1\)</span> so that 50% of the observations are
+included through the indicator function. With all of these estimated, we
+can now minimize <span class="math inline">\(Q\)</span> and get our
+surface <span class="math inline">\(\hat y(x), \forall x \in \mathcal
+X\)</span>. The only remaining step is to calculate <span class="math inline">\(\hat\sigma^2(x)\)</span>. Let <span class="math inline">\(e_i^2 = (y(x_i) - \hat y(x))^2\)</span>. We can
+then get <span class="math display">\[ \hat\sigma^2(x) =
+\frac{\sum_{i=1}^n \omega_i e_i^2}{\sum_{i=1}^n \omega_i}\]</span> With
+<span class="math inline">\(\omega_i =
+h_2^{-2}\phi(N_i^{CBD}/h_2)\phi(E_i^{CBD}/h_2), h_2 =
+.8^{1/6}n^{-1/6}\)</span>. This is another kernel regression on the
+residuals, which gives us local information about <span class="math inline">\(\hat\sigma^2(x)\)</span>. We can now recover <span class="math inline">\(\epsilon_i = \frac{\hat y(x_i) -
+y(x_i)}{\hat\sigma(x_i)}\)</span></p>
 <p>McMillen notes that this procedure will give clusters (in terms of
 distance) of points. This is not surprising, its exactly what our model
 would predict under positive agglomeration effects. A new subcenter has

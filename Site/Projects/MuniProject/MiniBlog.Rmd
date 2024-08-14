@@ -287,5 +287,197 @@ This seems like a good time to move all this over and clean it up in the Replica
 
 I have the Data section in the replication page up to the same point here. But I am actually running the whole years and zipcodes files and it is taking forever. I need to make sure to keep this file somewhere safe. 
 
+## Skipping steps
 
+Ok. I want to get this ready for the reading group. Im gonna go back and edit the intro a bit, and then start with replicating McMillen 2001 with the zbp 1994 data.
 
+## A good Idea
+I realized I want to change the name of my data, but is that really neccessary? Probably something I can do before I leave. I should make a list of that in the main blog.
+
+## Slacking
+
+I have been slacking on the mini blog and that is not because their hasnt been anything to say. I turned my back on the code and it decided to no longer work. Always great. Lets get it back working in here. Here it is currently. 
+
+```{r}
+clean_zbp = function(){
+for (i in 1:length(years)) {
+  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+  tt = readRDS(file_location)
+  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol = 8) 
+  colnames(data) = var_names
+  filename = paste0("Data/Cleaned/zbp_clean",years[i],".rds")
+  saveRDS(data,filename)
+}
+}
+```
+
+There is a years variable floating around in the enviroment that is set to `1994:1994`. I have it that way so I can just run the 1994 stuff instead of everything to get it through, but I wont't have to go back and rewrite it for all years. Lets load in the file and see if its all good.
+
+```{r}
+i = 1
+years = 1994:1994
+file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+tt = readRDS(file_location)
+head(tt)
+### That looks all good, lets try the next steps
+var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+data = tt[-1]
+#  data = data %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol = 8) 
+### Im gonna remove the matrix call
+#data[1:3] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) ## this works like it should, just is a vector
+## Going to try it with a matrix again, and a byrow
+## data[1:3] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol =8,byrow = T) ## This works!
+## A little longer
+#data[10:20] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol =8,byrow = T) ## This works!
+## Ok I think its good
+```  
+
+Now that I can look at the data better, thats a absolute ton of SIC codes. I can't imagine I need all of those. Lets table them
+
+```{r,eval = F}
+tt = readRDS("C:/Git/chasewiedemann.github.io/Site/Projects/MuniProject/Data/Cleaned/zbp_clean1994.rds")
+table(tt[,7])
+```
+
+Gross. This link is helpful
+
+https://www.census.gov/programs-surveys/economic-census/year/2022/guidance/understanding-naics.html#par_textimage_0
+
+I can probably get away with just the two digit code (sector) and totals. That will probably speed up my scrape by an order of magnitude as well. Lets try that here. I was a little worried about giving out my zipcode for a second, but its also WashU's zipcode, so really what could happen?
+
+```{r,eval = F}
+cur_year = 2018
+cur_sic = "NAICS2017"
+sector_sics = "00,11,21,22,23,31,32,33,42,44,45,48,49,51,52,53,54,55,56,61,62,71,72,81"
+url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,",cur_sic,"&for=zipcode:90210&for=",cur_sic,":",sector_sics)
+tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
+tt
+
+```
+## A decision to make
+It would be a lot easier just to download from their website. I'll admit, not as cool. Yeah definitely not as cool, and I like the scrapy-ness of this method. 
+
+## Back to it
+I can just append a "$SIC=" then the list of SICS. 
+
+## Screw it.
+I can just get it all and then clean. Speed of my scraping is not really an issue. This is becoming more of a tangent than actually helping me. 
+
+## This needs a deep clean
+I shouldnt be opening closing and opening and closing all these files. They should all be done at the same time. Or at least each year should be done. Let me look at how difficult that would be,
+
+### A middle ground. 
+I should probably keep the scrape seperate, but I can merge clean and append portions. Lets do that in here
+
+Heres the clean
+
+```{r}
+clean_zbp = function(){
+for (i in 1:length(years)) {
+  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+  tt = readRDS(file_location)
+  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>% matrix(ncol =8,byrow = T)
+  colnames(data) = var_names
+  filename = paste0("Data/Cleaned/zbp_clean",years[i],".rds")
+  saveRDS(data,filename)
+}
+}
+```
+
+And heres the append 
+
+```{r}
+append_area_zbp = function(){
+for (i in 1:length(years)) {
+file_location = paste0("Data/Cleaned/zbp_clean",years[i],".rds")
+tt = readRDS(file_location) %>% data.frame()
+tt$zipcode = as.numeric(tt$zipcode)
+cross = read.csv("Data/zip_area_crosswalk.csv") %>%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) 
+tt = merge(tt,cross,all.x = T, by.x = "zipcode", by.y = "zcta19")
+ filename = paste0("Data/Appended/zbp_appended",years[i],".rds")
+  saveRDS(tt,filename)
+}
+}
+```
+
+And heres were Ill put them togther
+ 
+```{r}
+clean_zbp = function(){
+### Read Cross In at the Top
+cross = read.csv("Data/zip_area_crosswalk.csv") %>%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) %>%
+  filter(year_intp == 2006)
+
+for (i in 1:length(years)) {
+  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+  tt = readRDS(file_location)
+  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>%
+          gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
+          matrix(ncol =8,byrow = T) %>% data.frame()
+  
+  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  
+  filename = paste0("Data/Cleaned/zbp",years[i],".rds")
+  saveRDS(merge(data,cross,all.x = T, by.x = c("zipcode", by.y = "zcta19"),filename))
+  }
+}
+```
+
+## Census API
+Well thats stupid. If I just append a space to the end of my api call ( like "SIC=00 " instead of "SIC=00") it will only pick up the 00 sics. Thats convinient, but also incredibly stupid
+
+With that I have to re-clean the data
+
+```{r}
+i = 1
+years = 1994:1994
+file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+tt = readRDS(file_location)
+#head(tt)
+### That looks all good, lets try the next steps
+var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+data = tt[-1]
+#  data = data %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol = 8) 
+### Im gonna remove the matrix call
+#data[1:3] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) ## this works like it should, just is a vector
+## Going to try it with a matrix again, and a byrow
+## data[1:3] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol =8,byrow = T) ## This works!
+## A little longer
+#var_names
+#data[10:20] %>% strsplit(",") %>% unlist() %>% gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.) %>% matrix(ncol =7,byrow = T) ## This works!
+## Ok I think its good
+```
+
+I jsut need to change it from an 8 to a 7 in the matrix call.
+
+but the clean is getting mad for some reason
+```{r}
+cross = read.csv("Data/zip_area_crosswalk.csv") %>%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) %>%
+  filter(year_intp == 2006)
+cross$zcta_area = cross$zcta_area/1000 #convert to km
+
+  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+  tt = readRDS(file_location)
+  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>%
+          gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
+          matrix(ncol =7,byrow = T) %>% data.frame()
+  
+  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  
+  filename = paste0("Data/Cleaned/zbp",years[i],".rds")
+#out= merge(data,cross,all.x = T, by.x = "zipcode", by.y = "zcta19"),filename
+  
+```

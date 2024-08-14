@@ -25,38 +25,35 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 
 # Introduction
 
-When working in Urban Economics, we unsurprising focus on Urban areas. But what is an Urban area? We tend to take this as some predefined object, such as a MSA, a group of countys, or whatever level of data that we have. The goal of this paper is to let the data identify what an Urban Area should be, and really to go beyond that. 
+When working in Urban Economics, we unsurprising focus on Urban areas. But what is an Urban area? We tend to take this as some predefined object, such as a MSA, a group of counties, or whatever level of data that we have. The goal of this paper is to let the data identify what an Urban Area should be, and really to go beyond that. 
 
-For a long time, and still somewhat currently, the workhorse model of urban economics was the Alonzo-Mills-Muth Model of the Central Business District (CBD). What that theory says is that all urban areas are built around CBD's which are historically the major city that has been around the longest. So the St. Louis CBD would be centered by the city of St. Louis and the surrounding area would fall into the urbn area around that CBD. 
-
-What do CBD's do? Well they produce. A standard model would have the assumption that all people living in the urban area work in the CBD. These workers can only access utility through working in the CBD (Maybe you normalize the utility of work outside the CBD to zero). A common assumption would also be that workers are symmetric, so that they all have to get the same utility. 
-
-# Model and Identification
-
-I think I need to be talking about the model in terms of the Census's Business Register, instead of what we observe as the zipcode. So the model is based on each firms decisions, but we only observe this statistic about the groupings in a zipcode. That should help clarify what assumptions we are making that are solely a function of not having the business registrar data.
-
-
-
+For a long time, and still somewhat currently, the workhorse model of urban economics was the Alonzo-Mills-Muth Model of the Central Business District (CBD). What that theory says is that all urban areas are built around CBD's which are historically the major city that has been around the longest. So the St. Louis CBD would be centered by the city of St. Louis and the surrounding area would fall into the urban area around that CBD. 
 
 # Data
 
-We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The Business Registrar has the data on every business that is registered with the IRS. 
+We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The zip codes used here are not *exactly* the same as the zip codes you are probably thinking of. I should be more precise and say that they are ZCTA codes. Traditional zip codes are used by the postal service and are frequently changed. The census uses ZCTA codes to maintain data continuity through years. I will be using zip code and ZCTA interchangeably here, but technically I always mean the ZCTA.  
+
+## Getting the Data
 
 As we are concerned with a timeseries, the data availability in 1994 will dictate what variables we use moving forward. We can look at the API's variables page to see what is available
 
-```{r.eval = F}
+```{r}
 library(kableExtra)
 url = "https://api.census.gov/data/1994/zbp/variables.html"
 read_html(url) %>% html_table() %>% data.frame %>% select(Name, Label) %>% kable()
 ```
-From this, we will take Total Number of Employees, Employment Size of Establishments, Total Number of Establishments, the Geography ID, Total Annual Payroll, and the SIC Code.
+From this, we will take Total Number of Employees, Total Number of Establishments, Total Annual Payroll, and the SIC Code.
 
-These are available for every year, but we do need to take take because the SIC Codes update every few years. This is handled in the code below which scrapes from the API for each of the years. Note that I write this in a function that saves the output into a .rds file. This takes a while, so I want to be able to get at this data without needing to scrape each time. So the function call gets commented out after I have already ran it.
+These are available for every year, but we do need to take take because the SIC Codes update every few years. This is handled in the code below which scrapes from the API for each of the years and then cleans it. Note that I write this in a function that saves the output into a .rds file. This takes a while, so I want to be able to get at this data without needing to scrape each time. So the function call gets commented out after I have already ran it.
 
-```{r,eval = F}
+```{r}
+library(dplyr)
+library(rvest)
+years = 1994:2018
+```
+
+```{r}
 scrape_zbp = function(){
-years = 2006:2018
-data = c()
 for (i in 1:length(years)) {
 cur_year = years[i]
 if (cur_year %in% 1994:1997) {
@@ -73,13 +70,99 @@ if (cur_year %in% 1994:1997) {
   cur_sic = "NAICS2017"
 }
 
-url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,ZIPCODE,",cur_sic,"&for=zipcode:*")
+url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,ESTAB,PAYANN&for=zipcode:*&",cur_sic,"=00 ")
 tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
-filename = paste0("Data/zbp_test",cur_year,".rds")
+
+filename = paste0("Data/Scrape/zbp_scrape",cur_year,".rds")
 saveRDS(tt,filename)
 }
+
 }
+```
+```{r,eval = F}
 scrape_zbp()
+```
+
+## Additional Data
+
+We need to bring in additional information about the area of each zipcode. I found a very useful crosswalk from the National Neighborhood Data Archive which can be accessed [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view). The citation for this project is
+
+*Melendez, Robert, Li, Mao, Khan, Anam, Gomez-Lopez, Iris, Clarke, Philippa, and Chenoweth, Megan. National Neighborhood Data Archive (NaNDA): Land Cover by ZIP Code Tabulation Area, United States, 2001-2016. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2020-12-14. https://doi.org/10.3886/E128862V1*
+
+This crosswalk is immensely helpful and I am very grateful. I have save their crosswalk in a file under in the Data folder for this project under the name `zip_area_crosswalk.csv`. We are going to take the following variables from this dataset
+
+- `zcta19`: The zipcode value used to merge into ZBP
+- `zcta_area`: The area of the zipcode in square meters (we will divide by 1000 to interpret as square kilometers)
+- `year_intp`: Year
+- `intp_flap`: Flag for interpolated data
+- `prop_value_*`: Proportion of the zipcode that is developed in bins (* = 21:Open,22:Low,23:Medium,24:High)   
+
+The final set of variables are very interesting. This data is derived from the National Land Cover Database, which classifies each square meter of the United States. This process is done for years 2001, 2003, 2006, 2008, 2011,2013, and 2016. The fourth variable, the interpolation flag, tells us if the data is from one of those years, or if it comes from a simple linear interpolation of the closest two points. 
+
+The following code cleans the scraped census data and appends 
+
+```{r}
+clean_zbp = function(){
+### Read Cross In at the Top
+cross = read.csv("Data/zip_area_crosswalk.csv") %>%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24)
+cross$zcta_area = cross$zcta_area/1000 #convert to km
+
+for (i in 1:length(years)) {
+  print(years[i])
+  if (years[i] < 2001) {
+      cross_year = 2001
+  } else if (years[i] > 2016) {
+    cross_year = 2016
+  } else{
+    cross_year = years[i]
+  }
+
+  thisCross = cross %>% filter(year_intp == cross_year)
+  
+  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
+  tt = readRDS(file_location)
+  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>%
+          gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
+          matrix(ncol =5,byrow = T) %>% data.frame()
+  
+  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  data$year = years[i]
+  filename = paste0("Data/Cleaned/zbp",years[i],".rds")
+  saveRDS(merge(data,thisCross,all.x = T, by.x = "zipcode", by.y = "zcta19"),filename)
+  }
+}
+```
+
+```{r,eval = F}
+clean_zbp()
+```
+
+
+
+# McMillan (2001) Redux
+
+McMillan (2001) gives a procedure for non-parametrically identifying employment subcenters. A summary of that paper can be found [here](https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/Summary.html).
+
+In this section, we are going to use his method on our data. Specifically, we are going to look at Dallas in 1994. Here is a snip from the paper showing the subcenters that McMillen identified.
+
+![](/Figures/McMillen2001_Dallas.PNG)
+
+Our goal is to produce something similar to this plot.
+
+## Data Selection
+
+Our data is not the same as the data used by McMillen. He uses Transportation Analysis Zones, we are going to use zipcodes. His data is from 1990, ours is from 1994. That being said, we actually observe more that what McMillen uses. The variable used in McMillen is equivalent to our `EMP` variable. We will be restricting ourselves to that variable, but we have the ability to get much more into much more detail.
+
+Further, we 
+
+
+```{r}
+tt = readRDS("Data/Cleaned/zbp1994.rds")
+
 ```
 
 

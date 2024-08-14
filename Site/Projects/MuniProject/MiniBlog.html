@@ -375,6 +375,12 @@ Slides</a>| <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/
 <a href="https://chasewiedemann.github.io/Site/Projects/MuniProject/MiniBlog.html">Mini-Blog</a>|</p>
 <pre class="r"><code>library(dplyr)
 library(censusapi)</code></pre>
+<pre><code>## Warning: package &#39;censusapi&#39; was built under R version 4.1.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;censusapi&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:methods&#39;:
+## 
+##     getFunction</code></pre>
 <div id="inital-post" class="section level1">
 <h1>Inital Post</h1>
 <p>Created the subdirectories along with a template. Want to make sure
@@ -1302,6 +1308,198 @@ the Replication file.</p>
 here. But I am actually running the whole years and zipcodes files and
 it is taking forever. I need to make sure to keep this file somewhere
 safe.</p>
+</div>
+<div id="skipping-steps" class="section level2">
+<h2>Skipping steps</h2>
+<p>Ok. I want to get this ready for the reading group. Im gonna go back
+and edit the intro a bit, and then start with replicating McMillen 2001
+with the zbp 1994 data.</p>
+</div>
+<div id="a-good-idea" class="section level2">
+<h2>A good Idea</h2>
+<p>I realized I want to change the name of my data, but is that really
+neccessary? Probably something I can do before I leave. I should make a
+list of that in the main blog.</p>
+</div>
+<div id="slacking" class="section level2">
+<h2>Slacking</h2>
+<p>I have been slacking on the mini blog and that is not because their
+hasnt been anything to say. I turned my back on the code and it decided
+to no longer work. Always great. Lets get it back working in here. Here
+it is currently.</p>
+<pre class="r"><code>clean_zbp = function(){
+for (i in 1:length(years)) {
+  file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+  tt = readRDS(file_location)
+  var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+  data = tt[-1]
+  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol = 8) 
+  colnames(data) = var_names
+  filename = paste0(&quot;Data/Cleaned/zbp_clean&quot;,years[i],&quot;.rds&quot;)
+  saveRDS(data,filename)
+}
+}</code></pre>
+<p>There is a years variable floating around in the enviroment that is
+set to <code>1994:1994</code>. I have it that way so I can just run the
+1994 stuff instead of everything to get it through, but I wont’t have to
+go back and rewrite it for all years. Lets load in the file and see if
+its all good.</p>
+<pre class="r"><code>i = 1
+years = 1994:1994
+file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+tt = readRDS(file_location)
+head(tt)</code></pre>
+<pre><code>## [1] &quot;[[\&quot;EMP\&quot;,\&quot;ESTAB\&quot;,\&quot;PAYANN\&quot;,\&quot;SIC\&quot;,\&quot;zipcode\&quot;],&quot; &quot;[\&quot;6198\&quot;,\&quot;439\&quot;,\&quot;155158\&quot;,\&quot;00  \&quot;,\&quot;01001\&quot;],&quot;   
+## [3] &quot;[\&quot;6073\&quot;,\&quot;450\&quot;,\&quot;127367\&quot;,\&quot;00  \&quot;,\&quot;01002\&quot;],&quot;    &quot;[\&quot;68\&quot;,\&quot;10\&quot;,\&quot;1604\&quot;,\&quot;00  \&quot;,\&quot;01003\&quot;],&quot;        
+## [5] &quot;[\&quot;210\&quot;,\&quot;47\&quot;,\&quot;4302\&quot;,\&quot;00  \&quot;,\&quot;01004\&quot;],&quot;        &quot;[\&quot;678\&quot;,\&quot;92\&quot;,\&quot;13521\&quot;,\&quot;00  \&quot;,\&quot;01005\&quot;],&quot;</code></pre>
+<pre class="r"><code>### That looks all good, lets try the next steps
+var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+data = tt[-1]
+#  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol = 8) 
+### Im gonna remove the matrix call
+#data[1:3] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) ## this works like it should, just is a vector
+## Going to try it with a matrix again, and a byrow
+## data[1:3] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol =8,byrow = T) ## This works!
+## A little longer
+#data[10:20] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol =8,byrow = T) ## This works!
+## Ok I think its good</code></pre>
+<p>Now that I can look at the data better, thats a absolute ton of SIC
+codes. I can’t imagine I need all of those. Lets table them</p>
+<pre class="r"><code>tt = readRDS(&quot;C:/Git/chasewiedemann.github.io/Site/Projects/MuniProject/Data/Cleaned/zbp_clean1994.rds&quot;)
+table(tt[,7])</code></pre>
+<p>Gross. This link is helpful</p>
+<p><a href="https://www.census.gov/programs-surveys/economic-census/year/2022/guidance/understanding-naics.html#par_textimage_0" class="uri">https://www.census.gov/programs-surveys/economic-census/year/2022/guidance/understanding-naics.html#par_textimage_0</a></p>
+<p>I can probably get away with just the two digit code (sector) and
+totals. That will probably speed up my scrape by an order of magnitude
+as well. Lets try that here. I was a little worried about giving out my
+zipcode for a second, but its also WashU’s zipcode, so really what could
+happen?</p>
+<pre class="r"><code>cur_year = 2018
+cur_sic = &quot;NAICS2017&quot;
+sector_sics = &quot;00,11,21,22,23,31,32,33,42,44,45,48,49,51,52,53,54,55,56,61,62,71,72,81&quot;
+url = paste0(&quot;https://api.census.gov/data/&quot;,cur_year,&quot;/zbp?get=EMP,EMPSZES,ESTAB,GEO_ID,PAYANN,&quot;,cur_sic,&quot;&amp;for=zipcode:90210&amp;for=&quot;,cur_sic,&quot;:&quot;,sector_sics)
+tt = read_html(url) %&gt;% html_text() %&gt;% strsplit(.,&quot;\n&quot;) %&gt;% unlist()
+tt</code></pre>
+</div>
+<div id="a-decision-to-make" class="section level2">
+<h2>A decision to make</h2>
+<p>It would be a lot easier just to download from their website. I’ll
+admit, not as cool. Yeah definitely not as cool, and I like the
+scrapy-ness of this method.</p>
+</div>
+<div id="back-to-it" class="section level2">
+<h2>Back to it</h2>
+<p>I can just append a “$SIC=” then the list of SICS.</p>
+</div>
+<div id="screw-it." class="section level2">
+<h2>Screw it.</h2>
+<p>I can just get it all and then clean. Speed of my scraping is not
+really an issue. This is becoming more of a tangent than actually
+helping me.</p>
+</div>
+<div id="this-needs-a-deep-clean" class="section level2">
+<h2>This needs a deep clean</h2>
+<p>I shouldnt be opening closing and opening and closing all these
+files. They should all be done at the same time. Or at least each year
+should be done. Let me look at how difficult that would be,</p>
+<div id="a-middle-ground." class="section level3">
+<h3>A middle ground.</h3>
+<p>I should probably keep the scrape seperate, but I can merge clean and
+append portions. Lets do that in here</p>
+<p>Heres the clean</p>
+<pre class="r"><code>clean_zbp = function(){
+for (i in 1:length(years)) {
+  file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+  tt = readRDS(file_location)
+  var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+  data = tt[-1]
+  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.)  %&gt;% gsub(&quot;\\[&quot;,&quot;&quot;,.) %&gt;% matrix(ncol =8,byrow = T)
+  colnames(data) = var_names
+  filename = paste0(&quot;Data/Cleaned/zbp_clean&quot;,years[i],&quot;.rds&quot;)
+  saveRDS(data,filename)
+}
+}</code></pre>
+<p>And heres the append</p>
+<pre class="r"><code>append_area_zbp = function(){
+for (i in 1:length(years)) {
+file_location = paste0(&quot;Data/Cleaned/zbp_clean&quot;,years[i],&quot;.rds&quot;)
+tt = readRDS(file_location) %&gt;% data.frame()
+tt$zipcode = as.numeric(tt$zipcode)
+cross = read.csv(&quot;Data/zip_area_crosswalk.csv&quot;) %&gt;%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) 
+tt = merge(tt,cross,all.x = T, by.x = &quot;zipcode&quot;, by.y = &quot;zcta19&quot;)
+ filename = paste0(&quot;Data/Appended/zbp_appended&quot;,years[i],&quot;.rds&quot;)
+  saveRDS(tt,filename)
+}
+}</code></pre>
+<p>And heres were Ill put them togther</p>
+<pre class="r"><code>clean_zbp = function(){
+### Read Cross In at the Top
+cross = read.csv(&quot;Data/zip_area_crosswalk.csv&quot;) %&gt;%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) %&gt;%
+  filter(year_intp == 2006)
+
+for (i in 1:length(years)) {
+  file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+  tt = readRDS(file_location)
+  var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+  data = tt[-1]
+  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;%
+          gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.)  %&gt;% gsub(&quot;\\[&quot;,&quot;&quot;,.) %&gt;%
+          matrix(ncol =8,byrow = T) %&gt;% data.frame()
+  
+  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  
+  filename = paste0(&quot;Data/Cleaned/zbp&quot;,years[i],&quot;.rds&quot;)
+  saveRDS(merge(data,cross,all.x = T, by.x = c(&quot;zipcode&quot;, by.y = &quot;zcta19&quot;),filename))
+  }
+}</code></pre>
+</div>
+</div>
+<div id="census-api" class="section level2">
+<h2>Census API</h2>
+<p>Well thats stupid. If I just append a space to the end of my api call
+( like “SIC=00” instead of “SIC=00”) it will only pick up the 00 sics.
+Thats convinient, but also incredibly stupid</p>
+<p>With that I have to re-clean the data</p>
+<pre class="r"><code>i = 1
+years = 1994:1994
+file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+tt = readRDS(file_location)
+#head(tt)
+### That looks all good, lets try the next steps
+var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+data = tt[-1]
+#  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol = 8) 
+### Im gonna remove the matrix call
+#data[1:3] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) ## this works like it should, just is a vector
+## Going to try it with a matrix again, and a byrow
+## data[1:3] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol =8,byrow = T) ## This works!
+## A little longer
+#var_names
+#data[10:20] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.) %&gt;% matrix(ncol =7,byrow = T) ## This works!
+## Ok I think its good</code></pre>
+<p>I jsut need to change it from an 8 to a 7 in the matrix call.</p>
+<p>but the clean is getting mad for some reason</p>
+<pre class="r"><code>cross = read.csv(&quot;Data/zip_area_crosswalk.csv&quot;) %&gt;%
+  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24) %&gt;%
+  filter(year_intp == 2006)
+cross$zcta_area = cross$zcta_area/1000 #convert to km
+
+  file_location = paste0(&quot;Data/Scrape/zbp_scrape&quot;,years[i],&quot;.rds&quot;)
+  tt = readRDS(file_location)
+  var_names = tt[1] %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;% gsub(&quot;[^a-zA-Z]&quot;, &quot;&quot;, .)
+  data = tt[-1]
+  data = data %&gt;% strsplit(&quot;,&quot;) %&gt;% unlist() %&gt;%
+          gsub(&quot;null&quot;,NA,.) %&gt;% gsub(&#39;&quot;&#39;,&#39;&#39;, .) %&gt;% gsub(&quot;\\]&quot;,&quot;&quot;,.)  %&gt;% gsub(&quot;\\[&quot;,&quot;&quot;,.) %&gt;%
+          matrix(ncol =7,byrow = T) %&gt;% data.frame()</code></pre>
+<pre><code>## Warning in matrix(., ncol = 7, byrow = T): data length [196295] is not a sub-multiple or multiple of the number of rows [28043]</code></pre>
+<pre class="r"><code>  colnames(data) = var_names
+  data$zipcode = as.numeric(data$zipcode)
+  
+  filename = paste0(&quot;Data/Cleaned/zbp&quot;,years[i],&quot;.rds&quot;)
+#out= merge(data,cross,all.x = T, by.x = &quot;zipcode&quot;, by.y = &quot;zcta19&quot;),filename</code></pre>
 </div>
 </div>
 
