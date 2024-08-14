@@ -404,14 +404,8 @@ technically I always mean the ZCTA.</p>
 <p>As we are concerned with a timeseries, the data availability in 1994
 will dictate what variables we use moving forward. We can look at the
 API’s variables page to see what is available</p>
-<pre class="r"><code>library(kableExtra)</code></pre>
-<pre><code>## Warning: package &#39;kableExtra&#39; was built under R version 4.1.3</code></pre>
-<pre><code>## 
-## Attaching package: &#39;kableExtra&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     group_rows</code></pre>
-<pre class="r"><code>url = &quot;https://api.census.gov/data/1994/zbp/variables.html&quot;
+<pre class="r"><code>library(kableExtra)
+url = &quot;https://api.census.gov/data/1994/zbp/variables.html&quot;
 read_html(url) %&gt;% html_table() %&gt;% data.frame %&gt;% select(Name, Label) %&gt;% kable()</code></pre>
 <table>
 <thead>
