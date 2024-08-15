@@ -25,13 +25,16 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 
 # Introduction
 
-When working in Urban Economics, we unsurprising focus on Urban areas. But what is an Urban area? We tend to take this as some predefined object, such as a MSA, a group of counties, or whatever level of data that we have. The goal of this paper is to let the data identify what an Urban Area should be, and really to go beyond that. 
+For a long time, and still somewhat currently, the workhorse model of urban economics was the Alonzo-Mills-Muth or monocentric model of the Central Business District (CBD). What that theory says is that all urban areas are built around CBD's which are historically the major city that has been around the longest. So the St. Louis CBD would be centered by the city of St. Louis and the surrounding area would fall into the urban area around that CBD. 
 
-For a long time, and still somewhat currently, the workhorse model of urban economics was the Alonzo-Mills-Muth Model of the Central Business District (CBD). What that theory says is that all urban areas are built around CBD's which are historically the major city that has been around the longest. So the St. Louis CBD would be centered by the city of St. Louis and the surrounding area would fall into the urban area around that CBD. 
+From an industrial organization perspective, the monocentric model provides a framework for us to ask questions about how Urban Areas compete. We treat each Urban Area as a firm and ask how their competitive interactions effect the economy as a whole. But we can go further. The polycentric model is an extension of the monocentric theory. This theory states that Urban Areas are a collection of emplyoment subcenters. Each subcenter can be thought of as a replica of the standard monocentric model contained within an Urban Area. Similar to how Urban Areas compete with each other in the national market, subcenters compete with each other within an Urban Area. We can now ask very interesting questions regarding the link between these two markets and the incentives faced by these subcenters. Does a more competitive structure of subcenters lead to improved outcomes for the Urban Area in the national market? Are subcenters internalizing their effect on the national market when making competitve decisions in the Urban Area market? How are current place-based policies interacting with these incentives? Can they be improved if we had a working model of these incentives?      
+
+These are possibly interesting and important questions, but we have still left something major undefined. What is an Urban area? We tend to take this as some predefined object, such as a MSA, a group of counties, or whatever level of data that we have will allow. One goal of this paper is to let the data identify what an Urban Area should be. Further, after identifying Urban Areas, we then need to be able to accurately identify subcenters. As our results, and possible policy implications, are dependent on how we define and identify these subcenters, we ought to make this identification as robust and assumption free as possible.
+
 
 # Data
 
-We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The zip codes used here are not *exactly* the same as the zip codes you are probably thinking of. I should be more precise and say that they are ZCTA codes. Traditional zip codes are used by the postal service and are frequently changed. The census uses ZCTA codes to maintain data continuity through years. I will be using zip code and ZCTA interchangeably here, but technically I always mean the ZCTA.  
+We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The zip codes used here are not *exactly* the same as the zip codes you are probably thinking of. I should be more precise and say that they are ZCTA codes. Traditional zip codes are used by the postal service and are frequently changed. The census uses ZCTA codes to maintain data continuity through their tract and block system. I will be using zip code and ZCTA interchangeably here, but technically I always mean the ZCTA.  
 
 ## Getting the Data
 
@@ -42,18 +45,54 @@ library(kableExtra)
 url = "https://api.census.gov/data/1994/zbp/variables.html"
 read_html(url) %>% html_table() %>% data.frame %>% select(Name, Label) %>% kable()
 ```
-From this, we will take Total Number of Employees, Total Number of Establishments, Total Annual Payroll, and the SIC Code.
+From this, we will take Total Number of Employees, Total Number of Establishments, Total Annual Payroll.
 
-These are available for every year, but we do need to take take because the SIC Codes update every few years. This is handled in the code below which scrapes from the API for each of the years and then cleans it. Note that I write this in a function that saves the output into a .rds file. This takes a while, so I want to be able to get at this data without needing to scrape each time. So the function call gets commented out after I have already ran it.
+These are available for every year, but we do need to take take because the name of the SIC Codes update every few years. Even as we are only using the top level SIC code, we still need to account for this in the code because the API will send information broken out into every SIC code if we do not specifiy. This results in data that is almost too large to hold in memory. 
 
-```{r}
+We also need to bring in additional information about the area and location of each zipcode and we would like ShapeFiles in order to make figures. To do the bulk of the work, we will be using the `tigris` package. The code below gets their zipcode shapefiles for the years 2000, 2010, and 2020.
+
+```{r,eval = F}
+library(tigris)
+### This can fail. So I usually run it before hand and make sure I have everything, then run the rest
+zip2000 = zctas(year = 2000)
+zip2010 = zctas(year = 2010)
+zip2020 = zctas(year = 2020)
+saveRDS(zip2000,"Data/zip2000.rds")
+saveRDS(zip2010,"Data/zip2010.rds")
+saveRDS(zip2020,"Data/zip2020.rds")
+```
+Unfortunately, there seems to be some zipcodes in ZBP that are not in the tigris files. This means that we will not be able to plot these zipcodes, but we still would like to include them in our anaylsis. For that, we make use of 3 additional files.
+
+First comes from a Stanford Center for Population Health Sciences. A link to the crosswalk is [here](https://redivis.com/StanfordPHS). I have put the crosswalk in the Data folder as `zip_latlong_crosswalk.csv`. I will stick to the tigris definitions as a main source, but will default to these for missing values. The Stanford data does not have zipcode area, so we need to supplement that as well. We can get that from the National Neighborhood Data Archive, which uses the National Land Cover Database. The link to that crosswalk is [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view) and is stored as `zip_area_crosswalk.csv`. Finally, we still have a few missing values, so we bring in a fourth dataset to fill in some more missing values. This data comes from some ArcGIS website that can be accessed [here](https://hub.arcgis.com/datasets/esri::usa-zip-code-boundaries/about). The data comes from TomTom, a geographic mapping service. 
+
+The following code first scrapes the Census ZBP API and merges with the crosswalks, for each year. After, it goes year by year and creates standardized variables by combining the crosswalk data in a preference order of Tigris>Stanford>NNDA>TomTom. 
+
+Fair warning. If you want to run this, it takes some time.
+
+```{r,eval = F}
 library(dplyr)
 library(rvest)
-years = 1994:2018
-```
+years = 2006:2018
+prepare_zbp_full = function(){
+### Load crosswalks
+area_cross = read.csv("Data/zip_area_crosswalk.csv")
+area_cross2 = read.csv("Data/USA_ZIP_CODE_Boundaries.csv")
+latlong_cross = read.csv("Data/zip_latlong_crosswalk.csv")
 
-```{r}
-scrape_zbp = function(){
+### Clean zip of crosswalks
+area_cross$zip = paste0("00000",area_cross$zcta19)
+area_cross2$zip = paste0("00000",area_cross2$ZIP_CODE)
+latlong_cross$zip = paste0("00000",latlong_cross$Zip)
+
+area_cross$zip = substr(area_cross$zip,nchar(area_cross$zip)-4,nchar(area_cross$zip))
+area_cross2$zip = substr(area_cross2$zip,nchar(area_cross2$zip)-4,nchar(area_cross2$zip))
+latlong_cross$zip = substr(latlong_cross$zip,nchar(latlong_cross$zip)-4,nchar(latlong_cross$zip))
+
+zip2000 = readRDS("Data/zip2000.rds")
+zip2010 = readRDS("Data/zip2010.rds")
+zip2020 = readRDS("Data/zip2020.rds")
+
+
 for (i in 1:length(years)) {
 cur_year = years[i]
 if (cur_year %in% 1994:1997) {
@@ -73,73 +112,86 @@ if (cur_year %in% 1994:1997) {
 url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,ESTAB,PAYANN&for=zipcode:*&",cur_sic,"=00 ")
 tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
 
-filename = paste0("Data/Scrape/zbp_scrape",cur_year,".rds")
-saveRDS(tt,filename)
-}
-
-}
-```
-```{r,eval = F}
-scrape_zbp()
-```
-
-## Additional Data
-
-We need to bring in additional information about the area of each zipcode. I found a very useful crosswalk from the National Neighborhood Data Archive which can be accessed [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view). The citation for this project is
-
-*Melendez, Robert, Li, Mao, Khan, Anam, Gomez-Lopez, Iris, Clarke, Philippa, and Chenoweth, Megan. National Neighborhood Data Archive (NaNDA): Land Cover by ZIP Code Tabulation Area, United States, 2001-2016. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2020-12-14. https://doi.org/10.3886/E128862V1*
-
-This crosswalk is immensely helpful and I am very grateful. I have save their crosswalk in a file under in the Data folder for this project under the name `zip_area_crosswalk.csv`. We are going to take the following variables from this dataset
-
-- `zcta19`: The zipcode value used to merge into ZBP
-- `zcta_area`: The area of the zipcode in square meters (we will divide by 1000 to interpret as square kilometers)
-- `year_intp`: Year
-- `intp_flap`: Flag for interpolated data
-- `prop_value_*`: Proportion of the zipcode that is developed in bins (* = 21:Open,22:Low,23:Medium,24:High)   
-
-The final set of variables are very interesting. This data is derived from the National Land Cover Database, which classifies each square meter of the United States. This process is done for years 2001, 2003, 2006, 2008, 2011,2013, and 2016. The fourth variable, the interpolation flag, tells us if the data is from one of those years, or if it comes from a simple linear interpolation of the closest two points. 
-
-The following code cleans the scraped census data and appends 
-
-```{r}
-clean_zbp = function(){
-### Read Cross In at the Top
-cross = read.csv("Data/zip_area_crosswalk.csv") %>%
-  select(zcta19, zcta_area, year_intp,intp_flag,prop_value_21,prop_value_22,prop_value_23,prop_value_24)
-cross$zcta_area = cross$zcta_area/1000 #convert to km
-
-for (i in 1:length(years)) {
-  print(years[i])
-  if (years[i] < 2001) {
-      cross_year = 2001
-  } else if (years[i] > 2016) {
-    cross_year = 2016
-  } else{
-    cross_year = years[i]
-  }
-
-  thisCross = cross %>% filter(year_intp == cross_year)
-  
-  file_location = paste0("Data/Scrape/zbp_scrape",years[i],".rds")
-  tt = readRDS(file_location)
-  var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
   data = tt[-1]
   data = data %>% strsplit(",") %>% unlist() %>%
           gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
           matrix(ncol =5,byrow = T) %>% data.frame()
   
   colnames(data) = var_names
-  data$zipcode = as.numeric(data$zipcode)
   data$year = years[i]
-  filename = paste0("Data/Cleaned/zbp",years[i],".rds")
-  saveRDS(merge(data,thisCross,all.x = T, by.x = "zipcode", by.y = "zcta19"),filename)
-  }
+
+## Cleaning
+### Append Zeros to make Zips Length 5
+data$zip = paste0("00000",data$zipcode)
+data$zip = substr(data$zip,nchar(data$zip)-4,nchar(data$zip))
+
+### Make our Numeric values numeric
+data$EMP = as.numeric(data$EMP)
+data$ESTAB = as.numeric(data$ESTAB)
+data$PAYANN = as.numeric(data$PAYANN)
+
+### Remove 99999 and 00501
+data = data[!(data$zip %in% c("99999","00501")),]
+
+### Year Independent Merge
+data = merge(data,area_cross2,all.x = T,by = "zip")
+data = merge(data,latlong_cross,all.x = T, by = "zip")
+
+### Year Dependent Merges
+if (cur_year <= 2005) {
+  data = merge(data,zip2000,all.x = T, by.x = "zip",by.y = "ZCTA5CE00")
+} else if (cur_year <= 2015) {
+  data = merge(data,zip2010,all.x = T, by.x = "zip",by.y = "ZCTA5CE10")    
+} else{
+  data = merge(data,zip2020,all.x = T, by.x = "zip",by.y = "ZCTA5CE20")
 }
+
+if (cur_year <= 2001) {
+  data = merge(data,area_cross[area_cross$year_intp == 2001,],all.x = T, by = "zip")
+} else if (cur_year >= 2016) {
+  data = merge(data,area_cross[area_cross$year_intp == 2016,],all.x = T, by = "zip")
+} else{
+  data = merge(data, area_cross[area_cross$year_intp == cur_year,],all.x = T, by = "zip")
+}
+
+filename = paste0("Data/ZBP_FULL/full_zbp",cur_year,".rds")
+saveRDS(data,filename)
+}
+}
+
+clean_zbp_full = function(){
+for (i in 1:length(years)) {
+  print(years[i])
+file_location = paste0("Data/ZBP_FULL/full_zbp",years[i],".rds")
+tt = readRDS(file_location) %>%
+    select(zip,EMP,ESTAB,PAYANN,year,Shape__Area,contains("ALAND"),zcta_area,Latitude,Longitude,contains("INTPTLAT"),contains("INTPTLON"),geometry)
+names(tt)[which(grepl("ALAND",names(tt)))] = "ALAND"
+names(tt)[which(grepl("INTPTLAT",names(tt)))] = "LAT"
+names(tt)[which(grepl("INTPTLON",names(tt)))] = "LON"
+
+tt = tt %>%
+  mutate(area = ifelse(!is.na(ALAND),ALAND,ifelse(!is.na(zcta_area),zcta_area,Shape__Area)),
+           lat = ifelse(!is.na(LAT),LAT,Latitude),
+           lon = ifelse(!is.na(LON),LON,Longitude)) %>%
+  select(zip,year,EMP,ESTAB,PAYANN,lat,lon,geometry)
+
+tt$lat = as.numeric(tt$lat)
+tt$lon = as.numeric(tt$lon)
+filename = paste0("Data/ZBP/ZBP",years[i],".rds")
+saveRDS(tt,filename)
+}
+}
+
+
 ```
 
+
 ```{r,eval = F}
-clean_zbp()
+prepare_zbp_full()
+clean_zbp_full()
 ```
+
 
 
 
@@ -147,23 +199,20 @@ clean_zbp()
 
 McMillan (2001) gives a procedure for non-parametrically identifying employment subcenters. A summary of that paper can be found [here](https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/Summary.html).
 
-In this section, we are going to use his method on our data. Specifically, we are going to look at Dallas in 1994. Here is a snip from the paper showing the subcenters that McMillen identified.
-
-![](/Figures/McMillen2001_Dallas.PNG)
-
-Our goal is to produce something similar to this plot.
+In this section, we are going to use his method on our data. Specifically, we are going to look at Dallas in 2000.
 
 ## Data Selection
 
-Our data is not the same as the data used by McMillen. He uses Transportation Analysis Zones, we are going to use zipcodes. His data is from 1990, ours is from 1994. That being said, we actually observe more that what McMillen uses. The variable used in McMillen is equivalent to our `EMP` variable. We will be restricting ourselves to that variable, but we have the ability to get much more into much more detail.
+Our data is not the same as the data used by McMillen. He uses Transportation Analysis Zones, we are going to use zipcodes. His data is from 1990, ours is from 2000. That being said, we actually observe more that what McMillen uses. The variable used in McMillen is equivalent to our `EMP` variable. We will be restricting ourselves to that variable, but we have the ability to get much more into a bit more detail.
 
-Further, we 
-
+We first load the data
 
 ```{r}
-tt = readRDS("Data/Cleaned/zbp1994.rds")
 
 ```
+
+
+
 
 
 

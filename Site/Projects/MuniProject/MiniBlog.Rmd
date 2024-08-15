@@ -27,6 +27,7 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 ```{r}
 library(dplyr)
 library(censusapi)
+knitr::opts_chunk$set(eval = F)
 ```
 
 # Inital Post
@@ -481,3 +482,156 @@ cross$zcta_area = cross$zcta_area/1000 #convert to km
 #out= merge(data,cross,all.x = T, by.x = "zipcode", by.y = "zcta19"),filename
   
 ```
+
+## Where the mini blog shines
+
+This was originally in the replication, but I want to move it here, and then just have a note to look in here to find what the seemingly aribtrary chagnes to the code do.
+
+An issue we see right away is that  of our Zipcodes that were in the Census are not in tigris. What is going on here? Lets get some summary statistics about our missing data
+
+```{r}
+missing = tt[is.na(tt$ALAND00),]
+summary(missing[,c("zipcode","EMP","ESTAB","PAYANN")])
+
+```
+
+We are missing 8411, we can immediately get rid of a quick data quirk 
+
+```{r}
+summary(missing[,c("zipcode","EMP","ESTAB","PAYANN")])
+missing[which.max(missing$EMP),]
+```
+this is is well documented. Some firms will just put this as their zipcode if they dont have a physical location. Lets look at the top 5 largest missing values
+
+```{r}
+missing = missing[missing$zipcode != "99999",]
+```
+I found a Stanford project that has a cross walk. the link is [here](https://redivis.com/StanfordPHS). I have put the crosswalk in the data folder as `zip_latlong_crosswalk.csv`. I prefer using the tigris definitions, but will default to these for missing values. We also need a area crosswalk, that is taken from [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view) and is stored as `zip_area_crosswalk.csv`
+
+```{r}
+
+latlong_cross = read.csv("Data/zip_latlong_crosswalk.csv")
+latlong_cross$Zip[nchar(latlong_cross$Zip) != 5] =paste0("0",latlong_cross$Zip[nchar(latlong_cross$Zip) != 5])
+latlong_cross$Zip[nchar(latlong_cross$Zip) != 5] =paste0("0",latlong_cross$Zip[nchar(latlong_cross$Zip) != 5])
+area_cross = read.csv("Data/zip_area_crosswalk.csv") %>% filter(year_intp == 2001)
+area_cross$zcta19[nchar(area_cross$zcta19) != 5] =paste0("0",area_cross$zcta19[nchar(area_cross$zcta19) != 5])
+area_cross$zcta19[nchar(area_cross$zcta19) != 5] =paste0("0",area_cross$zcta19[nchar(area_cross$zcta19) != 5])
+
+missing = merge(missing,latlong_cross,all.x = T, by.x = "zipcode", by.y ="Zip")
+missing = merge(missing,area_cross,all.x = T, by.x = "zipcode", by.y = "zcta19")
+
+missing_one = missing[is.na(missing$geopoint) |is.na(missing$zcta_area),]
+summary(missing_one[,c("zipcode","EMP","ESTAB","PAYANN")])
+```
+
+Okay, so 7055 are missing both area and lat and long. But we can check two thing. First, we only need area to get employment density. if employment is 0, it doesnt matter the size.
+
+```{r}
+missing_one =  missing_one[missing_one$EMP != 0,]
+summary(missing_one[,c("zipcode","EMP","ESTAB","PAYANN")])
+```
+So we only really have an issue with 4837. So we need to impute these guys. But do we have their location?
+
+```{r}
+missing_both = missing_one[is.na(missing_one$geopoint),]
+summary(missing_both[,c("zipcode","EMP","ESTAB","PAYANN")])
+```
+So we only have 146 that are missing both location and area. 
+
+What about the ones that we are missing only area. Where are they?
+
+```{r}
+missing_have_loc = missing[!is.na(missing$Longitude) & missing$EMP != 0,]
+library(sf)
+library(ggplot2)
+
+my_sf <- st_as_sf(missing_have_loc, coords = c('Longitude', 'Latitude'))
+
+
+#Plot it:
+
+ggplot(my_sf) + 
+  geom_sf(aes(color = EMP))
+```
+So they seem pretty spread out. What happens when I just plot all of the zipcodes we have, are we going to see 8410 holes?
+
+```{r,eval = F}
+# gg = ggplot(data = tt) + 
+#   geom_sf(color = NA, aes(geometry = geometry, fill = EMP))
+# gg
+# ggsave("allDataPlot.png")
+
+```
+So this is a bad idea. The ggplot object is over 1.1 GB. Woops.
+
+But this is the output
+
+![](Figures/allDataPlot.png)
+
+## Another data set
+
+heres the link
+
+https://hub.arcgis.com/datasets/esri::usa-zip-code-boundaries/about
+
+It the areas
+
+https://www.tomtom.com/
+
+Also Lets start a new chunk with everythign so far
+
+```{r,eval = F}
+library(dplyr)
+tt = readRDS("Data/ZBP/zbp2000.rds")
+zip2000 = readRDS("Data/zip2000.rds")
+## Merge with tigris
+tt = merge(tt,zip2000,all.x = T, by.x = "zipcode", by.y = "ZCTA5CE00")
+rm(zip2000)
+latlong_cross = read.csv("Data/zip_latlong_crosswalk.csv")
+latlong_cross$Zip[nchar(latlong_cross$Zip) != 5] =paste0("0",latlong_cross$Zip[nchar(latlong_cross$Zip) != 5])
+latlong_cross$Zip[nchar(latlong_cross$Zip) != 5] =paste0("0",latlong_cross$Zip[nchar(latlong_cross$Zip) != 5])
+area_cross = read.csv("Data/zip_area_crosswalk.csv") %>% filter(year_intp == 2001)
+area_cross$zcta19[nchar(area_cross$zcta19) != 5] =paste0("0",area_cross$zcta19[nchar(area_cross$zcta19) != 5])
+area_cross$zcta19[nchar(area_cross$zcta19) != 5] =paste0("0",area_cross$zcta19[nchar(area_cross$zcta19) != 5])
+
+tt = merge(tt,latlong_cross,all.x = T, by.x = "zipcode", by.y ="Zip")
+tt = merge(tt,area_cross,all.x = T, by.x = "zipcode", by.y = "zcta19")
+
+tt = tt[!(tt$zipcode %in% c("99999","00501")),]
+```
+
+```{r,eval = F}
+area_cross2 = read.csv("Data/USA_ZIP_CODE_Boundaries.csv")
+area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5] =paste0("0",area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5])
+area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5] =paste0("0",area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5])
+area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5] =paste0("0",area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5])
+area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5] =paste0("0",area_cross2$ZIP_CODE[nchar(area_cross2$ZIP_CODE) != 5])
+tt = merge(tt,area_cross2,all.x = T, by.x = "zipcode",by.y = "ZIP_CODE")
+
+tt = tt %>% select(zipcode,City, State,EMP,ESTAB,PAYANN,year,INTPTLAT00,INTPTLON00,Latitude,Longitude,ALAND00,AWATER00,zcta_area,Shape__Area)
+```
+
+## Okay. 
+
+We now have all the data by year, merged in with everythign else. Let collapse this to a single file and then get rid of all the extra stuff to free up some space on my hard drive
+
+```{r}
+library(dplyr)
+clean_zbp_full = function(){
+for (i in 1:length(years)) {
+  print(years[i])
+file_location = paste0("Data/ZBP_FULL/full_zbp",years[i],".rds")
+tt = readRDS(file_location) %>%
+    select(zip,EMP,ESTAB,PAYANN,year,Shape__Area,ALAND00,AWATER00,zcta_area,Latitude,Longitude,INTPTLAT00,INTPTLON00,geometry) %>%
+    mutate(area = ifelse(!is.na(ALAND00),ALAND00,ifelse(!is.na(zcta_area),zcta_area,Shape__Area)),
+           lat = ifelse(!is.na(INTPTLAT00),INTPTLAT00,Latitude),
+           lon = ifelse(!is.na(INTPTLON00),INTPTLON00,Longitude)) %>%
+  select(zip,year,EMP,ESTAB,PAYANN,lat,lon,geometry)
+tt$lat = as.numeric(tt$lat)
+tt$lon = as.numeric(tt$lon)
+filename = paste0("Data/ZBP/ZBP",years[i],".rds")
+saveRDS(tt,filename)
+}
+}
+```
+

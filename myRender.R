@@ -1,14 +1,14 @@
 
 library(tools)
 
-knitr::opts_chunk$set(eval = T)
 
-all_files = list.files(paste0(getwd()),recursive = T)
-toRender = all_files[file_ext(all_files) == "Rmd" & !grepl("_Template",all_files)]
-
+toRender = shell("git status",intern = T)
+toRender = trimws(gsub("\tmodified:","",toRender[grepl("\tmodified:",toRender)]))
 
 for (files in toRender) {
-    rmarkdown::render(files)
+  knitr::opts_chunk$set(eval = T)
+  rmarkdown::render(files)
+    
 }
 
 

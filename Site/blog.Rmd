@@ -12,6 +12,15 @@ theme: journal
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
+# 8/15/24 A Productive Day
+
+Lets make today productive. We need to do three things
+- Lets implement McMillen 2001 in the MuniProject replication page
+- Lets get everything from the old FKRB project onto the website
+- Lets get the intial reading of the KLR 2023 paper into the mini blog
+
+Accomplishing those goals constitutes a productive day. Lets go.
+
 # 8/14/24 Same Stuff Different Day
 
 I had three things on my to do list yesterday and I almost finished 1 1/2. As a quick recap, I am almost done with the McMillen 2001 paper summary. I just need to finish the LWR part that is in the appendix. The census scrape is doing something weird after 2004, I cant get anything to run after that year. I'll have to figure that out. Finally, I want to get some work down on FKRB. 

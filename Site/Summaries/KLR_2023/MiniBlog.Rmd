@@ -1,0 +1,102 @@
+---
+title: "Mini-Blog"
+output: html_document
+---
+
+```{r,echo = F}
+base_dir = getwd()
+base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
+sum_link = paste0(base_url,"/Summary.html")
+miniblog_link = paste0(base_url,"/MiniBlog.html")
+```
+
+[Home](https://chasewiedemann.github.io/index.html) |
+[About](https://chasewiedemann.github.io/Site/about.html) |
+[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
+[Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
+[Blog](https://chasewiedemann.github.io/Site/blog.html) |
+
+[Summary](`r sum_link`)|
+[Mini-Blog](`r miniblog_link`)|
+
+# Plan
+This is a big paper. I want to first go through the authors companion paper which does the math separately from the rest, then get into the main ECMA paper
+
+# KLR 2024: The Linear Algebra of Economic Geography Models
+
+## Initial Reading Notes
+
+- the world economy consists of a set of location index by $i \in \{0,\dots ,N\}$
+- The economy has an exogenous supply of workers that is normalized to one $\overline l = 1$
+- Each worker gets one unit of labor that is supplied inelastically. 
+- Workers are perfectly mobile across location, but have idiosyncratic preferences for each location
+### Consumer preference
+- Every worker $v$ in location $n$ has the indirect utility function $u_n(\nu) = \frac{b_n\epsilon_n(\nu)w_n}{p_n}$
+  + $w_n$ is the wage 
+  + $p_n$ is the price index of the consumption good
+  + $b_n$ are the amenities that are common for all workers
+  + $\epsilon(\nu)$ is a idosyncratic amenities preference draw that is specific to each worker $\nu$ and location $n$
+- The price index is of the form $p_n = \left(\sum_{i=1}^N p_{ni}^{1-\sigma})\right)^{1/1-\sigma},\sigma>1$
+- The idiosyncratic amenities draw are independent for each worker and location from the forllowing distribution $F(\epsilon) = exp(-\epsilon^{-\kappa}), \kappa >1$
+  + The scale is normalized to one, as it is isomorphic to $b_n$ (the common amenities of location $n$)
+  + $\kappa$ regulates dispersion of idiosyncratic amenities, which in tern determine migration elasticity, ie how responsive the population share of each location is to real wages $w_n$
+### Production Technology
+- Goods are produced with labor according to a constant returns technology and under the conditions of perfect competition
+- Iceberg variable costs of trade: $\tau_{ni}$ must be shipped from $i$ to $n$ in order for one unit to arrive
+- Cost to consumer in $n$ of purchasing the good produced in $i$ is $p_{ni} = \frac{\tau_{ni}w_i}{z_i}$
+  + $z_i$ is the productivity in location $i$
+  + Prodctivity on the shippers end decreases price at the recievers end
+  + $z_i$ is exogenous, but apparently easy to endogenize with agglomeration economies that let productivity in each location increase with its own population of the population of immediate neighbors
+### General Equilibrium
+- GE is referenced by the vectors of wages and population shares in each location $\{\vec w, \vec l\}$ ($2\times N$ Matrix)
+- Conviniently, we get $2\times N$ equilbrium conditions from the goods market clearning and population mobility.
+- Goods market clearing
+  + Income in each location equals expenditure on the good produced in that location $w_il_i = \sum_{n=1}^N s_{ni}w_nl_n$
+  + $s_ni$ is the share of expenditure of importer $n$ on exporter $i$ 
+  + From the CES Demand and the Production technology we get $s_{ni} = \frac{[(\tau_{ni}w_i)/z_i]^{-\theta}}{\sum_{m=1}^N [(\tau_{nm}w_m)/z_m]^{-\theta}}$
+  + $\theta \equiv \sigma-1$ and is the trade elasticity
+  + We then normalize the income of all location to 1: $\sum_{i=1}^N w_il_i =1$
+  + The choice of distribution for $\epsilon$ gives us the probability a worker chooses to live in location $n$, and there for the number of workers in location $n$ as $l_n = \frac{(b_nw_n/p_n)^\kappa}{\sum_{h=1}^N (b_hw_h/p_h)^\kappa}$
+  + Expected utility then must be the same across all locations and is given by $\overline u = \Gamma(\frac{\kappa -1}{\kappa})\left[\sum_{h=1}^N (b_hw_h/p_h)^\kappa \right]^{1/\kappa}$
+  + Not normalize, endogenous in the model
+### Some intuition
+- Each locaion faces an upward slipping supply function for workers
+  + locations have to offer a higher real wage relative to other location in order to attract a larger share of the population
+- Locations that offer higher real wages attract workers with lower realization for idiosyncratic amenities
+  + in english that means... Pittsburg (bad amenities) has to pay more?
+- The frechet distribution allows for the wage to be exactly offset b the composition effect of lower average amenities
+  + I hate this assumption, San Fran has the highest amenities and the highest wages
+- Along with the exogenous productivity assumption, the dispersion force from worker idiosyncratic preferences ensures the existance of a unique eq distribution of wages and population shares across locations.
+### Freind-Enemy Exposure Measures
+- going to consider small productivity shocks, holding constant amenities $dlog b_i =0$, bilateral trad costs $dlog\tau_{n} =0$ amd the total population of the economy $dlog \overline l =0$
+- Totally differntiate the goods market clearning codition, $w_il_i = \sum s_{ni}l_iw_i$ to yield $d logw + dlog l = T(dlog w +d logl) + \theta(TS-I)(dlog w - dlog z))$
+  + S is a matrix of $s_{ni}$, the share of importer $n$'s expenditure on exporter $i$
+  + T is a matrix with $T_{in} = S_{ni}\cdot \frac{w_nl_n}{w_il_i}$, exporter $i$'s income from inporter $n$
+- Chanes in the total income of a location of the left hand of this equation (including both change in wages and change in popilaion) depend on a market size effect (first term on the right hand side) and a cross-substiution effect (second term on the right hand side)
+- Market-size effect capture the fact that an increaes in the income of market $n$ on the right hand side increase the income of location $i$ on the left hand side by and amount that is determined b the share of location $i$ income from market $n$ given by $T{in}$
+- The cross substitution effect depends on the product of the income and expendtireue share martixes $TS-I$
+  + for $i\neq n$ the sum $\sum_{h=1}^N t_{ih}s_{hn}$ captures the overall competitive exposer of location $i$ to location $n$ through each of their common markets $h$ weighted by the importance of market $h$ for country $i$'s income ($t_{ih}$)
+  + As competitiveness of location $n$ increases, as measured by a decline in its wage relative to its productiveity ($dlogwn - dlogz_n$) consumers in all makerts $j$ substitute towards location $n$ and awa from other locations $i\neq n$
+  + What does wage being equal to prductivity tell us?
+  + This substitution effect reduces income in location $i$ and reaises it in location $n$ 
+  + The CES import demand sstem imposes that the magnitude of this cross-substitution efect in market $h$ depends on the trade elasticity $\theta$ and the share of expenditure in market $h$ on the goods prodced in location $n$
+  + this means that consumers in market $h$ increase the expenditure share on county $n$ by $10s_{hn} and lower the expendtire share on county $i$ by $s_{hn}$ This is just logit. They have rediscovered logit. 
+- Now was are going to totally differentiate the location choice probabilities $l_n = \frac{(b_nw_n/p_n)^\kappa}{\sum_{h=1}^N (b_hw_h/p_h)^\kappa}$ and get $dlog l = \kappa(I-1l')[dlog w - S(dlog w- dlogz)]$
+- The ppulation share of a location is increasing in its wage.
+- the population share is decreasing in its price index.
+- Now we are going to totally differentiate expected utility $\overline u = \Gamma(\frac{\kappa -1}{\kappa})\left[\sum_{h=1}^N (b_hw_h/p_h)^\kappa \right]^{1/\kappa}$ to get $d log \overline u = l' [d log w - S(dlog w - dlog z)]$
+- So now if we shock one of these equations, its gonna ripple through the others
+  + We might shock the producitivity, which would then change the distribution of wages, which would change the population share, which changes the income, which of course then gets fed back into wages through the market size effect. 
+- We are now going to link the equations by using the income normalization and rewriting the goods market clearing condition as $I+Q)(dlog w + d log l) = T(d log w + dlog l) + \theta(TS-I)(dlog w - dlog z)$
+  + $Q$ is a $N\times N$ matrix with the nominal income row vector $q'$ stacked $N$ times and because of our normalization, we have $Q(dlog w +dlog l) = 0$
+  + A root we can find
+- We can then substitue the changes in population shares into the goods market clearing and using the common level of expected utilit , we obtain the flosed for expresion for the elasticity of wages in each location with respect to productivity shocks in all loaction $d log w = W dlog z$ 
+  + $W$ is the friend-enemy matrix of bilarter wage exposure to productivity shocks
+  + $W = -(91+\kappa)I- \kappa1l' - V)^{-1}V$
+  + $V = \kappa(I-1l') + (I-T+Q)^{-1}\theta(TS-I)
+
+## Thoughts after the first reading
+Is this logit? The restricted substitution patterns make it seem so. I don't think that my summary of the KLR 2023 needs this, but I imagine that the math is going to be helpful. In the worst case, I've seen their notation now and will hopefully be a bit faster in the main paper.
+
+# KLR 2023
+
