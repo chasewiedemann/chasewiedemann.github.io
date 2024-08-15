@@ -99,4 +99,5 @@ This is a big paper. I want to first go through the authors companion paper whic
 Is this logit? The restricted substitution patterns make it seem so. I don't think that my summary of the KLR 2023 needs this, but I imagine that the math is going to be helpful. In the worst case, I've seen their notation now and will hopefully be a bit faster in the main paper.
 
 # KLR 2023
+lets go
 

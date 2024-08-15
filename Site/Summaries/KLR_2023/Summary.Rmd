@@ -19,3 +19,4 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Summary](`r sum_link`)|
 [Mini-Blog](`r miniblog_link`)|
 
+writing something so it will load
