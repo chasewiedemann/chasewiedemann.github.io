@@ -22,7 +22,7 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)
 
-# Introduction
+# Models without Unobserved Heterogenity 
 
 Consider a simple discrete choice model where the agents share a common utility function $u(X_t;\beta)$ and make choices over $J+1$ alternatives. The menu $X_t$ contains the characteristics of the alternatives in choice setting $t$ that the researcher believes effect utility and $s_t$ is a vector of choice probabilities that the researcher has collected. In all settings of interest this extremely simple model will be rejected by our data. Given that agents share a common utility function, they will all value the alternatives the same, and will all choose the same alternative to maximize utility. Contrast that with our observation that $s_t$ contains $J+1$ alternatives are present and likely has more than one positive choice probability.
 
@@ -30,14 +30,16 @@ The logical next step is to add an idiosyncratic preference shock to our agents 
 $$ u_{it} = u(X_t;\beta) + \epsilon_i $$
 Where $\epsilon_i$ is a $J\times 1$ random vector from a distribution $F_\epsilon$. Integrating out $\epsilon$ by taking an expectation over $F_\epsilon$ gives the mean utility $\delta_t$. We assume that $F_\epsilon$ is mean zero and orthogonal to the characteristics of the alternatives. Therefore we have
 $$ \delta_t = \mathbb E_\epsilon\left[u_{it}\right] = u(X_t;\beta) $$
+Another way to view the expectation taken over $F_\epsilon$ is through the infinite sum
+$$ \delta_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N u_i + \epsilon_i $$
+This form of the $\delta_t$ does not provide much additional insight at this point, but will become crucial later on.
 
-In this form and given a normalization, Berry (1994) shows that there is a bijection between mean utilities $\delta_t$ and any vector of choice probabilities (including the one we observe) $s_t$. This allows us to take any vector of choice probabilities $s_t$ and associate them with a unique value of $\delta_t$. We can then map $X_t$ onto $\delta_t$ to recover $\beta$.
+Given a normalization, Berry (1994) shows that there is a bijection between mean utilities $\delta_t$ and any vector of choice probabilities (including the one we observe) $s_t$. This allows us to take any vector of choice probabilities $s_t$ and associate them with a unique value of $\delta_t$. We can then map $X_t$ onto $\delta_t$ to recover $\beta$.
 
-But what does this mean? Consider the vector choice function $\mu(u) = c$. This function inputs a vector $u \in \mathbb R^n$, and outputs a vector in $c \in \{0,1\}^n$ such that $\sum_{i=1}^n c_i =1$. Only one of the entries in $c$ can be equal to one while all other entries are equal to zero. Our initial problem with the model without preference shocks was that all agents made the same choice, i.e.  $\mu(u_{i}) = \mu(u_{j}), \forall i,j$ because $u_{i} = \mu_{j}, \forall i,j$. Adding in the idiosyncratic shock allows for $\mu(u_{i} + \epsilon_{i}) \neq \mu(u_{j} + \epsilon_{j})$. Another way to view the expectation taken over $F_\epsilon$ is through the infinite sum
-$$ \delta_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N \mu(u_i + \epsilon_i) $$
-The sum makes explicit why we require a normalization on $\delta_t$, it is because $\delta_t$ is invariant to levels. This means that $\delta_t + \alpha$ where $\alpha$ is a constant vector, provides the same amount of information about our agents evaluation of the alternatives for every choice of $\alpha$. Seen another way, the inverse mapping from choice probabilities to mean utilities is a correspondence between $s_t$ and the equivalence class given by $\delta_t +\alpha$. The normalization choices a canonical member of each equivalence class to turn the correspondence into a bijection. 
 
-A simple way to choose this canonical member, and therefore create a bijection that allows us to invert this model for $\delta_t$, is to normalize the mean utility of one alternative to zero.  While any of the alternatives can be normalized, the common way this is preformed is to normalize the mean utility of the outside alternative. The outside alternative is the alternative where our agent did not choose any of the other alternatives. If we were studying a choice environment regarding the market for transportation services, this alternative would capture all agents who decided to walk or bike. Let $j=0$ be the index of the outside alternative. This normalization selects exactly one member of each equivalence class because $\delta_{0t} + \alpha = 0$ for exactly one value of $\alpha$. 
+We require a normalization because $\delta_t$ is invariant to levels. This means that $\delta_t + \alpha$ where $\alpha$ is a constant vector, provides the same amount of information about our agents evaluation of the alternatives for every choice of $\alpha$. Seen another way, the inverse mapping from choice probabilities to mean utilities is a correspondence between $s_t$ and the equivalence class given by $\delta_t +\alpha$. The normalization chooses a canonical member of each equivalence class to turn the correspondence into a bijection. 
+
+A simple way to choose this canonical member, and therefore create a bijection that allows us to invert this model for $\delta_t$, is to normalize the mean utility of one alternative to zero.  While any of the alternatives can be normalized, the common way this is preformed is to normalize the mean utility of the outside alternative. The outside alternative is the alternative where our agent did not choose any of the other alternatives. If we were studying a choice environment regarding the market for transportation services, this alternative would capture all agents who decided to walk or bike. Let $j=0$ be the index of the outside alternative. This normalization selects exactly one member of each equivalence class because $\delta_{0t} + \alpha_0 = 0$ for exactly one value of $\alpha$. 
 
 This bijection holds for all choices of $F_\epsilon$. However, assuming that $F_\epsilon$ is just $J$ copies of the single dimensional Type-1 Extreme Value distribution allows for this bijection to have a closed form solution given by
 $$ s_{jt} = \frac{e^{\delta_{jt}}}{\sum_{k=0}^J e^{\delta_{kt}}} $$
@@ -55,6 +57,8 @@ Our next step would be to estimate the map between $X_t$ and $\delta_t$. This is
 The solution to this problem is to define error in our estimation as 
 $$ \delta_{t} = u(X_t;\hat\beta) + \xi_t $$
 And choose $\hat\beta$ that minimizes the total contribution of $\xi_t$ across all markets. This estimation strategy has the additional benefit of being able to incorporate techniques to deal with misspecification error such as instrumental variables. 
+
+# Models with Unobserved Hetrogeity
 
 While we have a method for estimation, the model can preform poorly when we observe more than one choice environment for reasons other that $\xi$. Berry, Levinsohn \& Pakes (1995) give an illustrative example of this for the automobile industry. Consider that a Yugo (an inexpensive car) and a Mercedes (an expensive car) have the same choice probabilities. The model above enforces that these two cars have the same *cross-price derivative* for any third car. What does that mean? Suppose that we wish to predict the choice probabilities in a new choice setting $t'$ where a BMW (an expensive car) has a higher price (something all agents dislike) relative to its price in choice environment $t$. In comparison to $t$, we would expect that agents would substitute from the BMW towards the Mercedes, and the choice probability of the Yugo would remain unaffected. However, because the current model enforces that the Yugo and the Mercedes have the same cross-price derivative, our predicted choice probabilities of the Yugo and the Mercedes would both increase an equal amount in $t'$.
 
@@ -75,7 +79,7 @@ $$
 \end{aligned}
 $$
 
-This expression is begging for us to impose linearity. Suppose we restrict attention to the subset of functions where $u(X_t;\beta_i) = z(X;\tilde\beta) + v(X_t;\nu_i)$. This includes the common specification of $u(X_t;\beta_i) = X_t\beta_i$.  We then have
+As $\epsilon$ enters our model additively, the linearity of the expectation allows us to integrate it out. With that in mind, the remaining expression is begging for us to impose linearity again. Suppose we restrict attention to the subset of functions where $u(X_t;\beta_i) = z(X;\tilde\beta) + v(X_t;\nu_i)$. This includes the common specification of $u(X_t;\beta_i) = X_t\beta_i$.  We then have
 $$ 
 \begin{aligned}
 \tilde \delta_t &= \mathbb E_\nu\left[ u(X_t;\beta_i)\right]\\
@@ -84,17 +88,28 @@ $$
 &= z(X_t;\tilde \beta) + \mathbb E_\nu\left[ v(X_t;\nu_i) \right]
 \end{aligned}
 $$
-Given our linearity assumption, this expression shows that the mean utility is equal to some deterministic mapping from the characteristics of the alternatives, plus a term that captures the correlation between the characteristics and the unobserved heterogeneity of our agents.
+Given our linearity assumption, this expression shows that the mean utility is equal to some deterministic mapping from the characteristics of the alternatives, plus a term that captures the correlation between the characteristics and the unobserved heterogeneity of our agents. Note that in contrast to $\epsilon$, $\nu$ remains in the expression because we assume that the unobserved heterogeneity is correlated with the characteristics of the alternatives, while we assumed that $\epsilon$ was orthogonal to the characteristics. 
 
-What is the expression in the expectation? More importantly, how would we take a sample analog?
+Bu what is the expression in the expectation? More importantly, how would we take a sample analog? Lets again look at these expectations through their infinite sum representation that we introduced earlier, with the promise that it would come in handy.
 
-Lets again look at these expectations through their infinite sum representations with the vector choice function.
+$$ \tilde \delta_t = \lim_{N \to \infty} \frac{1}{N}\sum_{i=1}^{N} z(X_t;\tilde \beta) + v(X_t;\nu_{i})+\epsilon_{i} $$
+As this is an infinite sum and $\epsilon_i$ is independent of $\nu_i$, we can group this summation in whatever way we please. We wish to group together all terms that share a common $\nu_i$. We can rewrite the summation as follows to emphasize this process. Let $R^N_b$ be a grouping of close by $\nu$ values.  Each $R^N_b$ can be thought of as a bin. Let the number of bins $B$ grow in proportion to the sample size $N$ such that in the limit as $N \to \infty$, each $R^N_b$ constitutes a point value. Let $|R_b^N|$ be the number of values in each unique bin, which is dependent on the implied bin size, which is in turn dependent on $N$. The sum is then of the form  
+$$ \tilde \delta_t =\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_1) + \epsilon_i \right] +\dots + \left[|R^N_B|\cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_{B}) + \epsilon_i \right]  \right) $$
+Note that these two sums are equivalent as long as $F_\epsilon$ are independent $F_\nu$. As $F_\epsilon$ is assumed mean zero, the individual terms in that sum converge over $F_\epsilon$ such that
 
-$$ \tilde \delta_t = \lim_{N \to \infty} \frac{1}{N}\sum_{i=1}^{N}\mu\left(z(X_t;\tilde \beta) + v(X_t;\nu_{i})+\epsilon_{i}\right) $$
-As this is an infinite sum and $\epsilon_i$ is independent of $\nu_i$, we can group this summation in whatever way we please. We wish to group together all terms that share a common $\nu_i$. We can rewrite the summation as follows to emphasize this process
-$$ \tilde \delta_t =\lim_{N_\nu \to \infty} \left( \left[\lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} \mu(z(X_t;\tilde \beta) + v(x_t;\nu_1) + \epsilon_i) \right] +\dots + \left[\lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} \mu(z(X_t;\tilde \beta) + v(x_t;\nu_{N_\nu}) + \epsilon_i) \right]  \right) $$
-Note that these two sums are equivalent as long as the $F_\epsilon$ does not depend on $F_\nu$. Lets now focus on a generic term in the inner summation. Come back to this after exploring what we have when we consider more markets
+$$ \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_b) + \epsilon_i \xrightarrow{d} z(X_t;\tilde \beta) + v(X_t;\nu_b), \forall b $$
+This allows us to again rewrite the larger summation as
 
+$$ \tilde \delta_t =\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot \left(z(X_t;\tilde \beta) + v(X_t;\nu_1)\right) \right] +\dots + \left[|R^N_B| \cdot \left(z(X_t;\tilde \beta) + v(X_t;\nu_B)\right) \right]  \right) $$
+We can then distribute the $|R^N_b|$ to both terms, distribute the $N$ in the denominator, and rearrange to yield
+
+$$
+\begin{aligned}
+\tilde \delta_t &= \lim_{N\to\infty} \sum_{b=1}^N \frac{|R^N_b|}{N} z(X_t;\tilde \beta) + \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
+&=  z(X_t;\tilde \beta) + \lim_{N\to \infty} \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b)
+\end{aligned}
+$$ 
+Now notice that by construction, $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\nu$, the (non-parametric) density of the unobserved heterogeneity. 
 
 
 
