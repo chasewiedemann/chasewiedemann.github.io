@@ -24,7 +24,7 @@ download_wp_link = paste0(base_url,"/WorkingSlides.pdf")
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
 
-<a href="`r download_wp_link`" download>Click to Download Slides</a>
+<a href=`r download_wp_link` download>Click to Download Slides</a>
 
 # This Slide
 
