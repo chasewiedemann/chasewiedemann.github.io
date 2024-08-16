@@ -12,6 +12,15 @@ theme: journal
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
+# 8/16/24
+
+Okay. Its Fast Function Friday. Should that be here, or should i link to it? I'm going to be doing the FKRB stuff and optimizing that, so its the work is going to take place in the mini-blog and replication. But where does it go after? We will find out. The schedule for today is
+
+- FKRB with a FFF flair
+- KLR 2023 paper summary
+
+Lets go.
+
 # 8/15/24 A Productive Day
 
 Lets make today productive. We need to do three things

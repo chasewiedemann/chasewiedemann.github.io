@@ -22,3 +22,97 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)
 
+# Introduction
+
+Consider a simple discrete choice model where the agents share a common utility function $u(X_t;\beta)$ and make choices over $J+1$ alternatives. The menu $X_t$ contains the characteristics of the alternatives in choice setting $t$ that the researcher believes effect utility and $s_t$ is a vector of choice probabilities that the researcher has collected. In all settings of interest this extremely simple model will be rejected by our data. Given that agents share a common utility function, they will all value the alternatives the same, and will all choose the same alternative to maximize utility. Contrast that with our observation that $s_t$ contains $J+1$ alternatives are present and likely has more than one positive choice probability.
+
+The logical next step is to add an idiosyncratic preference shock to our agents utility function. This allows us to model agent $i$'s vector of utility for the alternatives as
+$$ u_{it} = u(X_t;\beta) + \epsilon_i $$
+Where $\epsilon_i$ is a $J\times 1$ random vector from a distribution $F_\epsilon$. Integrating out $\epsilon$ by taking an expectation over $F_\epsilon$ gives the mean utility $\delta_t$. We assume that $F_\epsilon$ is mean zero and orthogonal to the characteristics of the alternatives. Therefore we have
+$$ \delta_t = \mathbb E_\epsilon\left[u_{it}\right] = u(X_t;\beta) $$
+
+In this form and given a normalization, Berry (1994) shows that there is a bijection between mean utilities $\delta_t$ and any vector of choice probabilities (including the one we observe) $s_t$. This allows us to take any vector of choice probabilities $s_t$ and associate them with a unique value of $\delta_t$. We can then map $X_t$ onto $\delta_t$ to recover $\beta$.
+
+But what does this mean? Consider the vector choice function $\mu(u) = c$. This function inputs a vector $u \in \mathbb R^n$, and outputs a vector in $c \in \{0,1\}^n$ such that $\sum_{i=1}^n c_i =1$. Only one of the entries in $c$ can be equal to one while all other entries are equal to zero. Our initial problem with the model without preference shocks was that all agents made the same choice, i.e.  $\mu(u_{i}) = \mu(u_{j}), \forall i,j$ because $u_{i} = \mu_{j}, \forall i,j$. Adding in the idiosyncratic shock allows for $\mu(u_{i} + \epsilon_{i}) \neq \mu(u_{j} + \epsilon_{j})$. Another way to view the expectation taken over $F_\epsilon$ is through the infinite sum
+$$ \delta_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N \mu(u_i + \epsilon_i) $$
+The sum makes explicit why we require a normalization on $\delta_t$, it is because $\delta_t$ is invariant to levels. This means that $\delta_t + \alpha$ where $\alpha$ is a constant vector, provides the same amount of information about our agents evaluation of the alternatives for every choice of $\alpha$. Seen another way, the inverse mapping from choice probabilities to mean utilities is a correspondence between $s_t$ and the equivalence class given by $\delta_t +\alpha$. The normalization choices a canonical member of each equivalence class to turn the correspondence into a bijection. 
+
+A simple way to choose this canonical member, and therefore create a bijection that allows us to invert this model for $\delta_t$, is to normalize the mean utility of one alternative to zero.  While any of the alternatives can be normalized, the common way this is preformed is to normalize the mean utility of the outside alternative. The outside alternative is the alternative where our agent did not choose any of the other alternatives. If we were studying a choice environment regarding the market for transportation services, this alternative would capture all agents who decided to walk or bike. Let $j=0$ be the index of the outside alternative. This normalization selects exactly one member of each equivalence class because $\delta_{0t} + \alpha = 0$ for exactly one value of $\alpha$. 
+
+This bijection holds for all choices of $F_\epsilon$. However, assuming that $F_\epsilon$ is just $J$ copies of the single dimensional Type-1 Extreme Value distribution allows for this bijection to have a closed form solution given by
+$$ s_{jt} = \frac{e^{\delta_{jt}}}{\sum_{k=0}^J e^{\delta_{kt}}} $$
+This follows from properties of that (univariate) Type-1 Extreme Value distribution and a derivation can be found in Train (2002). Then, using our conveniently chosen normalization, we can write
+$$ s_{0t} = \frac{e^{\delta_{0t}}}{\sum_{k=0}^J e^{\delta_{kt}}} = \frac{1}{\sum_{k=0}^J e^{\delta_{kt}}} $$
+We see that this normalization has given us the value of the denominator of our expression. We can then divide by the value of this denominator and take the natural log to yield $\delta_{jt}$ as
+$$ 
+\begin{aligned}
+\frac{s_{jt}}{s_{0t}} &= \frac{e^{\delta_{jt}}}{\sum_{k=0}^J e^{\delta_{kt}}} \cdot \sum_{k=0}^J e^{\delta_{kt}} \\
+log \left( \frac{s_{jt}}{s_{0t}}\right ) &= \delta_{jt} \equiv u(X_t;\beta)
+\end{aligned}
+$$
+Our next step would be to estimate the map between $X_t$ and $\delta_t$. This is another avenue in which our model can, and is in fact likely to fail. If we assume $X_t$ contains $K$ attributes, under standard restrictions on the colinearity of the characteristics, $X_t$ will span $\mathbb R^K$ and we will find a solution $\hat\beta$ that is exact. The issue arises when we consider multiple choice environments. Each of these choice environments can also be inverted to find an exact solution $\hat\beta_{t}$. Under the model, $\beta = \hat\beta_t = \hat\beta_{t'}, \forall t,t'$. However, because of sampling, informational, and misspecification error, the solutions are likely to differ across choice environments. What do we do when these maps are different, i.e. $\beta_t \neq \beta_{t'}$?
+
+The solution to this problem is to define error in our estimation as 
+$$ \delta_{t} = u(X_t;\hat\beta) + \xi_t $$
+And choose $\hat\beta$ that minimizes the total contribution of $\xi_t$ across all markets. This estimation strategy has the additional benefit of being able to incorporate techniques to deal with misspecification error such as instrumental variables. 
+
+While we have a method for estimation, the model can preform poorly when we observe more than one choice environment for reasons other that $\xi$. Berry, Levinsohn \& Pakes (1995) give an illustrative example of this for the automobile industry. Consider that a Yugo (an inexpensive car) and a Mercedes (an expensive car) have the same choice probabilities. The model above enforces that these two cars have the same *cross-price derivative* for any third car. What does that mean? Suppose that we wish to predict the choice probabilities in a new choice setting $t'$ where a BMW (an expensive car) has a higher price (something all agents dislike) relative to its price in choice environment $t$. In comparison to $t$, we would expect that agents would substitute from the BMW towards the Mercedes, and the choice probability of the Yugo would remain unaffected. However, because the current model enforces that the Yugo and the Mercedes have the same cross-price derivative, our predicted choice probabilities of the Yugo and the Mercedes would both increase an equal amount in $t'$.
+
+As a model of choice environments, this is an unattractive feature. We would like our model to capture the idea that given a change in the utility of one alternative, agents substitution patterns reflect similarity between the alternatives. A common way to introduce substitution patterns of this sort is through the random coefficient model given as
+$$ u_{it} = u(X_t;\beta_i) + \epsilon_i $$
+Where the map between the menu in choice environment $t$ is now tied to the agent through $\beta_i$, allowing for similar alternatives to have correlated utility evaluations. While this accomplishes our goal of realistic substitution patterns, it comes at the cost of the convenient bijective property of the previous model. This means that there is no closed-form solution.   
+
+We lose the closed form solution because we now have a second expectation over the distribution of $\beta_i$. A convenient way to think about this distribution is to separate the stochastic part from the deterministic part and write $\beta_i = \tilde \beta + \nu_i$. We can now think about a deterministic vector $\tilde \beta$ and a random vector $\nu_i$ that follows some mean zero distribution $F_\nu$.
+
+Using this notation, we can look at an expression involving both expectations. Note that under mild and non-economic restrictions, the order in which we take the expectations does not matter.
+$$
+\begin{aligned}
+\tilde \delta_t &= \mathbb E_\epsilon \left [ \mathbb E_\nu [u_{it}] \right ]\\
+&= \mathbb E_\epsilon \left [ \mathbb E_\nu [ u(X_t;\beta_i) + \epsilon_i ] \right ] \\
+&= \mathbb E_\epsilon \left [ \mathbb E_\nu [ u(X_t;\tilde \beta+\nu_i)+\epsilon_i ] \right ] \\
+&= \mathbb E_\epsilon\left[ \mathbb E_\nu [ u(X_t;\tilde \beta+\nu_i)]\right ] + \mathbb E_\epsilon\left[ \mathbb E_\nu [\epsilon_i]\right ] \\
+&= \mathbb E_\nu\left[u(X_t;\tilde \beta + \nu_i) \right ]
+\end{aligned}
+$$
+
+This expression is begging for us to impose linearity. Suppose we restrict attention to the subset of functions where $u(X_t;\beta_i) = z(X;\tilde\beta) + v(X_t;\nu_i)$. This includes the common specification of $u(X_t;\beta_i) = X_t\beta_i$.  We then have
+$$ 
+\begin{aligned}
+\tilde \delta_t &= \mathbb E_\nu\left[ u(X_t;\beta_i)\right]\\
+&=  \mathbb E_\nu\left[ z(X;\tilde \beta) + v(X_t;\nu_i)\right] \\
+&= \mathbb E_\nu \left[ z(X_t;\tilde \beta) \right] + \mathbb E_\nu\left[ v(X_t;\nu_i) \right ] \\
+&= z(X_t;\tilde \beta) + \mathbb E_\nu\left[ v(X_t;\nu_i) \right]
+\end{aligned}
+$$
+Given our linearity assumption, this expression shows that the mean utility is equal to some deterministic mapping from the characteristics of the alternatives, plus a term that captures the correlation between the characteristics and the unobserved heterogeneity of our agents.
+
+What is the expression in the expectation? More importantly, how would we take a sample analog?
+
+Lets again look at these expectations through their infinite sum representations with the vector choice function.
+
+$$ \tilde \delta_t = \lim_{N \to \infty} \frac{1}{N}\sum_{i=1}^{N}\mu\left(z(X_t;\tilde \beta) + v(X_t;\nu_{i})+\epsilon_{i}\right) $$
+As this is an infinite sum and $\epsilon_i$ is independent of $\nu_i$, we can group this summation in whatever way we please. We wish to group together all terms that share a common $\nu_i$. We can rewrite the summation as follows to emphasize this process
+$$ \tilde \delta_t =\lim_{N_\nu \to \infty} \left( \left[\lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} \mu(z(X_t;\tilde \beta) + v(x_t;\nu_1) + \epsilon_i) \right] +\dots + \left[\lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} \mu(z(X_t;\tilde \beta) + v(x_t;\nu_{N_\nu}) + \epsilon_i) \right]  \right) $$
+Note that these two sums are equivalent as long as the $F_\epsilon$ does not depend on $F_\nu$. Lets now focus on a generic term in the inner summation. Come back to this after exploring what we have when we consider more markets
+
+
+
+
+
+
+We now with to reestablish our bijection between $\tilde \delta_t$ and $s_t$. We maintain our assumption that $F_\epsilon$ follows a Type-1 Extreme Value distribution so we can maintain the logit expression above. We next need to make a normalization on $\tilde\delta_t$. This is complicated due to $\delta_t$ being a random vector through the addition of $F_\nu$.  
+$$
+\begin{aligned}
+s_{jt} &= \frac{e^{z(X_{jt};\tilde \beta) + \mathbb E_\nu\left[ v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde \beta) + \mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
+&= \frac{e^{z(X_{jt};\tilde \beta)}e^{\mathbb E_\nu\left[ v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde \beta)}e^{\mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
+\frac{s_{jt}}{s_{0t}} &= 
+\end{aligned}
+$$
+
+
+# Model
+
+
+
+
+

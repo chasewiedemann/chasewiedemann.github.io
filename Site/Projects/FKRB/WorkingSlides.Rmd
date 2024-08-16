@@ -1,6 +1,6 @@
 ---
 title: "Working Slides"
-output: beamer_presentation
+output: html_document
 ---
 |
 ```{r,echo = F}
@@ -24,7 +24,7 @@ download_wp_link = paste0(base_url,"/WorkingSlides.pdf")
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
 
-[Download Slides](`r download_wp_link`)
+
 
 # This Slide
 
