@@ -1,6 +1,6 @@
 ---
 title: "Working Slides"
-output: html_document
+output: beamer_presentation
 ---
 |
 ```{r,echo = F}
@@ -22,3 +22,15 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Working Slides](`r ws_link`)|
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
+
+# This Slide
+
+## This is the second header
+
+### And the Third
+
+# Second Slide
+
+- a list 
+- of things
+
