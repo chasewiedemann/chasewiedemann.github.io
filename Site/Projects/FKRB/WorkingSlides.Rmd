@@ -10,6 +10,7 @@ wp_link = paste0(base_url,"/WorkingPaper.html")
 ws_link = paste0(base_url,"/WorkingSlides.html")
 rep_link = paste0(base_url,"/Replication.html")
 miniblog_link = paste0(base_url,"/MiniBlog.html")
+download_wp_link = paste0(base_url,"/WorkingSlides.pdf")
 ```
 
 [Home](https://chasewiedemann.github.io/index.html) |
@@ -22,6 +23,8 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Working Slides](`r ws_link`)|
 [Replication](`r rep_link`)|
 [Mini-Blog](`r miniblog_link`)|
+
+<a href="`r download_wp_link`" download>Click to Download Slides</a>
 
 # This Slide
 

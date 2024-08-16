@@ -20,5 +20,5 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Working Paper](`r wp_link`)|
 [Working Slides](`r ws_link`)|
 [Replication](`r rep_link`)|
-[Mini-Blog](`r miniblog_link
+[Mini-Blog](`r miniblog_link)
 
