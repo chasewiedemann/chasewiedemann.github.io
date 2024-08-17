@@ -673,112 +673,91 @@ fitCWPlus = fitCWPlus(data,betaGrid, J,M)
 ############# Store Performance Results ####################
 ############################################################</code></pre>
 </div>
-<div id="lets-see-it" class="section level2">
-<h2>Lets see it</h2>
-<p>I am not even gonna read my code. just run it, and then look at the
-fits</p>
-<pre class="r"><code>fitFKRB</code></pre>
-<pre><code>## function(data, ### Data in the Same Form as createData()
-##                    betaGrid, ### Grid of Points to be used
-##                    J, #Number of Inside Goods
-##                    M ### Number of Markets
-## ){
-## ############################################################
-## ##################### Libraries ############################
-## ############################################################
-## require(lsei)
-## source(&quot;helperFunctions.R&quot;)
-## ############################################################
-## ################## Create Z Matrix #########################
-## ############################################################
-## Z =  createZMatrix(data,betaGrid,J,M)
-## ############################################################
-## ############# Estimates FKRB Model #########################
-## ############################################################
-## fit = pnnls(Z,mktShare,sum =1)
-## ############################################################
-## ############# Returns Following Items: #####################
-## # $theta: Estimated Theta Vector
-## # $estMktShare: Estimated Market Share
-## ############################################################
-## return(list(&quot;theta&quot; = fit$x, &quot;estMktShare&quot; = Z %*% fit$x))}</code></pre>
-<pre class="r"><code>fitCW</code></pre>
-<pre><code>## function(data, ### Data in the Same Form as createData()
-##                    betaGrid, ### Grid of Points to be used
-##                    J, #Number of Inside Goods
-##                    M ### Number of Markets
-## ){
-## ############################################################
-## ##################### Libraries ############################
-## ############################################################
-## require(lsei)
-## source(&quot;helperFunctions.R&quot;)
-## ############################################################
-## ################### Extract Data ##########################
-## ############################################################
-## X = as.matrix(data[,4:ncol(data)][data[,2] != 0,])
-## mktShare = as.matrix(data[,3][data[,2] != 0])
-## outsideMktShare = data[,3][data[,2] == 0]
-## ############################################################
-## ############### Invert Market Share ########################
-## ############################################################
-## insideUtilities = log(mktShare/rep(outsideMktShare,each = J))
-## ############################################################
-## ################ Estimates CW Model ########################
-## ############################################################
-## fit = pnnls(X %*% t(betaGrid),insideUtilities,sum =1)
-## ############################################################
-## ################ Calculates Market Shares ##################
-## ############################################################
-## estUtility = data[,4:ncol(data)] %*% t(betaGrid) %*% fit$x
-## estMktShare = exp(estUtility)/rep(.colSums(exp(estUtility),J+1,M),each = J+1)
-## ############################################################
-## ############# Returns Following Items: #####################
-## # $theta: Estimated Theta Vector
-## # $EstMktShare: Estimated Market Share
-## ############################################################
-## return(list(&quot;theta&quot; = fit$x, &quot;EstMktShare&quot; = estMktShare))}</code></pre>
-<pre class="r"><code>fitCWPlus</code></pre>
-<pre><code>## function(data, ### Data in the Same Form as createData()
-##                  betaGrid, ### Grid of Points to be used
-##                  J, #Number of Inside Goods
-##                  M, ### Number of Markets
-##                  c = exp(1) #Base of second Expnent
-##                  ){
-## ############################################################
-## ##################### Libraries ############################
-## ############################################################
-## require(lsei)
-## source(&quot;helperFunctions.R&quot;)
-## ############################################################
-## ################### Extract Data ##########################
-## ############################################################
-## X = as.matrix(data[,4:ncol(data)][data[,2] != 0,])
-## mktShare = as.matrix(data[,3][data[,2] != 0])
-## outsideMktShare = data[,3][data[,2] == 0]
-## ############################################################
-## ############### Invert Market Share ########################
-## ############################################################
-## insideUtilities =  (log(log(J)) - log(-log(mktShare)))/log(c)
-## ############################################################
-## ################ Estimates CW Model ########################
-## ############################################################
-## fit = pnnls(X %*% t(betaGrid),insideUtilities,sum =1)
-## ############################################################
-## ################ Calculates Market Shares ##################
-## ############################################################
-## estUtility = data[,4:ncol(data)] %*% t(betaGrid) %*% fit$x
-## estMktShare = exp(estUtility)/rep(.colSums(exp(estUtility),J+1,M),each = J+1)
-## ############################################################
-## ############# Returns Following Items: #####################
-## # $theta: Estimated Theta Vector
-## # $EstMktShare: Estimated Market Share
-## ############################################################
-## return(list(&quot;theta&quot; = fit$x, &quot;EstMktShare&quot; = estMktShare))}</code></pre>
-<p>So apparently I have a bunch of dependencies that don’t let it work.
-I have some working-ish code. But I want to walk through it on the
-replication page.</p>
 </div>
+<div id="what-can-we-learn-from-choice-probabilities" class="section level1">
+<h1>What can we learn from choice probabilities</h1>
+<p>So on the replication page, I have gotten pretty far with going from
+our model of <span class="math inline">\(u(X_t;\beta_i)\)</span> to
+<span class="math inline">\(\delta_t\)</span>. But what if I went at it
+from the other direction. Lets start at <span class="math inline">\(s_t\)</span> and work backwards. The goal begin is
+that there is some middle ground where I can connect the two.</p>
+<p>So if I have <span class="math inline">\(J\)</span> choice
+probabilities, that is just a <span class="math inline">\(J\times
+1\)</span> vector. I am not going to be able to map bijectively into
+<span class="math inline">\(J\times K\)</span> matrix. But what
+information can I bijectively map into. What information do I want? I
+would like to know how much I like each of the goods in relation to the
+others. Thats a given and is pretty much all we are doing now. Can I
+show what products are close in <span class="math inline">\(X\)</span>
+space? How would I show that two patterns are close substitutes when I
+can only tell you the choice probabilities? Can I do it with just a
+single market? What can I tell you if I only get one <span class="math inline">\((s_t,X_t)\)</span> pair. What can I tell you if I
+get a bunch of <span class="math inline">\(s_t\)</span> but <span class="math inline">\(X\)</span> stays constant? I think that goes
+against theory? What additional things can i tell you if I can to use
+multiple <span class="math inline">\(s_t\)</span> with variation in the
+<span class="math inline">\(X_t\)</span>?</p>
+<p>These are the questions to answer. One market is restrictive. Lets
+say that I have a bunch of <span class="math inline">\(s_t\)</span>, but
+I dont have any <span class="math inline">\(X_t\)</span>. Can I still
+communicate which are substitutes?</p>
+<p>So if I have a bunch of <span class="math inline">\(s_t\)</span>, I
+need a way to glue them together. So I can take the average. Let <span class="math inline">\(\overline s = \frac{1}{T}\sum_{t=1}^T
+s_t\)</span>. This is an interesting object. IF I knew nothing about
+<span class="math inline">\(X\)</span> my best guess at the choice
+probabilities would be <span class="math inline">\(\overline
+s\)</span></p>
+<p>There it is. Once I have two, there is no additional information.
+Only convergence. Hell yeah brother. Even with one, I get <span class="math inline">\(s_1 = \overline s\)</span> so <span class="math inline">\((s_1 - \overline s)^2 = 0\)</span> matrix.
+Boom!</p>
+<p>Okay, so now lets work with two choice proabilities. Everything else
+is just convergence. What do I get with two. Well i can calculate <span class="math inline">\(\overline s\)</span>. What if <span class="math inline">\(s_1 = s_2\)</span>? Then we get the zero matrix.
+If <span class="math inline">\(X_1 \neq X_2\)</span> then these are just
+bad <span class="math inline">\(X\)</span> matrices.</p>
+<p>Okay, so we assume that <span class="math inline">\(s_1 \neq
+s_2\)</span>. What if <span class="math inline">\(X_1 = X_2\)</span>.
+Again, bad. Theres stuff in my model that I can’t see that is driving
+results. Isnt that unobserved heterogeneity? Yes. Can we estimate it?
+MAybe. Lets see what that looks like. Lets pretend we don’t even see
+<span class="math inline">\(X_1,X_2\)</span>. What can we get.</p>
+<p>Well we can get <span class="math inline">\(\overline s\)</span>, we
+can get the difference vectors <span class="math inline">\(s_1 -
+\overline s\)</span>. We need to talk about what information is actually
+in a probability vector. So we have the vector. Dope. Is that any
+different from knowing its inner product <span class="math inline">\(s&#39;s\)</span>? I always forget what its range
+is. I know the what ever the minimize is, its at constant equal
+probability vector and the maximum is one of the identity matrix
+columns.</p>
+<p><span class="math display">\[ \min s&#39;s = \sum_{j=0}^J s_j^2 =
+\sum \frac{1}{J^2} = 1/J \]</span></p>
+<p>So the inner product is in <span class="math inline">\([\frac{1}{J},
+1)\)</span>. Kinda interesting that closed on the left hand side.
+Probably because thats the only unique one. The max is unique up to
+permutations. An induction prooof would be wild here. I wonder what is
+preventing it? But it seems like knowledge of a <span class="math inline">\(N\)</span> vector being unqiue couldnt give me
+much information about a <span class="math inline">\(N+1\)</span>
+because the values would have to change to remain as a probability
+vector.</p>
+<p>Ok. Uniqueness of inner products aside, does the outer product tell
+us anything. I dont think so. Not for regular vectors. This obviously
+gets more interesting when we start looking at the difference vectors.
+Lets do that now.</p>
+<p>What do we get from the two difference vectors. The inner product is
+given as <span class="math inline">\(\sum (s_{ij} - \overline
+s_j)^2\)</span>. So if <span class="math inline">\(s_{1j} =
+s_{2j}\)</span>, then <span class="math inline">\(\overline s_j =
+s_{ij}\)</span>. Whats the formula</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta s_i &#39; \Delta s_i &amp;= \sum (s_{ij} - \overline s_j)^2 \\
+&amp;= \sum s_{ij}^2 - 2 s_{ij}\overline s_i + \overline s_j^2 \\
+\end{aligned}
+\]</span></p>
+<p>Not immediately informative, but we carry on. What about the outer
+product. I think this is where we shine. What should the outer product
+tell us? It should tell us what two choice probabilities move together.
+If the difference is always negative, then shocking, they are
+substitutes. This is also an interesting way to get complements, but
+thats secondary in a lot of IO applicaitons.</p>
 </div>
 
 

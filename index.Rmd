@@ -2,20 +2,17 @@
 title: "Personal Site For Chase Wiedemann"
 output: html_document
 ---
-|
-[Home](https://chasewiedemann.github.io/index.html) |
-[About](https://chasewiedemann.github.io/Site/about.html) |
-[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
-[Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
-[Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
-# Hello!
+[Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) \| [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) \| [Blog](https://chasewiedemann.github.io/Site/blog.html)\|
+
+# Hello! 
 
 Welcome to my Personal Website. I am currently a 4th Year PhD student at WUSTL Olin Business School. My main field is Industrial Organization, focusing on how the structure of economies and markets impact their long term goals. I am currently studying these ideas in the context of Cities and Urban Economics. The type of questions I am interested in studying include: How do cities compete? Can we identify how they are competing? What are the long run implications of this competitive structure? Can we as economist do anything to help?
 
 Urban Economics provides a concrete and data abundant lens to work on these problems. My future goals are to take these ideas and methods and apply them to more exotic economies and markets. Areas that I find interesting that share a common structure with Cities include compensation contracts for online platforms like YouTube or Twitch, and the effect of market structure on new technology adoption.
 
-
-
 Check out the About Page to learn more about what this site is all about and how it connects with my research.
 
+Cheers!
+
+Chase Wiedemann

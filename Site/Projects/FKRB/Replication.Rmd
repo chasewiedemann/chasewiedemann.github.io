@@ -106,28 +106,16 @@ We can then distribute the $|R^N_b|$ to both terms, distribute the $N$ in the de
 $$
 \begin{aligned}
 \tilde \delta_t &= \lim_{N\to\infty} \sum_{b=1}^N \frac{|R^N_b|}{N} z(X_t;\tilde \beta) + \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
-&=  z(X_t;\tilde \beta) + \lim_{N\to \infty} \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b)
+&=  z(X_t;\tilde \beta) + \lim_{N\to \infty} \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
+&= z(X_t;\tilde \beta) + \int v(X_t;z)f_\nu(z)\, dz
 \end{aligned}
 $$ 
-Now notice that by construction, $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\nu$, the (non-parametric) density of the unobserved heterogeneity. 
+Where the final equality comes from $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\nu$, where $f_\nu$ is the (non-parametric) density of the unobserved heterogeneity.  
 
 
+# Estimating Unobserved Heterogeneity on Grids
 
-
-
-We now with to reestablish our bijection between $\tilde \delta_t$ and $s_t$. We maintain our assumption that $F_\epsilon$ follows a Type-1 Extreme Value distribution so we can maintain the logit expression above. We next need to make a normalization on $\tilde\delta_t$. This is complicated due to $\delta_t$ being a random vector through the addition of $F_\nu$.  
-$$
-\begin{aligned}
-s_{jt} &= \frac{e^{z(X_{jt};\tilde \beta) + \mathbb E_\nu\left[ v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde \beta) + \mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
-&= \frac{e^{z(X_{jt};\tilde \beta)}e^{\mathbb E_\nu\left[ v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde \beta)}e^{\mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
-\frac{s_{jt}}{s_{0t}} &= 
-\end{aligned}
-$$
-
-
-# Model
-
-
+We now look to develop an estimator of $f_\nu$ based on the derivation above. The first thing we wish to do is to remove the influence of $z(X_t;\tilde\beta)$
 
 
 

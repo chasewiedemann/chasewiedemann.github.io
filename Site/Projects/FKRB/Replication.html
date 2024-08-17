@@ -588,31 +588,17 @@ to yield</p>
 \tilde \delta_t &amp;= \lim_{N\to\infty} \sum_{b=1}^N \frac{|R^N_b|}{N}
 z(X_t;\tilde \beta) + \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
 &amp;=  z(X_t;\tilde \beta) + \lim_{N\to \infty} \sum_{b=1}^N
-\frac{|R^N_b|}{N}v(X_t;\nu_b)
+\frac{|R^N_b|}{N}v(X_t;\nu_b) \\
+&amp;= z(X_t;\tilde \beta) + \int v(X_t;z)f_\nu(z)\, dz
 \end{aligned}
-\]</span> Now notice that by construction, <span class="math inline">\(\lim_{N\to \infty} \frac{|R_b^N|}{N} =
-f_\nu\)</span>, the (non-parametric) density of the unobserved
-heterogeneity.</p>
-<p>We now with to reestablish our bijection between <span class="math inline">\(\tilde \delta_t\)</span> and <span class="math inline">\(s_t\)</span>. We maintain our assumption that
-<span class="math inline">\(F_\epsilon\)</span> follows a Type-1 Extreme
-Value distribution so we can maintain the logit expression above. We
-next need to make a normalization on <span class="math inline">\(\tilde\delta_t\)</span>. This is complicated due
-to <span class="math inline">\(\delta_t\)</span> being a random vector
-through the addition of <span class="math inline">\(F_\nu\)</span>.<br />
-<span class="math display">\[
-\begin{aligned}
-s_{jt} &amp;= \frac{e^{z(X_{jt};\tilde \beta) + \mathbb E_\nu\left[
-v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde \beta) +
-\mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
-&amp;= \frac{e^{z(X_{jt};\tilde \beta)}e^{\mathbb E_\nu\left[
-v(X_{jt};\nu_i) \right]}}{\sum_{k=0}^J e^{z(X_{kt};\tilde
-\beta)}e^{\mathbb E_\nu\left[ v(X_{kt};\nu_i) \right]}} \\
-\frac{s_{jt}}{s_{0t}} &amp;=
-\end{aligned}
-\]</span></p>
+\]</span> Where the final equality comes from <span class="math inline">\(\lim_{N\to \infty} \frac{|R_b^N|}{N} =
+f_\nu\)</span>, where <span class="math inline">\(f_\nu\)</span> is the
+(non-parametric) density of the unobserved heterogeneity.</p>
 </div>
-<div id="model" class="section level1">
-<h1>Model</h1>
+<div id="estimating-unobserved-heterogeneity-on-grids" class="section level1">
+<h1>Estimating Unobserved Heterogeneity on Grids</h1>
+<p>We now look to develop an estimator of <span class="math inline">\(f_\nu\)</span> based on the derivation above. The
+first thing we wish to do is to remove the influence of <span class="math inline">\(z(X_t;\tilde\beta)\)</span></p>
 </div>
 
 
