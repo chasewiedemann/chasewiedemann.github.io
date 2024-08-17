@@ -1,10 +1,6 @@
 ---
 title: "Blog"
 output: html_document
-theme: journal
-editor_options: 
-  markdown: 
-    wrap: 72
 ---
 
 [Home](https://chasewiedemann.github.io/index.html) \|
@@ -14,7 +10,7 @@ editor_options:
 Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html)
 \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
-# 8/16/24 {style="color: lightblue"}
+# 8/16/24 ""
 
 Okay. Its Fast Function Friday. Should that be here, or should i link to
 it? I'm going to be doing the FKRB stuff and optimizing that, so its the
@@ -26,7 +22,7 @@ does it go after? We will find out. The schedule for today is
 
 Lets go.
 
-# 8/15/24 A Productive Day {style="color: lightblue"}
+# 8/15/24 A Productive Day
 
 Lets make today productive. We need to do three things - Lets implement
 McMillen 2001 in the MuniProject replication page - Lets get everything
@@ -43,7 +39,7 @@ and I was able to get all the data done in the MuniProject. Disney world
 and airports (and just random missing zipcodes) really made today and
 issue. But back at it tomrrow/later tonight after tennis
 
-# 8/14/24 Same Stuff Different Day {style="color: lightblue"}
+# 8/14/24 Same Stuff Different Day
 
 I had three things on my to do list yesterday and I almost finished 1
 1/2. As a quick recap, I am almost done with the McMillen 2001 paper
@@ -123,7 +119,7 @@ things.
 Of the 4 things I set out to do I did 3 of them. Not terrible. I need to
 do some FKRB stuff tomorrow. But overall a good day.
 
-# 8/13/24 Another Day another Dollar {style="color: lightblue"}
+# 8/13/24 Another Day another Dollar
 
 Ok. So the plan for today is three fold. First, I want to do a paper
 summary on McMillan 2001. This is the subcenter identification paper
@@ -147,7 +143,7 @@ definitely have learned alot.
 
 The eval stuff is really getting me. Some stuff runs, so doesnt
 
-# 8/12/2024: Site Refinements and Some Actual Work {style="color: lightblue"}
+# 8/12/2024: Site Refinements and Some Actual Work
 
 The goal for today is to get the site to a point where its fully
 functional, but still pretty ugly. That includes
@@ -314,7 +310,7 @@ Calling it for the day at work. The replication code is take forever to
 run, so I am going to commit and then let it run over night. Were back
 at it tomorrow.
 
-# 8/11/2024: Making This Site {style="color: lightblue"}
+# 8/11/2024: Making This Site
 
 I am trying to get this site running. I'm hosting it on github pages
 through a Rproject. I like the simplicity of it so far, but the things I
