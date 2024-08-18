@@ -583,6 +583,171 @@ notation now and will hopefully be a bit faster in the main paper.</p>
 <div id="klr-2023" class="section level1">
 <h1>KLR 2023</h1>
 <p>lets go</p>
+<ul>
+<li>centeral question: understand the response of the patial
+distribution of economic activety to fundamental shocks, such as changes
+in productivity. (thats a counterfactual)</li>
+<li>responce to shocks is graduaal beacuse migration friction cause the
+tiebout hypotheiss to move slow, and capital takes time to build</li>
+<li>challenge: forward looking capital investments with population
+mobility</li>
+<li>investment and migration decisions in each location depend on one
+another, and decisions in all locations in all future time periods.
+(giant state space)</li>
+<li>They are going to give us a tractable framework for incorportating
+foward-looking investment into dynamic descrete choice migration model
+that tackles the issue of a giant state space</li>
+<li>Second, through linearization, they obtain closed form solutions for
+the economies transition path in terms of an impact matrix that captures
+the initial impact of shocks and a transition matrix that governs the
+updating of state-variarbles.</li>
+<li>They show that the repsonce of the economy to any shock tofundaments
+can be characterized in terms of the eigenvalues and vector of the
+transition matrix.</li>
+<li>With this they are able to show that capital accumulation and
+migration dynamics play a centreal role in the observed decline in the
+rate of income convergence accros US states and the persistent and
+heterogenous impact of shocks.</li>
+<li>To show their new stuff, they use standard and simple models from
+the literature
+<ul>
+<li>Single sector Armington (1969) model of trade with constant
+elasticity gravity equation fro trade</li>
+<li>constant elasticity dynamic discrete choice model of migration from
+CAliendo, Dvorkin, &amp; PArro (2019), which gives us a constant
+elasticity gravity equation for migration</li>
+<li>textbook macro specification for capital accumulation where agents
+choose consumption and investment to maximize intertemporal utility
+subject to an intertemporal budget constraint</li>
+<li>The main simplifying assumption is to draw a distriction between
+workers and landlords, like Moll (2014), where morkers make
+forward-looking migration decisions, but do not have access to an
+investment technology and live “hand to mouth”. LAndlords are
+geographically immobile, but have access to an investment technology in
+local capital such as buildings and structures, and make forward looking
+capital accumulation decisions with respect to that capital</li>
+</ul></li>
+<li>the model allows for many locations that differ in productive and
+amenities, and a rich geography of bilateral trade and migration
+costs.</li>
+<li>They are going to show how to derive analytical conditions for the
+existence and uniqueness of equilibirum</li>
+<li>The eq only relys on the structural parameters such as agglomeration
+and dispersion forces which are invarient with respect to the initial
+conditions.</li>
+<li>The exact-hat algebra can let us take any point on the trasition
+path, change the the fundamentals, and then solve for the counterfactual
+transition path.</li>
+<li>Linearizing the model gives us a closed form solution for the
+eoncomies transtion path in terms of the impact and transition matrices.
+These matrices depend solely on trade and migration shares that are
+observed in the data and the structural paramters</li>
+<li>Eigendecompostion of the transition matrix shows that the dynamic
+responce of the state variables to any empiralcal shock to productivity
+and amenities can be expressed as a linear combination of its response
+to what they call eigenshocks
+<ul>
+<li>shocks to the fundamentals for which the initial impact on the
+capital and labor state vairavles correspons to an eigenvector of the
+transition matrix.</li>
+</ul></li>
+<li>Eigenshocks have three key properties
+<ul>
+<li>computable from the observed data</li>
+<li>speed of convergence to steady state for an eigen shock depends
+solely on the associated eigen value, allowing for sharp
+characterization of the determinates of speed of convergecne</li>
+<li>we can revoer loadings of any empirical shock to fundamentals on
+these eigenshocks from a linear projection of the empirical schocks on
+the eigenshocks, which allows them to use the framework to understand
+the impact of epmirical shocks.</li>
+</ul></li>
+<li>They apply their framework to the determinants of income convergence
+across US states from 1965 to 2015.</li>
+<li>The tractablity of their approach allows for a large number of
+extensions and generalizations including agglomeration forces in
+production and residential decsiion. They show that the model works for
+a large class of trade and interal competition models.</li>
+<li>Who do they cite?
+<ul>
+<li>Economic Geography - Krugman 1991 and Fujita, Krugma and Venables
+1999</li>
+<li>dynamic discrete choice models of migration: artuc, chaduhuri and
+mcLaren 2010, Caliendo and Parro 2020, allen donalson 2022, but the big
+one is above</li>
+<li>dyanmic models of capital accumulation: Aderson, Larch, Yotov 2015,
+Eaton Kortum Neiman and Romalis 2016, Alverex 2017, ravikumar, santacreu
+and sposi 2019</li>
+</ul></li>
+</ul>
+<div id="the-model" class="section level2">
+<h2>The model</h2>
+<ul>
+<li><span class="math inline">\(N\)</span> Locations indexed by <span class="math inline">\(i\)</span></li>
+<li>Discrete time indexed by <span class="math inline">\(t\)</span>.</li>
+<li>Two types of infinitely lived agents
+<ul>
+<li>workers</li>
+<li>landlords</li>
+</ul></li>
+<li>Workers are endowed with one unit of labor that is supplied
+inelastically and are geographically mobile subject to migration costs.
+Wroders do not ahve access to any investmetn technology, so they live
+hand to mouth as in Kaplan Violante (2014)</li>
+<li>Landlords are geographically immoble and own the capital stock in
+their location.</li>
+<li>They make forward lookign decsiions over consumption and investment
+in this local stock of capital.
+<ul>
+<li>We should be thinking of this capital as buildigns and strucures
+that are geographically immobile once installed and depreciate at a
+constant rate <span class="math inline">\(\delta\)</span></li>
+</ul></li>
+<li>The endogenous state variables are the population and capital stock
+in each location.</li>
+<li>the key location characteeristics that determine the spatial
+distribution of economic activity are the sequences of productivity
+<span class="math inline">\(z_{it}\)</span>, amenities <span class="math inline">\(b_{it}\)</span>, bilateral trade costs <span class="math inline">\(\tau_{nit}\)</span>, and bilateral migration costs
+<span class="math inline">\(\kappa_{nit}\)</span>.</li>
+<li>We normalize the total population across all location to be equal to
+1 in each period. This allows us to take <span class="math inline">\(l_{it}\)</span> as a population market share</li>
+</ul>
+<div id="production" class="section level3">
+<h3>Production</h3>
+<ul>
+<li>at the begining of each period <span class="math inline">\(t\)</span>, the economy inherits in each location
+<span class="math inline">\(i\)</span> a mass of workers <span class="math inline">\(l_it\)</span> and a capital stock <span class="math inline">\(k_it\)</span>.</li>
+<li>firms in each location use labor and capital to produce out put
+<span class="math inline">\(y_{it}\)</span> of the variety supplied by
+that location.</li>
+<li>Production is assumed to occur under conditions of perfect
+competition and subject constant returns to scale technology <span class="math display">\[ y_{it} =
+z_{it}(\frac{l_{it}}{\mu})^\mu(\frac{k_{it}}{1-\mu})^{1-\mu}, 0 &lt; \mu
+&lt;1 \]</span></li>
+<li>Impose inceberg variable trade costs, such that <span class="math inline">\(\tau_{nit}&gt;1\)</span> units of a good must be
+shipped from location <span class="math inline">\(i\)</span> in order
+for one unit to arrive in location <span class="math inline">\(n\)</span>.</li>
+<li>profit maximization implies the cost to the consumer in location
+<span class="math inline">\(n\)</span> of sourcing good produced in
+location <span class="math inline">\(i\)</span> depends solely on these
+iceberg trade costs and constant marginal costs <span class="math display">\[ p_{nit} = \tau_{nit}p_{iit} =
+\frac{\tau_{nit}w_{it}^\mu r_{it}^{1-\mu}}{z_{it}} \]</span> Where <span class="math inline">\(p_{iit}\)</span> is the free on board price of the
+good supplied by location <span class="math inline">\(i\)</span> before
+trade costs</li>
+<li>Normalize total labor income of all location <span class="math inline">\(\sum_{i=1}^N w_{it}l_{it} = 1\)</span> ### Worker
+consumption</li>
+<li>workers preferences in each period <span class="math inline">\(t\)</span> are the standard ARmington model of
+trade with constant elasticity of subsitution</li>
+<li>Workers spend wage income on products from different location to
+maximize utility in each period</li>
+<li>flow utility of a worker in location <span class="math inline">\(n\)</span> in period <span class="math inline">\(t\)</span> depends on amenities <span class="math inline">\(b_{nt}\)</span> and the consumption index <span class="math inline">\(c^w_{nt}\)</span> defined over the variety of
+products given as <span class="math display">\[ u_{nt}^w =
+b_{nt}c^w_{nt}, c_{nt}^w = \left[ \sum_{i=1}^N
+(c_{ni}^w)^{\theta/(\theta+1)}\right]^{(\theta+1)/\theta}, \theta =
+\sigma -1, \sigma &gt;1 \]</span></li>
+</ul>
+</div>
+</div>
 </div>
 
 

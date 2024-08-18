@@ -3,19 +3,394 @@ title: "Blog"
 output: html_document
 ---
 
-[Home](https://chasewiedemann.github.io/index.html) \|
-[About](https://chasewiedemann.github.io/Site/about.html) \|
-[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)
-\| [Paper
-Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html)
-\| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
+[Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) \| [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
-# 8/16/24 ""
+# 8/18/24
 
-Okay. Its Fast Function Friday. Should that be here, or should i link to
-it? I'm going to be doing the FKRB stuff and optimizing that, so its the
-work is going to take place in the mini-blog and replication. But where
-does it go after? We will find out. The schedule for today is
+The last couple of post have mainly been check ins in order to set up my day. Here I want to actaully work on something in a blog post. I want to work out how multivariate normal distributions are computed from the `mvrnorm` function.
+
+Heres the function taken from the `MASS` package source that can be found [here](https://rdrr.io/cran/MASS/src/R/mvrnorm.R)
+
+```{r}
+# file MASS/R/mvrnorm.R
+# copyright (C) 1994-2015 W. N. Venables and B. D. Ripley
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 or 3 of the License
+#  (at your option).
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  http://www.r-project.org/Licenses/
+#
+mvrnorm <-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p <- length(mu)
+    if(!all(dim(Sigma) == c(p,p))) stop("incompatible arguments")
+    if(EISPACK) stop("'EISPACK' is no longer supported by R", domain = NA)
+    eS <- eigen(Sigma, symmetric = TRUE)
+    ev <- eS$values
+    if(!all(ev >= -tol*abs(ev[1L]))) stop("'Sigma' is not positive definite")
+    X <- matrix(rnorm(p * n), n)
+    if(empirical) {
+        X <- scale(X, TRUE, FALSE) # remove means
+        X <- X %*% svd(X, nu = 0)$v # rotate to PCs
+        X <- scale(X, FALSE, TRUE) # rescale PCs to unit variance
+    }
+    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    nm <- names(mu)
+    if(is.null(nm) && !is.null(dn <- dimnames(Sigma))) nm <- dn[[1L]]
+    dimnames(X) <- list(nm, NULL)
+    if(n == 1) drop(X) else t(X)
+}
+
+```
+
+Beautiful.
+
+Here it is with just the minimal operational code, no documentation,checks to make sure things don't go screwy, or internal scaling (empirical).
+
+```{r}
+mvrnorm <-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p <- length(mu)
+    eS <- eigen(Sigma, symmetric = TRUE)
+    ev <- eS$values
+    X <- matrix(rnorm(p * n), n)
+    
+    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    
+
+     drop(X)
+}
+```
+
+Lets write this out in words, Lets assume $n=1$ so we are just simulating a single vector and $\mu$ is the zero vector as it enters additively
+
+-   $p$ is the dimension of the vector we wish to simulate
+-   We then extract the eigenvalues and vectors from the provided $\Sigma$ matrix (more on this later)
+-   This part is very interesting. We then initiate the vector as draws from the standardized univariate distribution, looking at this will come later
+-   We then take the output as the eigenvectors multiplied by a diagonal matrix containing the square roots of eigenvalues of $\Sigma$, but with all negative eigenvalues replaced with zero, and then this gets multiplied by the transpose of the vector of univariate draws.
+
+Ok. Now lets get into a little more detail. Let the univariate draws be given as $x = (g(u_1),g(u_2),\dots g(u_p))$ where $g$ is the quantile function for the univariate distibution we are trying to draw from (in this case its the normal distribution) and $u_i$ are draws from the uniform distribution. The $u_i$ are the only source of randomness in this entire function. We start with an eigen-decomposition of the supplied $\Sigma$ matrix. Lets look at the source code for the `eigen` function. This code is in base R and can be found [here](https://github.com/SurajGupta/r-source/blob/master/src/library/base/R/eigen.R)
+
+```{r}
+#  File src/library/base/R/eigen.R
+#  Part of the R package, https://www.R-project.org
+#
+#  Copyright (C) 1995-2015 The R Core Team
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  https://www.R-project.org/Licenses/
+
+
+isSymmetric <- function(object, ...) UseMethod("isSymmetric")
+
+isSymmetric.matrix <- function(object, tol = 100*.Machine$double.eps, ...)
+{
+    if(!is.matrix(object)) return(FALSE) ## we test for  symmetric *matrix*
+    ## cheap pretest: is it square?
+    d <- dim(object)
+    if(d[1L] != d[2L]) return(FALSE)
+    test <-
+        if(is.complex(object))
+            all.equal.numeric(object, Conj(t(object)), tolerance = tol, ...)
+        else # numeric, character, ..
+            all.equal(object, t(object), tolerance = tol, ...)
+    isTRUE(test)
+}
+
+eigen <- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
+{
+    x <- unname(as.matrix(x))
+    n <- nrow(x)
+    if (!n) stop("0 x 0 matrix")
+    if (n != ncol(x)) stop("non-square matrix in 'eigen'")
+    n <- as.integer(n)
+    if(is.na(n)) stop("invalid nrow(x)")
+
+    complex.x <- is.complex(x)
+    if (!all(is.finite(x))) stop("infinite or missing values in 'x'")
+
+    if(missing(symmetric)) symmetric <- isSymmetric.matrix(x)
+
+    if (symmetric) {
+        z <- if(!complex.x) .Internal(La_rs(x, only.values))
+        else .Internal(La_rs_cmplx(x, only.values))
+       
+    } else {
+        z <- if(!complex.x) .Internal(La_rg(x, only.values))
+        else .Internal(La_rg_cmplx(x, only.values))
+        ord <- sort.list(Mod(z$values), decreasing = TRUE)
+    }
+    return(list(values = z$values[ord],
+                vectors = if (!only.values) z$vectors[, ord, drop = FALSE]))
+}
+```
+
+We can clean this as we did above to look at it a little easier. We will take out the additional non-symmetric and complex cases as well
+
+```{r}
+eigen <- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
+{
+        z <- .Internal(La_rs(x, only.values))
+        ord <- sort.list(Mod(z$values), decreasing = TRUE)
+        
+    return(list(values = z$values[ord],
+                vectors =  z$vectors[, ord, drop = FALSE]))
+}
+
+```
+
+Well thats underwhelming, `eigen` is just a wrapper for an internal function `La_rs`. Lets look at the source for that. Its from the `Lapack` module and is written in `FORTRAN` (not an expert). I will have to comment out all the code for this page to not crash when I try to render it
+
+```{r}
+# static SEXP La_rs(SEXP x, SEXP only_values)
+# {
+#     int *xdims, n, lwork, info = 0, ov;
+#     char jobv[2] = "U", uplo[2] = "L", range[2] = "A";
+#     SEXP z = R_NilValue;
+#     double *work, *rx, *rvalues, tmp, *rz = NULL;
+#     int liwork, *iwork, itmp, m;
+#     double vl = 0.0, vu = 0.0, abstol = 0.0;
+#     /* valgrind seems to think vu should be set, but it is documented
+#        not to be used if range='a' */
+#     int il, iu, *isuppz;
+# 
+#     xdims = INTEGER(coerceVector(getAttrib(x, R_DimSymbol), INTSXP));
+#     n = xdims[0];
+#     if (n != xdims[1]) error(_("'x' must be a square numeric matrix"));
+#     ov = asLogical(only_values);
+#     if (ov == NA_LOGICAL) error(_("invalid '%s' argument"), "only.values");
+#     if (ov) jobv[0] = 'N'; else jobv[0] = 'V';
+# 
+#     /* work on a copy of x, since LAPACK trashes it */
+#     if (!isReal(x)) {
+# 	x = coerceVector(x, REALSXP);
+# 	rx = REAL(x);
+#     } else {
+# 	rx = (double *) R_alloc(n * (size_t) n, sizeof(double));
+# 	Memcpy(rx, REAL(x), (size_t) n * n);
+#     }
+#     PROTECT(x);
+#     SEXP values = PROTECT(allocVector(REALSXP, n));
+#     rvalues = REAL(values);
+# 
+#     if (!ov) {
+# 	z = PROTECT(allocMatrix(REALSXP, n, n));
+# 	rz = REAL(z);
+#     }
+#     isuppz = (int *) R_alloc(2*(size_t)n, sizeof(int));
+#     /* ask for optimal size of work arrays */
+#     lwork = -1; liwork = -1;
+#     F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
+# 		     &vl, &vu, &il, &iu, &abstol, &m, rvalues,
+# 		     rz, &n, isuppz,
+# 		     &tmp, &lwork, &itmp, &liwork, &info);
+#     if (info != 0)
+# 	error(_("error code %d from Lapack routine '%s'"), info, "dsyevr");
+#     lwork = (int) tmp;
+#     liwork = itmp;
+# 
+#     work = (double *) R_alloc(lwork, sizeof(double));
+#     iwork = (int *) R_alloc(liwork, sizeof(int));
+#     F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
+# 		     &vl, &vu, &il, &iu, &abstol, &m, rvalues,
+# 		     rz, &n, isuppz,
+# 		     work, &lwork, iwork, &liwork, &info);
+#     if (info != 0)
+# 	error(_("error code %d from Lapack routine '%s'"), info, "dsyevr");
+# 
+#     SEXP ret, nm;
+#     if (!ov) {
+# 	ret = PROTECT(allocVector(VECSXP, 2));
+# 	nm = PROTECT(allocVector(STRSXP, 2));
+# 	SET_STRING_ELT(nm, 1, mkChar("vectors"));
+# 	SET_VECTOR_ELT(ret, 1, z);
+# 	UNPROTECT_PTR(z);
+#     } else {
+# 	ret = PROTECT(allocVector(VECSXP, 1));
+# 	nm = PROTECT(allocVector(STRSXP, 1));
+#     }
+#     SET_STRING_ELT(nm, 0, mkChar("values"));
+#     setAttrib(ret, R_NamesSymbol, nm);
+#     SET_VECTOR_ELT(ret, 0, values);
+#     UNPROTECT(4);
+#     return ret;
+# }
+
+```
+
+Again, I'm not an expert. I'm going to call in "the expert"
+
+## START CHATGPT
+
+## Conversation on Understanding Fortran Code
+
+### User:
+Hello, I'm trying to figure out what this Fortran code does.
+
+### Assistant:
+Sure, I can help with that. Please share the Fortran code you'd like to understand.
+
+### User:
+```fortran
+F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
+                 &vl, &vu, &il, &iu, &abstol, &m, rvalues,
+                 rz, &n, isuppz,
+                 work, &lwork, iwork, &liwork, &info);
+```
+
+### Assistant:
+The Fortran code you've provided is a call to a function named `dsyevr`, which is part of the LAPACK (Linear Algebra PACKage) library. The `dsyevr` function is used to compute selected eigenvalues and, optionally, the corresponding eigenvectors of a real symmetric matrix.
+
+Here's a breakdown of the parameters and what the function does:
+
+1. **`jobv`**: Specifies whether to compute eigenvectors (`'V'`) or not (`'N'`).
+
+2. **`range`**: Specifies the range of eigenvalues to find:
+   - `'A'`: All eigenvalues.
+   - `'V'`: Eigenvalues within the interval `[vl, vu]`.
+   - `'I'`: Eigenvalues with indices in the range `[il, iu]`.
+
+3. **`uplo`**: Specifies whether the matrix is upper triangular (`'U'`) or lower triangular (`'L'`).
+
+4. **`n`**: The order of the matrix (number of rows/columns).
+
+5. **`rx`**: The array containing the symmetric matrix whose eigenvalues and eigenvectors are to be computed.
+
+6. **`vl`, `vu`**: If `range = 'V'`, these specify the lower and upper bounds of the interval.
+
+7. **`il`, `iu`**: If `range = 'I'`, these specify the indices of the smallest and largest eigenvalues to be returned.
+
+8. **`abstol`**: The absolute error tolerance for the eigenvalues. 
+
+9. **`m`**: The total number of eigenvalues found.
+
+10. **`rvalues`**: The array to store the computed eigenvalues.
+
+11. **`rz`**: The array to store the computed eigenvectors if they are required.
+
+12. **`isuppz`**: An integer array that indicates which columns of `rz` contain the eigenvectors.
+
+13. **`work`**: Workspace array for intermediate calculations.
+
+14. **`lwork`**: The length of the `work` array.
+
+15. **`iwork`**: An integer workspace array.
+
+16. **`liwork`**: The length of the `iwork` array.
+
+17. **`info`**: Output parameter that indicates the success or failure of the computation.
+
+#### Summary
+This call is used to find specific eigenvalues (and optionally, eigenvectors) of a real symmetric matrix, depending on the `range` and `jobv` parameters. The results, including the eigenvalues and eigenvectors, are stored in the provided arrays (`rvalues`, `rz`).
+
+Would you like a more detailed explanation of any specific part?
+
+### User:
+How does it compute `rvalues` and `rz`?
+
+### Assistant:
+The `dsyevr` function computes the eigenvalues (`rvalues`) and eigenvectors (`rz`) of a real symmetric matrix using a combination of methods designed to be efficient and accurate. Here's an overview of how these computations are typically performed within the function:
+
+#### 1. Matrix Reduction to Tridiagonal Form
+The first step in computing the eigenvalues and eigenvectors is to reduce the input symmetric matrix `rx` to a tridiagonal form. This is done using a series of Householder transformations. The tridiagonal matrix has the same eigenvalues as the original matrix but is easier to work with computationally.
+
+#### 2. Computation of Eigenvalues and Eigenvectors
+Depending on the `range` parameter, `dsyevr` employs the following strategies:
+   - **All Eigenvalues (`range = 'A'`)**: The function computes all eigenvalues of the tridiagonal matrix using a bisection method and, optionally, eigenvectors using an inverse iteration method.
+   - **Eigenvalues in a Specific Range (`range = 'V'`)**: Eigenvalues within a specified interval `[vl, vu]` are computed. The bisection method is often used to isolate the eigenvalues within this range.
+   - **Eigenvalues by Index (`range = 'I'`)**: Only the eigenvalues with indices `[il, iu]` are computed.
+
+#### 3. Refinement of Eigenvalues
+The eigenvalues are refined to high precision, typically by using the bisection method or the QR algorithm. This step ensures that the computed eigenvalues are as accurate as possible within the specified tolerance `abstol`.
+
+#### 4. Computation of Eigenvectors
+If the `jobv` parameter is set to `'V'`, the eigenvectors corresponding to the computed eigenvalues are calculated. This is done by applying the inverse of the Householder transformations (used in the reduction to tridiagonal form) to the eigenvectors of the tridiagonal matrix. The eigenvectors are then normalized.
+
+#### 5. Final Assembly
+The eigenvalues are stored in the array `rvalues`, and the corresponding eigenvectors are stored in the matrix `rz`. The `isuppz` array indicates which columns of `rz` contain the computed eigenvectors.
+
+#### 6. Output and Information Flag
+The function returns the number of eigenvalues found in `m`, and the `info` parameter is used to indicate success or failure. If `info = 0`, the computation was successful; otherwise, it indicates an error.
+
+#### Summary of Methods
+- **Tridiagonal Reduction**: Simplifies the matrix while preserving eigenvalues.
+- **Bisection or QR Algorithm**: Ensures accurate computation of eigenvalues.
+- **Inverse Iteration**: Computes eigenvectors efficiently after eigenvalues are determined.
+
+Would you like to delve deeper into any specific method used in these steps?
+
+### User:
+When does it use bisection vs QR?
+
+### Assistant:
+The choice between the bisection method and the QR algorithm in `dsyevr` depends on the nature of the eigenvalue computation required and the range specified (`range = 'A'`, `'V'`, or `'I'`).
+
+#### Bisection Method
+The bisection method is typically used when you need to find eigenvalues in a specific range or a subset of eigenvalues. It is particularly useful in the following scenarios:
+
+1. **Range-Specified Eigenvalue Search (`range = 'V'` or `range = 'I'`)**:
+   - **`range = 'V'`**: When you want eigenvalues within a specific interval `[vl, vu]`, the bisection method is used to isolate and refine these eigenvalues. The bisection method works well for finding roots (eigenvalues) within a given interval, making it suitable for this task.
+   - **`range = 'I'`**: When you're interested in a subset of eigenvalues by index, say the `il`-th to `iu`-th eigenvalues, the bisection method can also be applied to isolate and compute only these eigenvalues.
+
+2. **When High Precision is Needed for Specific Eigenvalues**:
+   - The bisection method can be more reliable for computing eigenvalues to a high precision when you need only a few eigenvalues or eigenvalues within a narrow range. This method is less sensitive to rounding errors compared to the QR algorithm, especially when dealing with very small or very large eigenvalues.
+
+#### QR Algorithm
+The QR algorithm is used when all eigenvalues of the matrix are required, typically when `range = 'A'`:
+
+1. **All Eigenvalues (`range = 'A'`)**:
+   - When the goal is to compute all eigenvalues of the matrix, the QR algorithm is generally preferred. The QR algorithm iteratively reduces the matrix and computes all eigenvalues at once, which can be more efficient than using bisection for every eigenvalue.
+   - The QR algorithm is well-suited for this task because it handles the entire spectrum of eigenvalues efficiently and is often faster when all eigenvalues are needed.
+
+#### Summary of When Each Method is Used
+- **Bisection Method**:
+  - Used when `range = 'V'` or `range = 'I'`.
+  - Applicable for finding eigenvalues within a specific range or a subset by index.
+  - Preferable when high precision is needed for specific eigenvalues.
+
+- **QR Algorithm**:
+  - Used when `range = 'A'` (all eigenvalues).
+  - Efficient for computing all eigenvalues of the matrix.
+
+This distinction allows `dsyevr` to balance efficiency and accuracy depending on the specific needs of the eigenvalue problem being solved. If you need more details on how these methods are implemented in LAPACK or how they perform in practice, I can provide further insights.
+
+### User:
+Can you output this conversation into a format that can easily be copied and pasted into a markdown document?
+
+### Assistant:
+Certainly! Here's the entire conversation placed within a single code block:
+
+[Include the entire conversation above in a blockquote with appropriate markdown syntax.]
+
+
+## END CHATGPT
+
+
+Honestly pretty helpful. 
+
+# 8/16/24
+
+Okay. Its Fast Function Friday. Should that be here, or should i link to it? I'm going to be doing the FKRB stuff and optimizing that, so its the work is going to take place in the mini-blog and replication. But where does it go after? We will find out. The schedule for today is
 
 -   FKRB with a FFF flair
 -   KLR 2023 paper summary
@@ -24,37 +399,19 @@ Lets go.
 
 # 8/15/24 A Productive Day
 
-Lets make today productive. We need to do three things - Lets implement
-McMillen 2001 in the MuniProject replication page - Lets get everything
-from the old FKRB project onto the website - Lets get the intial reading
-of the KLR 2023 paper into the mini blog
+Lets make today productive. We need to do three things - Lets implement McMillen 2001 in the MuniProject replication page - Lets get everything from the old FKRB project onto the website - Lets get the intial reading of the KLR 2023 paper into the mini blog
 
 Accomplishing those goals constitutes a productive day. Lets go.
 
 ## End of the day
 
-Wow, I did not write much here at all. Check out the MuniProject page
-for all of todays work. I was able to fix the myRender function a bit,
-and I was able to get all the data done in the MuniProject. Disney world
-and airports (and just random missing zipcodes) really made today and
-issue. But back at it tomrrow/later tonight after tennis
+Wow, I did not write much here at all. Check out the MuniProject page for all of todays work. I was able to fix the myRender function a bit, and I was able to get all the data done in the MuniProject. Disney world and airports (and just random missing zipcodes) really made today and issue. But back at it tomrrow/later tonight after tennis
 
 # 8/14/24 Same Stuff Different Day
 
-I had three things on my to do list yesterday and I almost finished 1
-1/2. As a quick recap, I am almost done with the McMillen 2001 paper
-summary. I just need to finish the LWR part that is in the appendix. The
-census scrape is doing something weird after 2004, I cant get anything
-to run after that year. I'll have to figure that out. Finally, I want to
-get some work down on FKRB.
+I had three things on my to do list yesterday and I almost finished 1 1/2. As a quick recap, I am almost done with the McMillen 2001 paper summary. I just need to finish the LWR part that is in the appendix. The census scrape is doing something weird after 2004, I cant get anything to run after that year. I'll have to figure that out. Finally, I want to get some work down on FKRB.
 
-Before laying out my schedule, Ill mention that I'm trying to get a
-Linux distro on my home laptop. In my struggles, I got weak and went
-with a pretty large distro, Linux Mint: XFCE. The install didn't go
-great, something about the wifi drivers. So to make progress there, I'm
-going to go back to my guiding, No Black Boxes, principle and try to
-install tinyLinux CorePlus. I know, I should be using the Micro, but
-baby steps.
+Before laying out my schedule, Ill mention that I'm trying to get a Linux distro on my home laptop. In my struggles, I got weak and went with a pretty large distro, Linux Mint: XFCE. The install didn't go great, something about the wifi drivers. So to make progress there, I'm going to go back to my guiding, No Black Boxes, principle and try to install tinyLinux CorePlus. I know, I should be using the Micro, but baby steps.
 
 With that out of the way, lets talk schedule.
 
@@ -62,82 +419,51 @@ With that out of the way, lets talk schedule.
 -   Get some work done to present tomorrow with the Reading Group
     -   Replicate McMillen on zbp1994 data?
     -   His method and then the improvments I have in mind
-    -   Do it for St. Louis? Or should I do one of the metros he does to
-        compare? Probably the second one
+    -   Do it for St. Louis? Or should I do one of the metros he does to compare? Probably the second one
 -   FKRB
     -   go back and get my old data creation and estimation scripts
     -   implement one of the counterfactuals (see mini-blog)
 -   Flash the usb with Tiny Linux CorePlus
 
-The last thing is for the absolute end of the day so I can work on it at
-home. If I get the first two done, I would also like to figure out whats
-going on with the rest of the scrape.
+The last thing is for the absolute end of the day so I can work on it at home. If I get the first two done, I would also like to figure out whats going on with the rest of the scrape.
 
 Ok. Lets go
 
 ## Rendering
 
-Yesterday I ran into a bunch of issue with rendering. I should probably
-figure that out. I'm thinking thats a weekend project though.
+Yesterday I ran into a bunch of issue with rendering. I should probably figure that out. I'm thinking thats a weekend project though.
 
 ## McMillen Paper Summary
 
-I just finished the draft of the McMillen Paper summary. Should I edit
-now? Probably, but fresh eyes will help right? Onto stuff for the
-reading group.
+I just finished the draft of the McMillen Paper summary. Should I edit now? Probably, but fresh eyes will help right? Onto stuff for the reading group.
 
 ## EOD Reminders
 
-I was just working on the muniproject and I had a good idea. Theres a
-lot of things that I want to do at the end of the day, just because its
-going to take a lot of computational time, and I can just let it run
-overnight. I should create a section at the end of each days post that
-collects that. At the end of the day, I will do those, and write a
-little sign off, and then commit. Love it
+I was just working on the muniproject and I had a good idea. Theres a lot of things that I want to do at the end of the day, just because its going to take a lot of computational time, and I can just let it run overnight. I should create a section at the end of each days post that collects that. At the end of the day, I will do those, and write a little sign off, and then commit. Love it
 
 ## Code in Mini-Blogs
 
-The code in mini-blogs is becoming an issue and I don't know if the
-rendering is going to fix anything once I figure that out. I think a
-better idea is just to use longer code blocks and just have comments in
-the code. That should make it a bit easier. Once I get to an obvious
-stopping place I will go back to text.
+The code in mini-blogs is becoming an issue and I don't know if the rendering is going to fix anything once I figure that out. I think a better idea is just to use longer code blocks and just have comments in the code. That should make it a bit easier. Once I get to an obvious stopping place I will go back to text.
 
 ### An improvement
 
-When I want to go back and change the code, Ill just comment it out.
-That at least keeps some sort of record, and i dont have to re run
-things.
+When I want to go back and change the code, Ill just comment it out. That at least keeps some sort of record, and i dont have to re run things.
 
 ## EOD 8/14/24
 
--   Change names of zbpYEAR to zbpYEAR_scrape. That way I have a nice
-    name to save the cleaned version to.
+-   Change names of zbpYEAR to zbpYEAR_scrape. That way I have a nice name to save the cleaned version to.
 
 ## End of Day
 
-Of the 4 things I set out to do I did 3 of them. Not terrible. I need to
-do some FKRB stuff tomorrow. But overall a good day.
+Of the 4 things I set out to do I did 3 of them. Not terrible. I need to do some FKRB stuff tomorrow. But overall a good day.
 
 # 8/13/24 Another Day another Dollar
 
-Ok. So the plan for today is three fold. First, I want to do a paper
-summary on McMillan 2001. This is the subcenter identification paper
-that I will be extending with dynamics. After that, I want to work on
-some FKRB stuff. Probably get a data creation and estimation function
-going. I think that the data creation function is going to be the first
-Faster Function Friday. Third, the zbp scrape failed after 2004. I am
-having it run 2005 now, I think it might have just been a HTML timeout
-thing. If that finishes, Ill get it set up to run 2006:2018 overnight
-again. So thats the plan. Lets go.
+Ok. So the plan for today is three fold. First, I want to do a paper summary on McMillan 2001. This is the subcenter identification paper that I will be extending with dynamics. After that, I want to work on some FKRB stuff. Probably get a data creation and estimation function going. I think that the data creation function is going to be the first Faster Function Friday. Third, the zbp scrape failed after 2004. I am having it run 2005 now, I think it might have just been a HTML timeout thing. If that finishes, Ill get it set up to run 2006:2018 overnight again. So thats the plan. Lets go.
 
 ## End of Day
 
-I did not finish any of my three goals. But the paper summary is looking
-very good. Thank god for my blog or I definiately would not have
-remember to start the scrape again. Go check the McMillen summary. I
-still need to finishe the LWR portion, but its pretty good so far. I
-definitely have learned alot.
+I did not finish any of my three goals. But the paper summary is looking very good. Thank god for my blog or I definiately would not have remember to start the scrape again. Go check the McMillen summary. I still need to finishe the LWR portion, but its pretty good so far. I definitely have learned alot.
 
 ## Or so I thought
 
@@ -145,68 +471,36 @@ The eval stuff is really getting me. Some stuff runs, so doesnt
 
 # 8/12/2024: Site Refinements and Some Actual Work
 
-The goal for today is to get the site to a point where its fully
-functional, but still pretty ugly. That includes
+The goal for today is to get the site to a point where its fully functional, but still pretty ugly. That includes
 
 -   Refining the Home Page
 -   Refining About Page
 -   Getting Links and Templates for the Project Page
 -   Getting Links and Templates for the Paper Summaries Page
 
-After that I will mostly be working on the mini blog within the
-subcenter identification page. The next update should be saying that its
-all done, and the one after that will be on the mini-blog. Quick idea,
-mini blog H1 headers should appear as links in the main blog page.
+After that I will mostly be working on the mini blog within the subcenter identification page. The next update should be saying that its all done, and the one after that will be on the mini-blog. Quick idea, mini blog H1 headers should appear as links in the main blog page.
 
 ## Site Refinements
 
-I also want to append the myRender.R script to run the standard git
-process. So it would do all the rendering that it does now, stage all
-the changes, take the commit message as an argument, commit and push
-just from one click. Is this where I make my functions folder?
+I also want to append the myRender.R script to run the standard git process. So it would do all the rendering that it does now, stage all the changes, take the commit message as an argument, commit and push just from one click. Is this where I make my functions folder?
 
-I should also mention that. I want to start doing weekly things. As I am
-currently talking to no one, its more of just a commitment device. I'm
-think the two things will be "GPU Function Friday" where I try to speed
-up a commonly used R function using the GPU, and Monday Paper Summaries.
-That gets me doing something over the weekend.
+I should also mention that. I want to start doing weekly things. As I am currently talking to no one, its more of just a commitment device. I'm think the two things will be "GPU Function Friday" where I try to speed up a commonly used R function using the GPU, and Monday Paper Summaries. That gets me doing something over the weekend.
 
 Back to site refinements.
 
 ### Update
 
-I added a template for the Projects page, along with all the machinery
-to get the website to work. One thing I noticed is that the render now
-takes significantly longer. At some point, I'm going to need to have it
-check for changes in the Rmd files as compared to whats on Github before
-rendering. But, a more pressing issue is that it is doing double the
-work right now. The rmarkdown::render_site() creates a \_site dir that
-has the entire site. Lets see what happens if I remove that now that I
-have a better idea of whats going on. The other thing is that it is
-rendering the templates, which obviously doesn't need to happen, so I
-wrote a quick grepl to stop that. Lets see what happens
+I added a template for the Projects page, along with all the machinery to get the website to work. One thing I noticed is that the render now takes significantly longer. At some point, I'm going to need to have it check for changes in the Rmd files as compared to whats on Github before rendering. But, a more pressing issue is that it is doing double the work right now. The rmarkdown::render_site() creates a \_site dir that has the entire site. Lets see what happens if I remove that now that I have a better idea of whats going on. The other thing is that it is rendering the templates, which obviously doesn't need to happen, so I wrote a quick grepl to stop that. Lets see what happens
 
 ### Update 2
 
-Everything is working. I have a couple commits that aren't assigned to a
-blog post (I'm gonna start calling these unlabled commits) just to get
-it running. I had ~/Project/~ instead of ~/Projects/~ in the link for
-the projects.html page. Another thing I learned last night after reading
-about how the site updates is that my browser is caching the page and
-loading that instead of the newest version. If I want to see the newest
-version right away, I have to clear my browsers cache. Or I can just
-wait until it clears itself. This should appear along with the Mini-Blog
-and replication of the subcenter identification so lets go!
+Everything is working. I have a couple commits that aren't assigned to a blog post (I'm gonna start calling these unlabled commits) just to get it running. I had ~/Project/~ instead of ~/Projects/~ in the link for the projects.html page. Another thing I learned last night after reading about how the site updates is that my browser is caching the page and loading that instead of the newest version. If I want to see the newest version right away, I have to clear my browsers cache. Or I can just wait until it clears itself. This should appear along with the Mini-Blog and replication of the subcenter identification so lets go!
 
 ### Update 3
 
-I got to working on the subcenter project and realized that I dont have
-a way to get around within the projects page. I think that the projects
-pages will get a secondary navigation bar that lets you cycle through
-the working paper, working slides, replication, and mini-blog.
+I got to working on the subcenter project and realized that I dont have a way to get around within the projects page. I think that the projects pages will get a secondary navigation bar that lets you cycle through the working paper, working slides, replication, and mini-blog.
 
-I also have no idea how the working slides are going to work, but thats
-a problem for a different day. Lets get to work.
+I also have no idea how the working slides are going to work, but thats a problem for a different day. Lets get to work.
 
 -   add navigation to the template files
 -   Remove the unstarted FKRB and dmEstimator Folders
@@ -214,31 +508,15 @@ a problem for a different day. Lets get to work.
 
 ### Update 4
 
-lol. I am trying some fixes and I did them on the miniblog.rmd side. But
-I dont have a way of checking that. So lets do it to the
-replicaiton.rmd, which actually displays. Lets go
+lol. I am trying some fixes and I did them on the miniblog.rmd side. But I dont have a way of checking that. So lets do it to the replicaiton.rmd, which actually displays. Lets go
 
 ### Update 5
 
-It worked! I just want to add some pipes "\|" to seperate everything
-like the traditional nav bar.
+It worked! I just want to add some pipes "\|" to seperate everything like the traditional nav bar.
 
-I also want to mention two things. When I am doing commits to both this
-blog and a mini blog, I should be saying which one it is. But when I do
-both that can be kinda tricky. For the most part, I should just be
-commiting more before changing to other things. But when Im still doing
-a lot of site refinement, its gonna get messy. So bear with me and I'll
-try to make it somewhat intelligible
+I also want to mention two things. When I am doing commits to both this blog and a mini blog, I should be saying which one it is. But when I do both that can be kinda tricky. For the most part, I should just be commiting more before changing to other things. But when Im still doing a lot of site refinement, its gonna get messy. So bear with me and I'll try to make it somewhat intelligible
 
-Second, I had a good idea in the mini-blog for the muni project. My
-replication was getting pretty stream of conscious-y, and I was trying
-to define the boundaries between a mini blog and a replication. What I
-landed on is that a replication can (and should) be edited while the
-blog, whether is mini or big, should not. So thats gonna be the boundary
-between those two areas for now. I would imagine that any traditional
-segment that Id have on the blog, like GPU Function Friday would be
-editted. So maybe that gets its own section like the Projects and Paper
-Summaries? I don't know yet, lets find out. Back to work
+Second, I had a good idea in the mini-blog for the muni project. My replication was getting pretty stream of conscious-y, and I was trying to define the boundaries between a mini blog and a replication. What I landed on is that a replication can (and should) be edited while the blog, whether is mini or big, should not. So thats gonna be the boundary between those two areas for now. I would imagine that any traditional segment that Id have on the blog, like GPU Function Friday would be editted. So maybe that gets its own section like the Projects and Paper Summaries? I don't know yet, lets find out. Back to work
 
 -   Add Pipes
 -   add changes to templates
@@ -247,105 +525,59 @@ Summaries? I don't know yet, lets find out. Back to work
 
 ### Update 6
 
-It didn't work. I have the working directory, but apparently the
-internet wants links to be actual urls not the location of the files on
-my local computer. Weird. Well lets fix that and get it to work. Maybe a
-little bit more debugging instead of just looking at it and saying its
-good would be warrented next time.
+It didn't work. I have the working directory, but apparently the internet wants links to be actual urls not the location of the files on my local computer. Weird. Well lets fix that and get it to work. Maybe a little bit more debugging instead of just looking at it and saying its good would be warrented next time.
 
 ### Update 6 (mini Update)
 
-Mini update. I had WorkingSlide.html instead of WorkingSlides.html. This
-should be the last bug fix, for this. Lets go.
+Mini update. I had WorkingSlide.html instead of WorkingSlides.html. This should be the last bug fix, for this. Lets go.
 
 ### Update 7
 
-Well this little detour has taught me something. I need to be doing
-these site changes via a program instead of by hand and with templates.
-I basically need to be able to just call a function at the top of every
-page that will spit out the links to everything instead of changing it
-by hand. But thats defininately not what I need to be doing now. Thats a
-at home on my own time project.
+Well this little detour has taught me something. I need to be doing these site changes via a program instead of by hand and with templates. I basically need to be able to just call a function at the top of every page that will spit out the links to everything instead of changing it by hand. But thats defininately not what I need to be doing now. Thats a at home on my own time project.
 
-Am I basically just making CSS? Yeah probably. But at least its my CSS
-and I know what its doing. I'd imagine that actuall CSS is better for
-this, but that seems like a something for a MUCH later date.
+Am I basically just making CSS? Yeah probably. But at least its my CSS and I know what its doing. I'd imagine that actuall CSS is better for this, but that seems like a something for a MUCH later date.
 
 Ok, finally, back to work. Lets go
 
 ## Quick Thoughts on Code
 
-What happens when I have something that takes a while to run? I don't
-want it to run everytime i recompile. Making sure only the current
-project recompiles is something on the todo list, but this is within
-that problem.
+What happens when I have something that takes a while to run? I don't want it to run everytime i recompile. Making sure only the current project recompiles is something on the todo list, but this is within that problem.
 
-Obvious solution would be the run it, save it in a RDS, comment out the
-code block, and then load it. But thats very ugly and requires
-commenting and uncommenting. I think a better solution is to make
-everything a function. I can then either just comment out the function
-call, or I can write some if statements around it at the top. I like
-this solution and Im gonna implement it in the muniProject. I also need
-to figure out how the filing system is actually gonna work, but I think
-getting into the thick of it will tell me the best way. With that said,
-Ill report back from the thick of it.
+Obvious solution would be the run it, save it in a RDS, comment out the code block, and then load it. But thats very ugly and requires commenting and uncommenting. I think a better solution is to make everything a function. I can then either just comment out the function call, or I can write some if statements around it at the top. I like this solution and Im gonna implement it in the muniProject. I also need to figure out how the filing system is actually gonna work, but I think getting into the thick of it will tell me the best way. With that said, Ill report back from the thick of it.
 
 ## Lunch Thought
 
-GPU Function Friday is pretty restrictive. My thought at lunch was that
-it should be "Faster Function Friday". This incorporates a lot of
-different ways that I can make a function faster, instead of just using
-the GPU. Im gonna update the about page quick, and then carry on.
+GPU Function Friday is pretty restrictive. My thought at lunch was that it should be "Faster Function Friday". This incorporates a lot of different ways that I can make a function faster, instead of just using the GPU. Im gonna update the about page quick, and then carry on.
 
 ## Excited
 
-I just commited and looked at the mini-blog. Thats a lot of work going
-on. Also, the no eval worked but it propagated through the entire
-system. Id imagine I need to turn it on for each thing? Idk. Burn that
-bridge when we get to it.
+I just commited and looked at the mini-blog. Thats a lot of work going on. Also, the no eval worked but it propagated through the entire system. Id imagine I need to turn it on for each thing? Idk. Burn that bridge when we get to it.
 
 ## Calling for the day
 
-Calling it for the day at work. The replication code is take forever to
-run, so I am going to commit and then let it run over night. Were back
-at it tomorrow.
+Calling it for the day at work. The replication code is take forever to run, so I am going to commit and then let it run over night. Were back at it tomorrow.
 
 # 8/11/2024: Making This Site
 
-I am trying to get this site running. I'm hosting it on github pages
-through a Rproject. I like the simplicity of it so far, but the things I
-have read online have been suggesting a blogdown for larger projects.
-But I think I want to be the one whose doing all the background work,
-instead of relying on some blackbox to do it. Well, I am already relying
-on the blackbox of Rmarkdown, but I think I get that better.
+I am trying to get this site running. I'm hosting it on github pages through a Rproject. I like the simplicity of it so far, but the things I have read online have been suggesting a blogdown for larger projects. But I think I want to be the one whose doing all the background work, instead of relying on some blackbox to do it. Well, I am already relying on the blackbox of Rmarkdown, but I think I get that better.
 
-Alright, the plan for the rest of the day is to get my municipal project
-onto here. What does that look like.
+Alright, the plan for the rest of the day is to get my municipal project onto here. What does that look like.
 
 -   You click on Projects
 -   Its under working projects
 -   you click on the title
--   it takes you to the replication page (or the diary page not sure
-    yet)
--   You can get to the other pages (working paper, working slides, and
-    replication) from that initial page
+-   it takes you to the replication page (or the diary page not sure yet)
+-   You can get to the other pages (working paper, working slides, and replication) from that initial page
 
 Lets go!
 
 ### Some starters
 
-I think I want to document heavily, and to get that done, lets get a
-little formalism on how to do that. I imagine this isnt really where I
-should be doing stuff like this when working on a project, that should
-be on the diary page of that project, but this is like the diary of the
-website, so the rambling should go here. Lets say that all dated diary
-posts start with two hashtags and then any subsection start with 3. Lets
-see how this works in read time.
+I think I want to document heavily, and to get that done, lets get a little formalism on how to do that. I imagine this isnt really where I should be doing stuff like this when working on a project, that should be on the diary page of that project, but this is like the diary of the website, so the rambling should go here. Lets say that all dated diary posts start with two hashtags and then any subsection start with 3. Lets see how this works in read time.
 
 ### Site rendering reminder
 
-To render the site, save everything, rmarkdown::render_site(), commit
-and push.
+To render the site, save everything, rmarkdown::render_site(), commit and push.
 
 ### Lets try some code
 
@@ -356,77 +588,41 @@ print(1+1)
 
 ### It worked!
 
-Lets add some more stucutre before working on the projects. I want the
-files system that is running this website to mimic the website. So the
-only thing that is going to go in the main part of the file is the
-index.rmd that contains the text of the front page, and the \_site.yaml
-file that controls the formatting. Everything else goes into a folder
-called NavBar
+Lets add some more stucutre before working on the projects. I want the files system that is running this website to mimic the website. So the only thing that is going to go in the main part of the file is the index.rmd that contains the text of the front page, and the \_site.yaml file that controls the formatting. Everything else goes into a folder called NavBar
 
-In NavBar about.rmd and blog.rmd can hang out by themseleves because
-tthey are just static pages. But summaries and projects need additional
-filing. So in NavBar, there blog.rmd, about.rmd, a Projects Folder, and
-a Summaries Folder. We are gonna focus on the Projects folder, but it
-should be similar to summaries.
+In NavBar about.rmd and blog.rmd can hang out by themseleves because tthey are just static pages. But summaries and projects need additional filing. So in NavBar, there blog.rmd, about.rmd, a Projects Folder, and a Summaries Folder. We are gonna focus on the Projects folder, but it should be similar to summaries.
 
-Within the Projects folder, we have the projects.rmd. This need to list
-Links to all the actual projects. Right now I have three. each with its
-own folder. Again lets work with MuniProject, but the others should be
-similar.
+Within the Projects folder, we have the projects.rmd. This need to list Links to all the actual projects. Right now I have three. each with its own folder. Again lets work with MuniProject, but the others should be similar.
 
-We want the 4 Files in here, working paper, working_slides, replication,
-and diary. Lets think about what the url should look like, which will
-hopefully get us a little closer to a good structure.
+We want the 4 Files in here, working paper, working_slides, replication, and diary. Lets think about what the url should look like, which will hopefully get us a little closer to a good structure.
 
-Let \~ denote chasewiedemann.github.io. So what do we want. We want to
-click on \~/Projects and see a list of Projects. We Then Want to click
-on \~/Projects/MuniProject/ and see a the 4 ingredients. Ok. Lets get
-\~/Projects Working. I lied. I want to do this for the MuniProject and
-the GridEstimators Project as an example to make sure it works for
-multiple. I should probably commit.
+Let \~ denote chasewiedemann.github.io. So what do we want. We want to click on \~/Projects and see a list of Projects. We Then Want to click on \~/Projects/MuniProject/ and see a the 4 ingredients. Ok. Lets get \~/Projects Working. I lied. I want to do this for the MuniProject and the GridEstimators Project as an example to make sure it works for multiple. I should probably commit.
 
 ### Bad (But in the End Good) Idea
 
-I made a bunch of chagnes to the files structure, but didnt tell my
-\_site.yml file about it. But fortunately, it seems like my output_dir
-docs file is really good at mimicing my file structure. I have
-everything fixed and will commit now.
+I made a bunch of chagnes to the files structure, but didnt tell my \_site.yml file about it. But fortunately, it seems like my output_dir docs file is really good at mimicing my file structure. I have everything fixed and will commit now.
 
 ### Structure Note
 
-When I say I am going to commit after immediately describing something.
-I will make the commit message the next highest header, underscore, and
-then the date. For example, I am going to commit now. the commit message
-will be strcuture note_081124
+When I say I am going to commit after immediately describing something. I will make the commit message the next highest header, underscore, and then the date. For example, I am going to commit now. the commit message will be strcuture note_081124
 
 ### Oh No
 
-It didn't work. I guess I have to figure out what this output_dir is
-actually doing. Or do I need to make them html? Lets see if I can find a
-link
+It didn't work. I guess I have to figure out what this output_dir is actually doing. Or do I need to make them html? Lets see if I can find a link
 
 <https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html>
 
-This guy is saying (Right about 10.5.2) that all the .rmd or .md files
-in the ROOT of the directory will be rendered into HTML. Mine are in
-folders.
+This guy is saying (Right about 10.5.2) that all the .rmd or .md files in the ROOT of the directory will be rendered into HTML. Mine are in folders.
 
-Looking more into the site, it seems like the entire reason that people
-recommend blogdown is for this reason. It will only render the .rmd into
-html that are on the front page.
+Looking more into the site, it seems like the entire reason that people recommend blogdown is for this reason. It will only render the .rmd into html that are on the front page.
 
-I think what I need to do is output everything to a html_file. Im gonna
-try that with this the projects.rmd, about.rmd, projects.rmd page
+I think what I need to do is output everything to a html_file. Im gonna try that with this the projects.rmd, about.rmd, projects.rmd page
 
-What I need to do is write a script that goes through all of my rmds.
-renders them, and creates the html doc.
+What I need to do is write a script that goes through all of my rmds. renders them, and creates the html doc.
 
-TEsting on the terminal now. Lets see if i can get blog.rmd to create
-NavBar/blog.html
+TEsting on the terminal now. Lets see if i can get blog.rmd to create NavBar/blog.html
 
-That Worked. So What I need to Do is create my own script that will
-search through the NavBar director, and render all the .rmd files in it.
-lets go!!
+That Worked. So What I need to Do is create my own script that will search through the NavBar director, and render all the .rmd files in it. lets go!!
 
 ## The Script
 
@@ -445,63 +641,31 @@ rmarkdown::render_site()
 
 ```
 
-All it does is go into the NavBar directory, find all the files that end
-in .rmd, and then render them. It then runs the render_site() command
-that seems to be doing a lot of the backend work that I dont fully
-understand yet. One potential downside I see is that this will render
-literally everything. That could be an issue if I have a large project
-somewhere. I think I can probably just go and check to see if its
-different from the github page, and then not render it if it hasnt
-changed, but thats an issue for another day. Lets commit by running
-myRender in the terminal
+All it does is go into the NavBar directory, find all the files that end in .rmd, and then render them. It then runs the render_site() command that seems to be doing a lot of the backend work that I dont fully understand yet. One potential downside I see is that this will render literally everything. That could be an issue if I have a large project somewhere. I think I can probably just go and check to see if its different from the github page, and then not render it if it hasnt changed, but thats an issue for another day. Lets commit by running myRender in the terminal
 
 ### Update
 
-I got it working. Sometimes i get a weird index.lock file that I can
-only delete once I'm outside of R. Theres obviously more going on here
-than I comprehend, but I think I'm getting the hang of it. I just
-updated the home page, lets see if that works
+I got it working. Sometimes i get a weird index.lock file that I can only delete once I'm outside of R. Theres obviously more going on here than I comprehend, but I think I'm getting the hang of it. I just updated the home page, lets see if that works
 
 ### Update 2
 
-I got everything running exactly as I have written it. The only issue is
-that the exact way I have written it removes all the links to other
-files. That means that once you are on the about page, theres no way to
-get back to index or projects. Lets fix that now. What i am trying first
-is just to add a navbar like in the \_site.yml file into the about.rmd.
-Hopefully when this renders, it will add a navbar. Lets commit and
-check. I forgot to run myRender first, so lets find out if I messed
-everything up
+I got everything running exactly as I have written it. The only issue is that the exact way I have written it removes all the links to other files. That means that once you are on the about page, theres no way to get back to index or projects. Lets fix that now. What i am trying first is just to add a navbar like in the \_site.yml file into the about.rmd. Hopefully when this renders, it will add a navbar. Lets commit and check. I forgot to run myRender first, so lets find out if I messed everything up
 
 ### Update 3
 
-Two things. First, I should be need to rethink my commit messages. Just
-Going up 1 doesnt make sense. So What Im going to do is to go up 2 and
-have both. So the day post will be a single hashtag, and then a topic
-will be a double. Then withing that topic i will be doing updates with a
-third hastag. So this one will be This Script_Update 3 081124
+Two things. First, I should be need to rethink my commit messages. Just Going up 1 doesnt make sense. So What Im going to do is to go up 2 and have both. So the day post will be a single hashtag, and then a topic will be a double. Then withing that topic i will be doing updates with a third hastag. So this one will be This Script_Update 3 081124
 
-The other thing is that I don't know if my changes do anything. Im gonna
-need to remember to add something like "test TExt" to the bottom of a
-page Im testing
+The other thing is that I don't know if my changes do anything. Im gonna need to remember to add something like "test TExt" to the bottom of a page Im testing
 
 ### Update 4
 
-Its not updating anything. I can see on the github page that it went
-from pending to deployed. Im gonna check again before commiting the next
-changes. What I did is change the \_site.yml to "doc/NavBar/\~" instead
-of "NavBar/\~". Again, I think this is more because I don't know what
-render_site() is actually doing, but this seems like an easy fix for now
+Its not updating anything. I can see on the github page that it went from pending to deployed. Im gonna check again before commiting the next changes. What I did is change the \_site.yml to "doc/NavBar/\~" instead of "NavBar/\~". Again, I think this is more because I don't know what render_site() is actually doing, but this seems like an easy fix for now
 
-Good thing I checked, the text loaded, but the about.html still doesn't
-have a navbar. Lets see if what I was previously planning on doing has a
-fix. I just have to be patient, and add a new Test Text
+Good thing I checked, the text loaded, but the about.html still doesn't have a navbar. Lets see if what I was previously planning on doing has a fix. I just have to be patient, and add a new Test Text
 
 ### Update 5
 
-I think I know what to do here. My last commit showed changes to the
-NavBar folder, but not to the docs folder. I need to port over my
-rendered stuff into the docs file. Heres the script
+I think I know what to do here. My last commit showed changes to the NavBar folder, but not to the docs folder. I need to port over my rendered stuff into the docs file. Heres the script
 
 ```{r,eval = F}
 
@@ -527,73 +691,38 @@ Not very elegant, but it should work.
 
 ### Update 6
 
-I scraped all that. The navBar idea is a non-starter at this point. I
-looked at the html code that was built, and hopefully at some point it
-isnt giberish to me, but for now its incomprehensible. Lets just build
-it statically. You should be able to get back home with a button click
-from every page. Thats gonna just need to be a template. I think thats
-what I will need to eventually do. Create a template directory that I
-can just add from. But lets start a new top and work on getting a link
-at the top of the page from the about page to the home page. This will
-create a pattern that we can replicate
+I scraped all that. The navBar idea is a non-starter at this point. I looked at the html code that was built, and hopefully at some point it isnt giberish to me, but for now its incomprehensible. Lets just build it statically. You should be able to get back home with a button click from every page. Thats gonna just need to be a template. I think thats what I will need to eventually do. Create a template directory that I can just add from. But lets start a new top and work on getting a link at the top of the page from the about page to the home page. This will create a pattern that we can replicate
 
 ## How to get Home
 
 ### Start
 
-Lets look at the internet for help. It seems pretty easy. Heres there
-example [RStudio](https://www.rstudio.com). Lets add something similar
-to the about.rmd, but its gonna take us Home. I have no clue what its
-gonna look like, and i just added the url of the home page to it
+Lets look at the internet for help. It seems pretty easy. Heres there example [RStudio](https://www.rstudio.com). Lets add something similar to the about.rmd, but its gonna take us Home. I have no clue what its gonna look like, and i just added the url of the home page to it
 
 ### Update
 
-It worked, but now I want to do something a little more basic. Lets get
-rid of the pre-built navbar in favor of more control. I removed all the
-stuff from the \_site.yml file. Lets get links to all the other stuff
-into the index.rmd file
+It worked, but now I want to do something a little more basic. Lets get rid of the pre-built navbar in favor of more control. I removed all the stuff from the \_site.yml file. Lets get links to all the other stuff into the index.rmd file
 
 ### Update 2
 
-We ran into some issues. Without the additional help from the black box,
-we never create a index.html page. I had previously skipped over it, but
-now we need it. I commited before writing this under How to get Home
-unlabled 1. Lets see if it works
+We ran into some issues. Without the additional help from the black box, we never create a index.html page. I had previously skipped over it, but now we need it. I commited before writing this under How to get Home unlabled 1. Lets see if it works
 
 ### Update 3
 
-It still is failing its build. Im gonna look at the index.html that it
-loads in a local web browser to make sure its not something dumn about
-me doing links wrong. A possible problem is that when I run
-rmarkdown::render_site(), it is deleting some of my stuff. Lets try
-going full manual
+It still is failing its build. Im gonna look at the index.html that it loads in a local web browser to make sure its not something dumn about me doing links wrong. A possible problem is that when I run rmarkdown::render_site(), it is deleting some of my stuff. Lets try going full manual
 
 ### Update 4
 
-I think I found a (the?) issue. In the Setting page of Github, I had it
-building from a file called docs because thats how the tutorial that I
-read told me to do it. Now that I am straying from the source, I need to
-make sure I dont have any of those old relics in there. Lets see if that
-fixes it.
+I think I found a (the?) issue. In the Setting page of Github, I had it building from a file called docs because thats how the tutorial that I read told me to do it. Now that I am straying from the source, I need to make sure I dont have any of those old relics in there. Lets see if that fixes it.
 
 ### Update 4 (updated)
 
-It works. This is as basic as I can get this site, and I think that
-probably for the best (for now). I think Im going to get all the links
-into the pages, figure out the projects page, and then call it a day.
-Next commit will be all the Site links, then onto the projects page
+It works. This is as basic as I can get this site, and I think that probably for the best (for now). I think Im going to get all the links into the pages, figure out the projects page, and then call it a day. Next commit will be all the Site links, then onto the projects page
 
 ### Update 5
 
-I'm not sure if I'm not being patient enough to let the changes go
-through, or if its fixed, or if I just broke it. Im going to go update
-every page and run it how I have it now. Then Ill let it sit for awhile
-and check if it ever updates
+I'm not sure if I'm not being patient enough to let the changes go through, or if its fixed, or if I just broke it. Im going to go update every page and run it how I have it now. Then Ill let it sit for awhile and check if it ever updates
 
 ### Last Update
 
-Unless it fails. It works, just takes a while for the site to catch up.
-I foresee this being an even larger issue when I start making bigger
-changes. But another problem for another day. Im gonna have the myRender
-script take out the \_site dir to clean everything up. Ive also updated
-the checks on each page to include a 2
+Unless it fails. It works, just takes a while for the site to catch up. I foresee this being an even larger issue when I start making bigger changes. But another problem for another day. Im gonna have the myRender script take out the \_site dir to clean everything up. Ive also updated the checks on each page to include a 2

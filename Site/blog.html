@@ -370,7 +370,506 @@ pre code {
 | <a href="https://chasewiedemann.github.io/Site/Summaries/summaries.html">Paper
 Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</a> |</p>
 <div id="section" class="section level1">
-<h1>8/16/24 “”</h1>
+<h1>8/18/24</h1>
+<p>The last couple of post have mainly been check ins in order to set up
+my day. Here I want to actaully work on something in a blog post. I want
+to work out how multivariate normal distributions are computed from the
+<code>mvrnorm</code> function.</p>
+<p>Heres the function taken from the <code>MASS</code> package source
+that can be found <a href="https://rdrr.io/cran/MASS/src/R/mvrnorm.R">here</a></p>
+<pre class="r"><code># file MASS/R/mvrnorm.R
+# copyright (C) 1994-2015 W. N. Venables and B. D. Ripley
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 or 3 of the License
+#  (at your option).
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  http://www.r-project.org/Licenses/
+#
+mvrnorm &lt;-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p &lt;- length(mu)
+    if(!all(dim(Sigma) == c(p,p))) stop(&quot;incompatible arguments&quot;)
+    if(EISPACK) stop(&quot;&#39;EISPACK&#39; is no longer supported by R&quot;, domain = NA)
+    eS &lt;- eigen(Sigma, symmetric = TRUE)
+    ev &lt;- eS$values
+    if(!all(ev &gt;= -tol*abs(ev[1L]))) stop(&quot;&#39;Sigma&#39; is not positive definite&quot;)
+    X &lt;- matrix(rnorm(p * n), n)
+    if(empirical) {
+        X &lt;- scale(X, TRUE, FALSE) # remove means
+        X &lt;- X %*% svd(X, nu = 0)$v # rotate to PCs
+        X &lt;- scale(X, FALSE, TRUE) # rescale PCs to unit variance
+    }
+    X &lt;- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    nm &lt;- names(mu)
+    if(is.null(nm) &amp;&amp; !is.null(dn &lt;- dimnames(Sigma))) nm &lt;- dn[[1L]]
+    dimnames(X) &lt;- list(nm, NULL)
+    if(n == 1) drop(X) else t(X)
+}</code></pre>
+<p>Beautiful.</p>
+<p>Here it is with just the minimal operational code, no
+documentation,checks to make sure things don’t go screwy, or internal
+scaling (empirical).</p>
+<pre class="r"><code>mvrnorm &lt;-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p &lt;- length(mu)
+    eS &lt;- eigen(Sigma, symmetric = TRUE)
+    ev &lt;- eS$values
+    X &lt;- matrix(rnorm(p * n), n)
+    
+    X &lt;- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    
+
+     drop(X)
+}</code></pre>
+<p>Lets write this out in words, Lets assume <span class="math inline">\(n=1\)</span> so we are just simulating a single
+vector and <span class="math inline">\(\mu\)</span> is the zero vector
+as it enters additively</p>
+<ul>
+<li><span class="math inline">\(p\)</span> is the dimension of the
+vector we wish to simulate</li>
+<li>We then extract the eigenvalues and vectors from the provided <span class="math inline">\(\Sigma\)</span> matrix (more on this later)</li>
+<li>This part is very interesting. We then initiate the vector as draws
+from the standardized univariate distribution, looking at this will come
+later</li>
+<li>We then take the output as the eigenvectors multiplied by a diagonal
+matrix containing the square roots of eigenvalues of <span class="math inline">\(\Sigma\)</span>, but with all negative eigenvalues
+replaced with zero, and then this gets multiplied by the transpose of
+the vector of univariate draws.</li>
+</ul>
+<p>Ok. Now lets get into a little more detail. Let the univariate draws
+be given as <span class="math inline">\(x = (g(u_1),g(u_2),\dots
+g(u_p))\)</span> where <span class="math inline">\(g\)</span> is the
+quantile function for the univariate distibution we are trying to draw
+from (in this case its the normal distribution) and <span class="math inline">\(u_i\)</span> are draws from the uniform
+distribution. The <span class="math inline">\(u_i\)</span> are the only
+source of randomness in this entire function. We start with an
+eigen-decomposition of the supplied <span class="math inline">\(\Sigma\)</span> matrix. Lets look at the source
+code for the <code>eigen</code> function. This code is in base R and can
+be found <a href="https://github.com/SurajGupta/r-source/blob/master/src/library/base/R/eigen.R">here</a></p>
+<pre class="r"><code>#  File src/library/base/R/eigen.R
+#  Part of the R package, https://www.R-project.org
+#
+#  Copyright (C) 1995-2015 The R Core Team
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  https://www.R-project.org/Licenses/
+
+
+isSymmetric &lt;- function(object, ...) UseMethod(&quot;isSymmetric&quot;)
+
+isSymmetric.matrix &lt;- function(object, tol = 100*.Machine$double.eps, ...)
+{
+    if(!is.matrix(object)) return(FALSE) ## we test for  symmetric *matrix*
+    ## cheap pretest: is it square?
+    d &lt;- dim(object)
+    if(d[1L] != d[2L]) return(FALSE)
+    test &lt;-
+        if(is.complex(object))
+            all.equal.numeric(object, Conj(t(object)), tolerance = tol, ...)
+        else # numeric, character, ..
+            all.equal(object, t(object), tolerance = tol, ...)
+    isTRUE(test)
+}
+
+eigen &lt;- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
+{
+    x &lt;- unname(as.matrix(x))
+    n &lt;- nrow(x)
+    if (!n) stop(&quot;0 x 0 matrix&quot;)
+    if (n != ncol(x)) stop(&quot;non-square matrix in &#39;eigen&#39;&quot;)
+    n &lt;- as.integer(n)
+    if(is.na(n)) stop(&quot;invalid nrow(x)&quot;)
+
+    complex.x &lt;- is.complex(x)
+    if (!all(is.finite(x))) stop(&quot;infinite or missing values in &#39;x&#39;&quot;)
+
+    if(missing(symmetric)) symmetric &lt;- isSymmetric.matrix(x)
+
+    if (symmetric) {
+        z &lt;- if(!complex.x) .Internal(La_rs(x, only.values))
+        else .Internal(La_rs_cmplx(x, only.values))
+       
+    } else {
+        z &lt;- if(!complex.x) .Internal(La_rg(x, only.values))
+        else .Internal(La_rg_cmplx(x, only.values))
+        ord &lt;- sort.list(Mod(z$values), decreasing = TRUE)
+    }
+    return(list(values = z$values[ord],
+                vectors = if (!only.values) z$vectors[, ord, drop = FALSE]))
+}</code></pre>
+<p>We can clean this as we did above to look at it a little easier. We
+will take out the additional non-symmetric and complex cases as well</p>
+<pre class="r"><code>eigen &lt;- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
+{
+        z &lt;- .Internal(La_rs(x, only.values))
+        ord &lt;- sort.list(Mod(z$values), decreasing = TRUE)
+        
+    return(list(values = z$values[ord],
+                vectors =  z$vectors[, ord, drop = FALSE]))
+}</code></pre>
+<p>Well thats underwhelming, <code>eigen</code> is just a wrapper for an
+internal function <code>La_rs</code>. Lets look at the source for that.
+Its from the <code>Lapack</code> module and is written in
+<code>FORTRAN</code> (not an expert). I will have to comment out all the
+code for this page to not crash when I try to render it</p>
+<pre class="r"><code># static SEXP La_rs(SEXP x, SEXP only_values)
+# {
+#     int *xdims, n, lwork, info = 0, ov;
+#     char jobv[2] = &quot;U&quot;, uplo[2] = &quot;L&quot;, range[2] = &quot;A&quot;;
+#     SEXP z = R_NilValue;
+#     double *work, *rx, *rvalues, tmp, *rz = NULL;
+#     int liwork, *iwork, itmp, m;
+#     double vl = 0.0, vu = 0.0, abstol = 0.0;
+#     /* valgrind seems to think vu should be set, but it is documented
+#        not to be used if range=&#39;a&#39; */
+#     int il, iu, *isuppz;
+# 
+#     xdims = INTEGER(coerceVector(getAttrib(x, R_DimSymbol), INTSXP));
+#     n = xdims[0];
+#     if (n != xdims[1]) error(_(&quot;&#39;x&#39; must be a square numeric matrix&quot;));
+#     ov = asLogical(only_values);
+#     if (ov == NA_LOGICAL) error(_(&quot;invalid &#39;%s&#39; argument&quot;), &quot;only.values&quot;);
+#     if (ov) jobv[0] = &#39;N&#39;; else jobv[0] = &#39;V&#39;;
+# 
+#     /* work on a copy of x, since LAPACK trashes it */
+#     if (!isReal(x)) {
+#   x = coerceVector(x, REALSXP);
+#   rx = REAL(x);
+#     } else {
+#   rx = (double *) R_alloc(n * (size_t) n, sizeof(double));
+#   Memcpy(rx, REAL(x), (size_t) n * n);
+#     }
+#     PROTECT(x);
+#     SEXP values = PROTECT(allocVector(REALSXP, n));
+#     rvalues = REAL(values);
+# 
+#     if (!ov) {
+#   z = PROTECT(allocMatrix(REALSXP, n, n));
+#   rz = REAL(z);
+#     }
+#     isuppz = (int *) R_alloc(2*(size_t)n, sizeof(int));
+#     /* ask for optimal size of work arrays */
+#     lwork = -1; liwork = -1;
+#     F77_CALL(dsyevr)(jobv, range, uplo, &amp;n, rx, &amp;n,
+#            &amp;vl, &amp;vu, &amp;il, &amp;iu, &amp;abstol, &amp;m, rvalues,
+#            rz, &amp;n, isuppz,
+#            &amp;tmp, &amp;lwork, &amp;itmp, &amp;liwork, &amp;info);
+#     if (info != 0)
+#   error(_(&quot;error code %d from Lapack routine &#39;%s&#39;&quot;), info, &quot;dsyevr&quot;);
+#     lwork = (int) tmp;
+#     liwork = itmp;
+# 
+#     work = (double *) R_alloc(lwork, sizeof(double));
+#     iwork = (int *) R_alloc(liwork, sizeof(int));
+#     F77_CALL(dsyevr)(jobv, range, uplo, &amp;n, rx, &amp;n,
+#            &amp;vl, &amp;vu, &amp;il, &amp;iu, &amp;abstol, &amp;m, rvalues,
+#            rz, &amp;n, isuppz,
+#            work, &amp;lwork, iwork, &amp;liwork, &amp;info);
+#     if (info != 0)
+#   error(_(&quot;error code %d from Lapack routine &#39;%s&#39;&quot;), info, &quot;dsyevr&quot;);
+# 
+#     SEXP ret, nm;
+#     if (!ov) {
+#   ret = PROTECT(allocVector(VECSXP, 2));
+#   nm = PROTECT(allocVector(STRSXP, 2));
+#   SET_STRING_ELT(nm, 1, mkChar(&quot;vectors&quot;));
+#   SET_VECTOR_ELT(ret, 1, z);
+#   UNPROTECT_PTR(z);
+#     } else {
+#   ret = PROTECT(allocVector(VECSXP, 1));
+#   nm = PROTECT(allocVector(STRSXP, 1));
+#     }
+#     SET_STRING_ELT(nm, 0, mkChar(&quot;values&quot;));
+#     setAttrib(ret, R_NamesSymbol, nm);
+#     SET_VECTOR_ELT(ret, 0, values);
+#     UNPROTECT(4);
+#     return ret;
+# }</code></pre>
+<p>Again, I’m not an expert. I’m going to call in “the expert”</p>
+<div id="start-chatgpt" class="section level2">
+<h2>START CHATGPT</h2>
+</div>
+<div id="conversation-on-understanding-fortran-code" class="section level2">
+<h2>Conversation on Understanding Fortran Code</h2>
+<div id="user" class="section level3">
+<h3>User:</h3>
+<p>Hello, I’m trying to figure out what this Fortran code does.</p>
+</div>
+<div id="assistant" class="section level3">
+<h3>Assistant:</h3>
+<p>Sure, I can help with that. Please share the Fortran code you’d like
+to understand.</p>
+</div>
+<div id="user-1" class="section level3">
+<h3>User:</h3>
+<pre class="fortran"><code>F77_CALL(dsyevr)(jobv, range, uplo, &amp;n, rx, &amp;n,
+                 &amp;vl, &amp;vu, &amp;il, &amp;iu, &amp;abstol, &amp;m, rvalues,
+                 rz, &amp;n, isuppz,
+                 work, &amp;lwork, iwork, &amp;liwork, &amp;info);</code></pre>
+</div>
+<div id="assistant-1" class="section level3">
+<h3>Assistant:</h3>
+<p>The Fortran code you’ve provided is a call to a function named
+<code>dsyevr</code>, which is part of the LAPACK (Linear Algebra
+PACKage) library. The <code>dsyevr</code> function is used to compute
+selected eigenvalues and, optionally, the corresponding eigenvectors of
+a real symmetric matrix.</p>
+<p>Here’s a breakdown of the parameters and what the function does:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong><code>jobv</code></strong>: Specifies whether to compute
+eigenvectors (<code>&#39;V&#39;</code>) or not (<code>&#39;N&#39;</code>).</p></li>
+<li><p><strong><code>range</code></strong>: Specifies the range of
+eigenvalues to find:</p>
+<ul>
+<li><code>&#39;A&#39;</code>: All eigenvalues.</li>
+<li><code>&#39;V&#39;</code>: Eigenvalues within the interval
+<code>[vl, vu]</code>.</li>
+<li><code>&#39;I&#39;</code>: Eigenvalues with indices in the range
+<code>[il, iu]</code>.</li>
+</ul></li>
+<li><p><strong><code>uplo</code></strong>: Specifies whether the matrix
+is upper triangular (<code>&#39;U&#39;</code>) or lower triangular
+(<code>&#39;L&#39;</code>).</p></li>
+<li><p><strong><code>n</code></strong>: The order of the matrix (number
+of rows/columns).</p></li>
+<li><p><strong><code>rx</code></strong>: The array containing the
+symmetric matrix whose eigenvalues and eigenvectors are to be
+computed.</p></li>
+<li><p><strong><code>vl</code>, <code>vu</code></strong>: If
+<code>range = &#39;V&#39;</code>, these specify the lower and upper bounds of
+the interval.</p></li>
+<li><p><strong><code>il</code>, <code>iu</code></strong>: If
+<code>range = &#39;I&#39;</code>, these specify the indices of the smallest and
+largest eigenvalues to be returned.</p></li>
+<li><p><strong><code>abstol</code></strong>: The absolute error
+tolerance for the eigenvalues.</p></li>
+<li><p><strong><code>m</code></strong>: The total number of eigenvalues
+found.</p></li>
+<li><p><strong><code>rvalues</code></strong>: The array to store the
+computed eigenvalues.</p></li>
+<li><p><strong><code>rz</code></strong>: The array to store the computed
+eigenvectors if they are required.</p></li>
+<li><p><strong><code>isuppz</code></strong>: An integer array that
+indicates which columns of <code>rz</code> contain the
+eigenvectors.</p></li>
+<li><p><strong><code>work</code></strong>: Workspace array for
+intermediate calculations.</p></li>
+<li><p><strong><code>lwork</code></strong>: The length of the
+<code>work</code> array.</p></li>
+<li><p><strong><code>iwork</code></strong>: An integer workspace
+array.</p></li>
+<li><p><strong><code>liwork</code></strong>: The length of the
+<code>iwork</code> array.</p></li>
+<li><p><strong><code>info</code></strong>: Output parameter that
+indicates the success or failure of the computation.</p></li>
+</ol>
+<div id="summary" class="section level4">
+<h4>Summary</h4>
+<p>This call is used to find specific eigenvalues (and optionally,
+eigenvectors) of a real symmetric matrix, depending on the
+<code>range</code> and <code>jobv</code> parameters. The results,
+including the eigenvalues and eigenvectors, are stored in the provided
+arrays (<code>rvalues</code>, <code>rz</code>).</p>
+<p>Would you like a more detailed explanation of any specific part?</p>
+</div>
+</div>
+<div id="user-2" class="section level3">
+<h3>User:</h3>
+<p>How does it compute <code>rvalues</code> and <code>rz</code>?</p>
+</div>
+<div id="assistant-2" class="section level3">
+<h3>Assistant:</h3>
+<p>The <code>dsyevr</code> function computes the eigenvalues
+(<code>rvalues</code>) and eigenvectors (<code>rz</code>) of a real
+symmetric matrix using a combination of methods designed to be efficient
+and accurate. Here’s an overview of how these computations are typically
+performed within the function:</p>
+<div id="matrix-reduction-to-tridiagonal-form" class="section level4">
+<h4>1. Matrix Reduction to Tridiagonal Form</h4>
+<p>The first step in computing the eigenvalues and eigenvectors is to
+reduce the input symmetric matrix <code>rx</code> to a tridiagonal form.
+This is done using a series of Householder transformations. The
+tridiagonal matrix has the same eigenvalues as the original matrix but
+is easier to work with computationally.</p>
+</div>
+<div id="computation-of-eigenvalues-and-eigenvectors" class="section level4">
+<h4>2. Computation of Eigenvalues and Eigenvectors</h4>
+<p>Depending on the <code>range</code> parameter, <code>dsyevr</code>
+employs the following strategies: - <strong>All Eigenvalues
+(<code>range = &#39;A&#39;</code>)</strong>: The function computes all
+eigenvalues of the tridiagonal matrix using a bisection method and,
+optionally, eigenvectors using an inverse iteration method. -
+<strong>Eigenvalues in a Specific Range
+(<code>range = &#39;V&#39;</code>)</strong>: Eigenvalues within a specified
+interval <code>[vl, vu]</code> are computed. The bisection method is
+often used to isolate the eigenvalues within this range. -
+<strong>Eigenvalues by Index (<code>range = &#39;I&#39;</code>)</strong>: Only
+the eigenvalues with indices <code>[il, iu]</code> are computed.</p>
+</div>
+<div id="refinement-of-eigenvalues" class="section level4">
+<h4>3. Refinement of Eigenvalues</h4>
+<p>The eigenvalues are refined to high precision, typically by using the
+bisection method or the QR algorithm. This step ensures that the
+computed eigenvalues are as accurate as possible within the specified
+tolerance <code>abstol</code>.</p>
+</div>
+<div id="computation-of-eigenvectors" class="section level4">
+<h4>4. Computation of Eigenvectors</h4>
+<p>If the <code>jobv</code> parameter is set to <code>&#39;V&#39;</code>, the
+eigenvectors corresponding to the computed eigenvalues are calculated.
+This is done by applying the inverse of the Householder transformations
+(used in the reduction to tridiagonal form) to the eigenvectors of the
+tridiagonal matrix. The eigenvectors are then normalized.</p>
+</div>
+<div id="final-assembly" class="section level4">
+<h4>5. Final Assembly</h4>
+<p>The eigenvalues are stored in the array <code>rvalues</code>, and the
+corresponding eigenvectors are stored in the matrix <code>rz</code>. The
+<code>isuppz</code> array indicates which columns of <code>rz</code>
+contain the computed eigenvectors.</p>
+</div>
+<div id="output-and-information-flag" class="section level4">
+<h4>6. Output and Information Flag</h4>
+<p>The function returns the number of eigenvalues found in
+<code>m</code>, and the <code>info</code> parameter is used to indicate
+success or failure. If <code>info = 0</code>, the computation was
+successful; otherwise, it indicates an error.</p>
+</div>
+<div id="summary-of-methods" class="section level4">
+<h4>Summary of Methods</h4>
+<ul>
+<li><strong>Tridiagonal Reduction</strong>: Simplifies the matrix while
+preserving eigenvalues.</li>
+<li><strong>Bisection or QR Algorithm</strong>: Ensures accurate
+computation of eigenvalues.</li>
+<li><strong>Inverse Iteration</strong>: Computes eigenvectors
+efficiently after eigenvalues are determined.</li>
+</ul>
+<p>Would you like to delve deeper into any specific method used in these
+steps?</p>
+</div>
+</div>
+<div id="user-3" class="section level3">
+<h3>User:</h3>
+<p>When does it use bisection vs QR?</p>
+</div>
+<div id="assistant-3" class="section level3">
+<h3>Assistant:</h3>
+<p>The choice between the bisection method and the QR algorithm in
+<code>dsyevr</code> depends on the nature of the eigenvalue computation
+required and the range specified (<code>range = &#39;A&#39;</code>,
+<code>&#39;V&#39;</code>, or <code>&#39;I&#39;</code>).</p>
+<div id="bisection-method" class="section level4">
+<h4>Bisection Method</h4>
+<p>The bisection method is typically used when you need to find
+eigenvalues in a specific range or a subset of eigenvalues. It is
+particularly useful in the following scenarios:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Range-Specified Eigenvalue Search (<code>range = &#39;V&#39;</code>
+or <code>range = &#39;I&#39;</code>)</strong>:
+<ul>
+<li><strong><code>range = &#39;V&#39;</code></strong>: When you want eigenvalues
+within a specific interval <code>[vl, vu]</code>, the bisection method
+is used to isolate and refine these eigenvalues. The bisection method
+works well for finding roots (eigenvalues) within a given interval,
+making it suitable for this task.</li>
+<li><strong><code>range = &#39;I&#39;</code></strong>: When you’re interested in
+a subset of eigenvalues by index, say the <code>il</code>-th to
+<code>iu</code>-th eigenvalues, the bisection method can also be applied
+to isolate and compute only these eigenvalues.</li>
+</ul></li>
+<li><strong>When High Precision is Needed for Specific
+Eigenvalues</strong>:
+<ul>
+<li>The bisection method can be more reliable for computing eigenvalues
+to a high precision when you need only a few eigenvalues or eigenvalues
+within a narrow range. This method is less sensitive to rounding errors
+compared to the QR algorithm, especially when dealing with very small or
+very large eigenvalues.</li>
+</ul></li>
+</ol>
+</div>
+<div id="qr-algorithm" class="section level4">
+<h4>QR Algorithm</h4>
+<p>The QR algorithm is used when all eigenvalues of the matrix are
+required, typically when <code>range = &#39;A&#39;</code>:</p>
+<ol style="list-style-type: decimal">
+<li><strong>All Eigenvalues (<code>range = &#39;A&#39;</code>)</strong>:
+<ul>
+<li>When the goal is to compute all eigenvalues of the matrix, the QR
+algorithm is generally preferred. The QR algorithm iteratively reduces
+the matrix and computes all eigenvalues at once, which can be more
+efficient than using bisection for every eigenvalue.</li>
+<li>The QR algorithm is well-suited for this task because it handles the
+entire spectrum of eigenvalues efficiently and is often faster when all
+eigenvalues are needed.</li>
+</ul></li>
+</ol>
+</div>
+<div id="summary-of-when-each-method-is-used" class="section level4">
+<h4>Summary of When Each Method is Used</h4>
+<ul>
+<li><strong>Bisection Method</strong>:
+<ul>
+<li>Used when <code>range = &#39;V&#39;</code> or <code>range = &#39;I&#39;</code>.</li>
+<li>Applicable for finding eigenvalues within a specific range or a
+subset by index.</li>
+<li>Preferable when high precision is needed for specific
+eigenvalues.</li>
+</ul></li>
+<li><strong>QR Algorithm</strong>:
+<ul>
+<li>Used when <code>range = &#39;A&#39;</code> (all eigenvalues).</li>
+<li>Efficient for computing all eigenvalues of the matrix.</li>
+</ul></li>
+</ul>
+<p>This distinction allows <code>dsyevr</code> to balance efficiency and
+accuracy depending on the specific needs of the eigenvalue problem being
+solved. If you need more details on how these methods are implemented in
+LAPACK or how they perform in practice, I can provide further
+insights.</p>
+</div>
+</div>
+<div id="user-4" class="section level3">
+<h3>User:</h3>
+<p>Can you output this conversation into a format that can easily be
+copied and pasted into a markdown document?</p>
+</div>
+<div id="assistant-4" class="section level3">
+<h3>Assistant:</h3>
+<p>Certainly! Here’s the entire conversation placed within a single code
+block:</p>
+<p>[Include the entire conversation above in a blockquote with
+appropriate markdown syntax.]</p>
+</div>
+</div>
+<div id="end-chatgpt" class="section level2">
+<h2>END CHATGPT</h2>
+<p>Honestly pretty helpful.</p>
+</div>
+</div>
+<div id="section-1" class="section level1">
+<h1>8/16/24</h1>
 <p>Okay. Its Fast Function Friday. Should that be here, or should i link
 to it? I’m going to be doing the FKRB stuff and optimizing that, so its
 the work is going to take place in the mini-blog and replication. But

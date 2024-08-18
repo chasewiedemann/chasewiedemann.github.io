@@ -79,43 +79,59 @@ $$
 \end{aligned}
 $$
 
-As $\epsilon$ enters our model additively, the linearity of the expectation allows us to integrate it out. With that in mind, the remaining expression is begging for us to impose linearity again. Suppose we restrict attention to the subset of functions where $u(X_t;\beta_i) = z(X;\tilde\beta) + v(X_t;\nu_i)$. This includes the common specification of $u(X_t;\beta_i) = X_t\beta_i$.  We then have
-$$ 
-\begin{aligned}
-\tilde \delta_t &= \mathbb E_\nu\left[ u(X_t;\beta_i)\right]\\
-&=  \mathbb E_\nu\left[ z(X;\tilde \beta) + v(X_t;\nu_i)\right] \\
-&= \mathbb E_\nu \left[ z(X_t;\tilde \beta) \right] + \mathbb E_\nu\left[ v(X_t;\nu_i) \right ] \\
-&= z(X_t;\tilde \beta) + \mathbb E_\nu\left[ v(X_t;\nu_i) \right]
-\end{aligned}
-$$
-Given our linearity assumption, this expression shows that the mean utility is equal to some deterministic mapping from the characteristics of the alternatives, plus a term that captures the correlation between the characteristics and the unobserved heterogeneity of our agents. Note that in contrast to $\epsilon$, $\nu$ remains in the expression because we assume that the unobserved heterogeneity is correlated with the characteristics of the alternatives, while we assumed that $\epsilon$ was orthogonal to the characteristics. 
+As $\epsilon$ enters our model additively, the linearity of the expectation allows us to integrate it out. We can contrast this with $\nu$, which does not enter additively. Because the unobserved heterogeneity does not enter additively, we are allowing for it to be non-orthogonal to the alteratives characteristics. 
 
 Bu what is the expression in the expectation? More importantly, how would we take a sample analog? Lets again look at these expectations through their infinite sum representation that we introduced earlier, with the promise that it would come in handy.
 
-$$ \tilde \delta_t = \lim_{N \to \infty} \frac{1}{N}\sum_{i=1}^{N} z(X_t;\tilde \beta) + v(X_t;\nu_{i})+\epsilon_{i} $$
+$$ \tilde \delta_t = \lim_{N \to \infty} \frac{1}{N}\sum_{i=1}^{N} u(X_t;\tilde \beta + \nu_i)+\epsilon_{i} $$
 As this is an infinite sum and $\epsilon_i$ is independent of $\nu_i$, we can group this summation in whatever way we please. We wish to group together all terms that share a common $\nu_i$. We can rewrite the summation as follows to emphasize this process. Let $R^N_b$ be a grouping of close by $\nu$ values.  Each $R^N_b$ can be thought of as a bin. Let the number of bins $B$ grow in proportion to the sample size $N$ such that in the limit as $N \to \infty$, each $R^N_b$ constitutes a point value. Let $|R_b^N|$ be the number of values in each unique bin, which is dependent on the implied bin size, which is in turn dependent on $N$. The sum is then of the form  
-$$ \tilde \delta_t =\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_1) + \epsilon_i \right] +\dots + \left[|R^N_B|\cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_{B}) + \epsilon_i \right]  \right) $$
-Note that these two sums are equivalent as long as $F_\epsilon$ are independent $F_\nu$. As $F_\epsilon$ is assumed mean zero, the individual terms in that sum converge over $F_\epsilon$ such that
+$$ \tilde \delta_t =\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} u(X_t;\tilde \beta + \nu_1)  + \epsilon_i \right] +\dots + \left[|R^N_B|\cdot \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} u(X_t;\tilde \beta+\nu_B)  + \epsilon_i \right]  \right) $$
+Note that these two sums are equivalent as long as $F_\epsilon$ is independent $F_\nu$. As $F_\epsilon$ is assumed mean zero, the individual terms in that sum converge over $F_\epsilon$ such that
 
-$$ \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} z(X_t;\tilde \beta) + v(X_t;\nu_b) + \epsilon_i \xrightarrow{d} z(X_t;\tilde \beta) + v(X_t;\nu_b), \forall b $$
+$$ \lim_{N_\epsilon \to \infty} \frac{1}{N_\epsilon} \sum_{i=1}^{N_\epsilon} u(X_t;\tilde \beta+\nu_i)  + \epsilon_i \xrightarrow{d} u(X_t;\tilde \beta+\nu_i), \forall b $$
 This allows us to again rewrite the larger summation as
 
-$$ \tilde \delta_t =\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot \left(z(X_t;\tilde \beta) + v(X_t;\nu_1)\right) \right] +\dots + \left[|R^N_B| \cdot \left(z(X_t;\tilde \beta) + v(X_t;\nu_B)\right) \right]  \right) $$
-We can then distribute the $|R^N_b|$ to both terms, distribute the $N$ in the denominator, and rearrange to yield
-
-$$
-\begin{aligned}
-\tilde \delta_t &= \lim_{N\to\infty} \sum_{b=1}^N \frac{|R^N_b|}{N} z(X_t;\tilde \beta) + \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
-&=  z(X_t;\tilde \beta) + \lim_{N\to \infty} \sum_{b=1}^N \frac{|R^N_b|}{N}v(X_t;\nu_b) \\
-&= z(X_t;\tilde \beta) + \int v(X_t;z)f_\nu(z)\, dz
-\end{aligned}
 $$ 
-Where the final equality comes from $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\nu$, where $f_\nu$ is the (non-parametric) density of the unobserved heterogeneity.  
+\begin{aligned}
+\tilde \delta_t &=\lim_{N \to \infty}\frac{1}{N} \left(\left[|R^N_1| \cdot u(X_t;\tilde \beta+\nu_1) \right] +\dots + \left[|R^N_B| \cdot u(X_t;\tilde \beta+\nu_B)  \right]  \right) \\
+&= \lim_{N\to\infty} \sum_{b=1}^N \frac{|R^N_b|}{N} u(X_t;\tilde \beta+\nu_i) \\
+&= \int_\Omega u(X_t;\tilde \beta + \nu_i)f_\nu(z) \,dz
+\end{aligned}
+$$
+Where the final equality comes from $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\nu$, where $f_\nu$ is the (non-parametric) density of the unobserved heterogeneity with support $\Omega$.  
+
+We can then evaluate this integral on a grid. Assume we have $\overline R\to \infty$ grid points $\{\beta_r\}$ distributed through $\mathbb R^K$. Let $\theta^r = f_\nu(\beta_r)$. Take evaluations of the utility function, $u(X_t;\beta_r$) at each point on this grid. As $\overline R\to \infty$  we maintain equality and have
+$$ \tilde \delta_t =  \int_\Omega u(X_t;\tilde \beta + \nu_i)f_\nu(z) \,dz = \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r u(X_t;\beta_r) $$
+Using our standard inversion formula, we have the infeasible estimating equation
+$$ \tilde \delta_{jt} = \frac{s_{jt}}{s_{0t}} = \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r u(X_t;\beta_r) $$
+To make this estimating equation feasible, we use a finite, yet large, $R$. As the set of true $\{\theta\}$ are defined as the density $f_\nu$, our estimation procedure requires that our recovered $\{\hat\theta\}$ behave as a density as well. This means that $\hat\theta_r \geq 0$ and $\sum_{r=1}^R \hat\theta^r = 1$. This can easily be accomplished via constrained least squares and the following estimating equation.  
+$$ \delta_{jt} = \sum_{r=1}^R \hat\theta^r u(X_t;\beta_r) + u_{jt} $$
+### Code Example
+
+Here we will generate an exotic distribution for $f_\nu$, and recover that distribution through a discrete choice framework. Our ``true" distribution will be the mixture of two, two dimensional, normal distributions given as 
+$$ g_1 \sim \mathcal N(\begin{pmatrix} 2 \\ 2 \end{pmatrix},\begin{pmatrix} 1 & .5 \\ .5 & 1\end{pmatrix}), g_2 \sim \mathcal N(\begin{pmatrix} -1 \\ 1 \end{pmatrix},\begin{pmatrix} 1 & -.5 \\ -.5 & 1\end{pmatrix}) $$
+Along with a confounding distribution that only enters
+With mixture weights given as
+
+$$ f_\nu = \frac{1}{2} g_1 + \frac{1}{4}g_2 + \frac{1}{4} g_3 $$
+We can then look simulate from this distribution and view are 
+```{r}
+require(MASS)
+require(ggplot2)
+K = 2
+
+drawF_nu = function(N){
+.5*mvrnorm(N,c(5,5),rbind(c(1,.5),c(.5,1)))+.25*mvrnorm(N,c(0,1),rbind(c(1,-.5),c(-.5,1)))+.25*mvrnorm(N,c(0,-1),rbind(c(2,-1),c(-1,1)))
+}
+N = 10000
+ggdf = data.frame(drawF_nu(N))
+ggplot(ggdf,aes(x = X1, y = X2)) + geom_density_2d_filled()
+
+```
+
+ 
 
 
-# Estimating Unobserved Heterogeneity on Grids
-
-We now look to develop an estimator of $f_\nu$ based on the derivation above. The first thing we wish to do is to remove the influence of $z(X_t;\tilde\beta)$
 
 
 
