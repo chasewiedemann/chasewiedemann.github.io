@@ -23,193 +23,57 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 [Mini-Blog](`r miniblog_link`)|
 
 
+
+# Abstract
+
 # Introduction
 
-For a long time, and still somewhat currently, the workhorse model of urban economics was the Alonzo-Mills-Muth or monocentric model of the Central Business District (CBD). What that theory says is that all urban areas are built around CBD's which are historically the major city that has been around the longest. So the St. Louis CBD would be centered by the city of St. Louis and the surrounding area would fall into the urban area around that CBD. 
+Municipal mergers, the process of merging two or more political jurisdictions in an urban area, are often discussed in economic planning initiatives. Advocates of municipal mergers rely on the expected benefits from access to greater economies of scale and more effective regional planning. Detractors counter these claims with the perceived negative effects of decreased constituent attachment to the political process and increased costs stemming from bureaucracy. A large academic literature has tried to add to this debate by investigating past municipal mergers. This literature has lead to mixed results. The difficulty in extracting policy implications from past mergers are both empirical and theoretical. 
 
-From an industrial organization perspective, the monocentric model provides a framework for us to ask questions about how Urban Areas compete. We treat each Urban Area as a firm and ask how their competitive interactions effect the economy as a whole. But we can go further. The polycentric model is an extension of the monocentric theory. This theory states that Urban Areas are a collection of emplyoment subcenters. Each subcenter can be thought of as a replica of the standard monocentric model contained within an Urban Area. Similar to how Urban Areas compete with each other in the national market, subcenters compete with each other within an Urban Area. We can now ask very interesting questions regarding the link between these two markets and the incentives faced by these subcenters. Does a more competitive structure of subcenters lead to improved outcomes for the Urban Area in the national market? Are subcenters internalizing their effect on the national market when making competitve decisions in the Urban Area market? How are current place-based policies interacting with these incentives? Can they be improved if we had a working model of these incentives?      
+On the empirical side, examining past mergers presents three main challenges. First and foremost, municipal mergers are relatively rare events. Second, mergers happen in an array of different cultural, political, and historic contexts, making external validity a concern when extrapolating results into a specific context. Third, municipal mergers are far from randomly assigned, creating a selection issue where historically poor preforming municipalities constitute the majority of municipal mergers.
 
-These are possibly interesting and important questions, but we have still left something major undefined. What is an Urban area? We tend to take this as some predefined object, such as a MSA, a group of counties, or whatever level of data that we have will allow. One goal of this paper is to let the data identify what an Urban Area should be. Further, after identifying Urban Areas, we then need to be able to accurately identify subcenters. As our results, and possible policy implications, are dependent on how we define and identify these subcenters, we ought to make this identification as robust and assumption free as possible.
+On the theory side, we are again presented with three main challenges. First, municipal mergers do not occur in a vacuum, but rather inside a larger urban area. A counterfactual merger changes the incentives and the competitive environment for all residents, firms, and municipalities located in the urban area. Second, dynamics in the form of forward-looking agents play an immense role as the counterfactual merger can induce changes to established investment patterns, which is presumably the desired result of the merger. Third, a workable measure of welfare is often difficult to establish in these settings, making comparative statics or the answers to normative questions about pursuing municipal mergers difficult to come by.
 
+If the goal is to extract normative policy prescriptions regarding mergers, these issues must be addressed. The proposed solution in this paper is to embed the framework of municipal mergers into a structural model of an urban area. Just as counterfactual mergers between competitive firms in a product market have been examined, we can examine counterfactual mergers of competitive municipalities in the market for residents and firms. To see the utility of this approach, we can examine how a structural model can be used to address the potential flaws discussed above.
 
-# Data
+We first start with the theoretical hurdles the model allows us to overcome. As a model of the entire urban area, the incentives of municipalities, residents, and firms are endogenous. This allows agents the opportunity to re-optimize after the counterfactual merger, which lets the new competitive environment of the urban area determine counterfactual allocation decisions. This re-optimization plays directly into the second hurdle the model overcomes. The choice of municipality for firms and residents is associated with large fixed costs. This means that agents are going to make decisions that not only rely on the current period allocations, but also on all subsequent periods. Finally, embedding a structural model allows us to examine welfare at the level of the urban area, instead of just at the municipal level. This relates directly to the stated belief that municipal mergers are a form of more effective regional planning, and also has interesting political economy ramifications. Who wins and who loses for a proposed municipal merger? How will the merger effect the urban area as a whole? 
 
-We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The zip codes used here are not *exactly* the same as the zip codes you are probably thinking of. I should be more precise and say that they are ZCTA codes. Traditional zip codes are used by the postal service and are frequently changed. The census uses ZCTA codes to maintain data continuity through their tract and block system. I will be using zip code and ZCTA interchangeably here, but technically I always mean the ZCTA.  
+On the empirical side, the structural model allows us to simulate a merger without the need to have observed a merger in the data. As the incentives of our agents are recovered as model primitives, the outcome of a counterfactual merger is just the result of these agents optimizing in a new competitive environment. Because the model is estimated using data from the urban area of interest, it is self contained. While we may not have external validity globally, this encapsulation allows us to claim at least locally validity. 
 
-## Getting the Data
+Two broadly defined primitives of the model will drive the results and policy prescriptions of the model. First, primitives governing the municipal production function will determine how a municipality will be able to map their tax revenue into municipal quality. Following the literature, we expect that this will result in an inverted U-shaped curve, where the peak of such a curve can be thought of as the "optimal" municipal size. Second, substitution patterns for both residents and firms will dictate how agents re-optimize post-merger.  
 
-As we are concerned with a timeseries, the data availability in 1994 will dictate what variables we use moving forward. We can look at the API's variables page to see what is available
+While many aspects of standard merger analysis in product markets will find a natural analog in the urban area market, there are some distinctions that alter standard economic arguments and intuition when examining urban areas and municipalities. Four institutional details regarding municipalities bare expressing. First, municipal budgets are legislatively enforced to be balanced. Second, in general, municipal jurisdictions are fixed at the point of incorporation. Third, in general, there is no exit opportunity for municipalities. And fourth, municipalities face a spatial dimension to their competition.
 
-```{r}
-library(kableExtra)
-url = "https://api.census.gov/data/1994/zbp/variables.html"
-read_html(url) %>% html_table() %>% data.frame %>% select(Name, Label) %>% kable()
-```
-From this, we will take Total Number of Employees, Total Number of Establishments, Total Annual Payroll.
+Further, two economic primitives interact with these institutional details. Economies of scale allow the efficiency of a municipality to be augmented by its population and economies of density allow efficiency to be augmented by its density. Generally, these two primitives have been found to have an inverted U-shape. Holding area 
 
-These are available for every year, but we do need to take take because the name of the SIC Codes update every few years. Even as we are only using the top level SIC code, we still need to account for this in the code because the API will send information broken out into every SIC code if we do not specifiy. This results in data that is almost too large to hold in memory. 
+One interesting implication of these institutional details is on the growth of high quality municipalities. High quality in a municipality will attract firms and residents, allowing it a greater tax base to further develop its quality. Entry of residents and firms into the municipality can soon outstrip its initial endowment of land. Due to its fixed boundaries and the negative effects of density, such as congestion or residents' distaste, the population of residents and firms of the municipality will become capped at some level. As demand for that land still grows, the tax base of the municipality continues to grow as a result. The legislative requirement that municipal budgets are balanced forces the municipality continue to increase expenditure enticing investment in projects that have a low return. While this is welfare improving for the municipality, it is allowed to select on only the wealthiest residents and most commercially successful firms, it represents a dead weight loss in terms of overall urban area welfare. The social planner solution would allocated this maginal investment into projects with a higher return, but there are no such projects within the high quality municipality. As direct transfers from one municipality to another may be unfeasible, from the urban areas point of view, a welfare improvement could be made by increasing the jurisdictional boundaries of that municipality to the point where the marginal project is welfare neutral. The expansion of the high quality municipality is essentially a municipal merger.
 
-We also need to bring in additional information about the area and location of each zipcode and we would like ShapeFiles in order to make figures. To do the bulk of the work, we will be using the `tigris` package. The code below gets their zipcode shapefiles for the years 2000, 2010, and 2020.
+Another interesting implication looks at the reverse direction. Consider a municipality that due to either its low quality or the location and allocation decisions of other municipalities, sees its own quality and therefore population of residents and firms decreasing. This has the possibility to create the cycle above, but with a negative trajectory. The trajectory is determined by shape and presence of economies of scale in municipal production. One possibility is that economies of scale have an inverted U-shape and that this decrease in size moves the municipality closer to an optimal level for economies of scale. In that case, the increase in municipal efficiency can increase quality the number of residents and firms will reach an equilibrium. This is ideal for the social planner. A municipality that was operating at a size above its efficient level has been brought to efficient level. However, if the municipality was already at or below the optimal level, this decrease in size leads to a point further from the optimal, reducing municipal quality even further, and the process continues. This represents a welfare loss for both the municipality and the urban area. The welfare in the municipality is low because residents and firms are leaving, and those that remain are negatively selected. It represents a loss for the urban area as a location that has the potential to operate at an efficient level currently is not. At this stage, a welfare improvement could be made if the municipality could exit or at least shrink in size to get to an optimal level. The land it previously occupied could then be utilized by a higher quality municipality.
 
-```{r,eval = F}
-library(tigris)
-### This can fail. So I usually run it before hand and make sure I have everything, then run the rest
-zip2000 = zctas(year = 2000)
-zip2010 = zctas(year = 2010)
-zip2020 = zctas(year = 2020)
-saveRDS(zip2000,"Data/zip2000.rds")
-saveRDS(zip2010,"Data/zip2010.rds")
-saveRDS(zip2020,"Data/zip2020.rds")
-```
-Unfortunately, there seems to be some zipcodes in ZBP that are not in the tigris files. This means that we will not be able to plot these zipcodes, but we still would like to include them in our anaylsis. For that, we make use of 3 additional files.
+The two implications seem to lend themselves together. High quality municipalities do not have enough land, and low quality municipalities have too much. A trade between the two would represent a welfare improvement for both municipalities and the urban area as a whole. Unfortunately, the spatial dimension of competition in the urban area can hamper this process. Further, spillover effects make this coincidence of wants even less likely. The spatial dimension of competition refers to the fact that the municipalities interact on a geography. A reasonable restriction on any merger would be that the two jurisdictions must share a physical boundary. So to make the welfare improving trade as above, we would need a space constrained high quality municipality to share a boundary with a space-overwhelmed low quality municipality. Spillover effects make this situation unlikely. Consider the first situation, the high quality municipality is spending on projects create amenities and a pool of wealthy consumers that are not easily excluded from residents and firms of nearby municipalities. As this investment spills over into neighboring municipalities, their quality increases, isolating the high quality municipality from a low quality merge partner. 
 
-First comes from a Stanford Center for Population Health Sciences. A link to the crosswalk is [here](https://redivis.com/StanfordPHS). I have put the crosswalk in the Data folder as `zip_latlong_crosswalk.csv`. I will stick to the tigris definitions as a main source, but will default to these for missing values. The Stanford data does not have zipcode area, so we need to supplement that as well. We can get that from the National Neighborhood Data Archive, which uses the National Land Cover Database. The link to that crosswalk is [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view) and is stored as `zip_area_crosswalk.csv`. Finally, we still have a few missing values, so we bring in a fourth dataset to fill in some more missing values. This data comes from some ArcGIS website that can be accessed [here](https://hub.arcgis.com/datasets/esri::usa-zip-code-boundaries/about). The data comes from TomTom, a geographic mapping service. 
+Now consider the second situation. The low quality municipality is losing residents and firms. Neighboring municipalities have a marginally more difficult time attracting firms because they could locate to a similar municipality that neighbors a municipality with wealthy residents. They also have a marginally more difficult time attracting residents because again, they could locate in a similar municipality that neighbors a municipality with high amenities. This also has the effect of isolating the struggling municipality from a merge partner.
 
-The following code first scrapes the Census ZBP API and merges with the crosswalks, for each year. After, it goes year by year and creates standardized variables by combining the crosswalk data in a preference order of Tigris>Stanford>NNDA>TomTom. 
+Absent the ability to correct, these processes are self-reinforcing and welfare reducing for the urban area as a whole. To see this, allow the process to continue. As the high quality municipality increases the quality of its neighbors, they themselves soon reach a density constraint, and their spending goes to projects with lower and lower returns. The dead weight losses from spending on less and less efficient projects compound. Further, as negative spillover operate from the other direction, more and more land that could be used productively is used in an inefficient manner. This deadweight loss makes the urban area relatively less attractive on the national market. Not only do new residents and firms enter the urban area at a lower rate, but existing residents and firms leave at an increasing rate. 
 
-Fair warning. If you want to run this, it takes some time.
-
-```{r,eval = F}
-library(dplyr)
-library(rvest)
-years = 2006:2018
-prepare_zbp_full = function(){
-### Load crosswalks
-area_cross = read.csv("Data/zip_area_crosswalk.csv")
-area_cross2 = read.csv("Data/USA_ZIP_CODE_Boundaries.csv")
-latlong_cross = read.csv("Data/zip_latlong_crosswalk.csv")
-
-### Clean zip of crosswalks
-area_cross$zip = paste0("00000",area_cross$zcta19)
-area_cross2$zip = paste0("00000",area_cross2$ZIP_CODE)
-latlong_cross$zip = paste0("00000",latlong_cross$Zip)
-
-area_cross$zip = substr(area_cross$zip,nchar(area_cross$zip)-4,nchar(area_cross$zip))
-area_cross2$zip = substr(area_cross2$zip,nchar(area_cross2$zip)-4,nchar(area_cross2$zip))
-latlong_cross$zip = substr(latlong_cross$zip,nchar(latlong_cross$zip)-4,nchar(latlong_cross$zip))
-
-zip2000 = readRDS("Data/zip2000.rds")
-zip2010 = readRDS("Data/zip2010.rds")
-zip2020 = readRDS("Data/zip2020.rds")
-
-
-for (i in 1:length(years)) {
-cur_year = years[i]
-if (cur_year %in% 1994:1997) {
-  cur_sic = "SIC"
-} else if (cur_year %in% 1998:2002) {
-  cur_sic = "NAICS1997"
-} else if (cur_year %in% 2003:2007){
-  cur_sic = "NAICS2002"
-} else if (cur_year %in% 2008:2011){
-  cur_sic = "NAICS2007"
-} else if (cur_year %in% 2012:2016){
-  cur_sic = "NAICS2012"
-} else {
-  cur_sic = "NAICS2017"
-}
-
-url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,ESTAB,PAYANN&for=zipcode:*&",cur_sic,"=00 ")
-tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
-
-var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
-  data = tt[-1]
-  data = data %>% strsplit(",") %>% unlist() %>%
-          gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
-          matrix(ncol =5,byrow = T) %>% data.frame()
-  
-  colnames(data) = var_names
-  data$year = years[i]
-
-## Cleaning
-### Append Zeros to make Zips Length 5
-data$zip = paste0("00000",data$zipcode)
-data$zip = substr(data$zip,nchar(data$zip)-4,nchar(data$zip))
-
-### Make our Numeric values numeric
-data$EMP = as.numeric(data$EMP)
-data$ESTAB = as.numeric(data$ESTAB)
-data$PAYANN = as.numeric(data$PAYANN)
-
-### Remove 99999 and 00501
-data = data[!(data$zip %in% c("99999","00501")),]
-
-### Year Independent Merge
-data = merge(data,area_cross2,all.x = T,by = "zip")
-data = merge(data,latlong_cross,all.x = T, by = "zip")
-
-### Year Dependent Merges
-if (cur_year <= 2005) {
-  data = merge(data,zip2000,all.x = T, by.x = "zip",by.y = "ZCTA5CE00")
-} else if (cur_year <= 2015) {
-  data = merge(data,zip2010,all.x = T, by.x = "zip",by.y = "ZCTA5CE10")    
-} else{
-  data = merge(data,zip2020,all.x = T, by.x = "zip",by.y = "ZCTA5CE20")
-}
-
-if (cur_year <= 2001) {
-  data = merge(data,area_cross[area_cross$year_intp == 2001,],all.x = T, by = "zip")
-} else if (cur_year >= 2016) {
-  data = merge(data,area_cross[area_cross$year_intp == 2016,],all.x = T, by = "zip")
-} else{
-  data = merge(data, area_cross[area_cross$year_intp == cur_year,],all.x = T, by = "zip")
-}
-
-filename = paste0("Data/ZBP_FULL/full_zbp",cur_year,".rds")
-saveRDS(data,filename)
-}
-}
-
-clean_zbp_full = function(){
-for (i in 1:length(years)) {
-  print(years[i])
-file_location = paste0("Data/ZBP_FULL/full_zbp",years[i],".rds")
-tt = readRDS(file_location) %>%
-    select(zip,EMP,ESTAB,PAYANN,year,Shape__Area,contains("ALAND"),zcta_area,Latitude,Longitude,contains("INTPTLAT"),contains("INTPTLON"),geometry)
-names(tt)[which(grepl("ALAND",names(tt)))] = "ALAND"
-names(tt)[which(grepl("INTPTLAT",names(tt)))] = "LAT"
-names(tt)[which(grepl("INTPTLON",names(tt)))] = "LON"
-
-tt = tt %>%
-  mutate(area = ifelse(!is.na(ALAND),ALAND,ifelse(!is.na(zcta_area),zcta_area,Shape__Area)),
-           lat = ifelse(!is.na(LAT),LAT,Latitude),
-           lon = ifelse(!is.na(LON),LON,Longitude)) %>%
-  select(zip,year,EMP,ESTAB,PAYANN,lat,lon,geometry)
-
-tt$lat = as.numeric(tt$lat)
-tt$lon = as.numeric(tt$lon)
-filename = paste0("Data/ZBP/ZBP",years[i],".rds")
-saveRDS(tt,filename)
-}
-}
-
-
-```
-
-
-```{r,eval = F}
-prepare_zbp_full()
-clean_zbp_full()
-```
+Could a social planner with the ability to redraw jurisdiction rectify this situation? As we have discussed, deadweight losses occur when space-constrained high quality municipalities invest in projects with low return, and when space-overwhelmed 
 
 
 
 
-# McMillan (2001) Redux
 
-McMillan (2001) gives a procedure for non-parametrically identifying employment subcenters. A summary of that paper can be found [here](https://chasewiedemann.github.io/Site/Summaries/McMillen_2001/Summary.html).
 
-In this section, we are going to use his method on our data. Specifically, we are going to look at Dallas in 2000.
 
-## Data Selection
 
-Our data is not the same as the data used by McMillen. He uses Transportation Analysis Zones, we are going to use zipcodes. His data is from 1990, ours is from 2000. That being said, we actually observe more that what McMillen uses. The variable used in McMillen is equivalent to our `EMP` variable. We will be restricting ourselves to that variable, but we have the ability to get much more into a bit more detail.
 
-We first load the data
 
-```{r}
 
-```
+
+
+
+
+
+
 
 
 

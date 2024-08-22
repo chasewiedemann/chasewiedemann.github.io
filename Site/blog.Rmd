@@ -3,390 +3,86 @@ title: "Blog"
 output: html_document
 ---
 
-[Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) \| [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
-
-# 8/18/24
-
-The last couple of post have mainly been check ins in order to set up my day. Here I want to actaully work on something in a blog post. I want to work out how multivariate normal distributions are computed from the `mvrnorm` function.
-
-Heres the function taken from the `MASS` package source that can be found [here](https://rdrr.io/cran/MASS/src/R/mvrnorm.R)
-
-```{r}
-# file MASS/R/mvrnorm.R
-# copyright (C) 1994-2015 W. N. Venables and B. D. Ripley
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 or 3 of the License
-#  (at your option).
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  http://www.r-project.org/Licenses/
-#
-mvrnorm <-
-    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
-{
-    p <- length(mu)
-    if(!all(dim(Sigma) == c(p,p))) stop("incompatible arguments")
-    if(EISPACK) stop("'EISPACK' is no longer supported by R", domain = NA)
-    eS <- eigen(Sigma, symmetric = TRUE)
-    ev <- eS$values
-    if(!all(ev >= -tol*abs(ev[1L]))) stop("'Sigma' is not positive definite")
-    X <- matrix(rnorm(p * n), n)
-    if(empirical) {
-        X <- scale(X, TRUE, FALSE) # remove means
-        X <- X %*% svd(X, nu = 0)$v # rotate to PCs
-        X <- scale(X, FALSE, TRUE) # rescale PCs to unit variance
-    }
-    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
-    nm <- names(mu)
-    if(is.null(nm) && !is.null(dn <- dimnames(Sigma))) nm <- dn[[1L]]
-    dimnames(X) <- list(nm, NULL)
-    if(n == 1) drop(X) else t(X)
-}
-
-```
-
-Beautiful.
-
-Here it is with just the minimal operational code, no documentation,checks to make sure things don't go screwy, or internal scaling (empirical).
-
-```{r}
-mvrnorm <-
-    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
-{
-    p <- length(mu)
-    eS <- eigen(Sigma, symmetric = TRUE)
-    ev <- eS$values
-    X <- matrix(rnorm(p * n), n)
-    
-    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
-    
-
-     drop(X)
-}
-```
-
-Lets write this out in words, Lets assume $n=1$ so we are just simulating a single vector and $\mu$ is the zero vector as it enters additively
-
--   $p$ is the dimension of the vector we wish to simulate
--   We then extract the eigenvalues and vectors from the provided $\Sigma$ matrix (more on this later)
--   This part is very interesting. We then initiate the vector as draws from the standardized univariate distribution, looking at this will come later
--   We then take the output as the eigenvectors multiplied by a diagonal matrix containing the square roots of eigenvalues of $\Sigma$, but with all negative eigenvalues replaced with zero, and then this gets multiplied by the transpose of the vector of univariate draws.
-
-Ok. Now lets get into a little more detail. Let the univariate draws be given as $x = (g(u_1),g(u_2),\dots g(u_p))$ where $g$ is the quantile function for the univariate distibution we are trying to draw from (in this case its the normal distribution) and $u_i$ are draws from the uniform distribution. The $u_i$ are the only source of randomness in this entire function. We start with an eigen-decomposition of the supplied $\Sigma$ matrix. Lets look at the source code for the `eigen` function. This code is in base R and can be found [here](https://github.com/SurajGupta/r-source/blob/master/src/library/base/R/eigen.R)
-
-```{r}
-#  File src/library/base/R/eigen.R
-#  Part of the R package, https://www.R-project.org
-#
-#  Copyright (C) 1995-2015 The R Core Team
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  A copy of the GNU General Public License is available at
-#  https://www.R-project.org/Licenses/
-
-
-isSymmetric <- function(object, ...) UseMethod("isSymmetric")
-
-isSymmetric.matrix <- function(object, tol = 100*.Machine$double.eps, ...)
-{
-    if(!is.matrix(object)) return(FALSE) ## we test for  symmetric *matrix*
-    ## cheap pretest: is it square?
-    d <- dim(object)
-    if(d[1L] != d[2L]) return(FALSE)
-    test <-
-        if(is.complex(object))
-            all.equal.numeric(object, Conj(t(object)), tolerance = tol, ...)
-        else # numeric, character, ..
-            all.equal(object, t(object), tolerance = tol, ...)
-    isTRUE(test)
-}
-
-eigen <- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
-{
-    x <- unname(as.matrix(x))
-    n <- nrow(x)
-    if (!n) stop("0 x 0 matrix")
-    if (n != ncol(x)) stop("non-square matrix in 'eigen'")
-    n <- as.integer(n)
-    if(is.na(n)) stop("invalid nrow(x)")
-
-    complex.x <- is.complex(x)
-    if (!all(is.finite(x))) stop("infinite or missing values in 'x'")
-
-    if(missing(symmetric)) symmetric <- isSymmetric.matrix(x)
-
-    if (symmetric) {
-        z <- if(!complex.x) .Internal(La_rs(x, only.values))
-        else .Internal(La_rs_cmplx(x, only.values))
-       
-    } else {
-        z <- if(!complex.x) .Internal(La_rg(x, only.values))
-        else .Internal(La_rg_cmplx(x, only.values))
-        ord <- sort.list(Mod(z$values), decreasing = TRUE)
-    }
-    return(list(values = z$values[ord],
-                vectors = if (!only.values) z$vectors[, ord, drop = FALSE]))
-}
-```
-
-We can clean this as we did above to look at it a little easier. We will take out the additional non-symmetric and complex cases as well
-
-```{r}
-eigen <- function(x, symmetric, only.values = FALSE, EISPACK = FALSE)
-{
-        z <- .Internal(La_rs(x, only.values))
-        ord <- sort.list(Mod(z$values), decreasing = TRUE)
-        
-    return(list(values = z$values[ord],
-                vectors =  z$vectors[, ord, drop = FALSE]))
-}
-
-```
-
-Well thats underwhelming, `eigen` is just a wrapper for an internal function `La_rs`. Lets look at the source for that. Its from the `Lapack` module and is written in `FORTRAN` (not an expert). I will have to comment out all the code for this page to not crash when I try to render it
-
-```{r}
-# static SEXP La_rs(SEXP x, SEXP only_values)
-# {
-#     int *xdims, n, lwork, info = 0, ov;
-#     char jobv[2] = "U", uplo[2] = "L", range[2] = "A";
-#     SEXP z = R_NilValue;
-#     double *work, *rx, *rvalues, tmp, *rz = NULL;
-#     int liwork, *iwork, itmp, m;
-#     double vl = 0.0, vu = 0.0, abstol = 0.0;
-#     /* valgrind seems to think vu should be set, but it is documented
-#        not to be used if range='a' */
-#     int il, iu, *isuppz;
-# 
-#     xdims = INTEGER(coerceVector(getAttrib(x, R_DimSymbol), INTSXP));
-#     n = xdims[0];
-#     if (n != xdims[1]) error(_("'x' must be a square numeric matrix"));
-#     ov = asLogical(only_values);
-#     if (ov == NA_LOGICAL) error(_("invalid '%s' argument"), "only.values");
-#     if (ov) jobv[0] = 'N'; else jobv[0] = 'V';
-# 
-#     /* work on a copy of x, since LAPACK trashes it */
-#     if (!isReal(x)) {
-# 	x = coerceVector(x, REALSXP);
-# 	rx = REAL(x);
-#     } else {
-# 	rx = (double *) R_alloc(n * (size_t) n, sizeof(double));
-# 	Memcpy(rx, REAL(x), (size_t) n * n);
-#     }
-#     PROTECT(x);
-#     SEXP values = PROTECT(allocVector(REALSXP, n));
-#     rvalues = REAL(values);
-# 
-#     if (!ov) {
-# 	z = PROTECT(allocMatrix(REALSXP, n, n));
-# 	rz = REAL(z);
-#     }
-#     isuppz = (int *) R_alloc(2*(size_t)n, sizeof(int));
-#     /* ask for optimal size of work arrays */
-#     lwork = -1; liwork = -1;
-#     F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
-# 		     &vl, &vu, &il, &iu, &abstol, &m, rvalues,
-# 		     rz, &n, isuppz,
-# 		     &tmp, &lwork, &itmp, &liwork, &info);
-#     if (info != 0)
-# 	error(_("error code %d from Lapack routine '%s'"), info, "dsyevr");
-#     lwork = (int) tmp;
-#     liwork = itmp;
-# 
-#     work = (double *) R_alloc(lwork, sizeof(double));
-#     iwork = (int *) R_alloc(liwork, sizeof(int));
-#     F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
-# 		     &vl, &vu, &il, &iu, &abstol, &m, rvalues,
-# 		     rz, &n, isuppz,
-# 		     work, &lwork, iwork, &liwork, &info);
-#     if (info != 0)
-# 	error(_("error code %d from Lapack routine '%s'"), info, "dsyevr");
-# 
-#     SEXP ret, nm;
-#     if (!ov) {
-# 	ret = PROTECT(allocVector(VECSXP, 2));
-# 	nm = PROTECT(allocVector(STRSXP, 2));
-# 	SET_STRING_ELT(nm, 1, mkChar("vectors"));
-# 	SET_VECTOR_ELT(ret, 1, z);
-# 	UNPROTECT_PTR(z);
-#     } else {
-# 	ret = PROTECT(allocVector(VECSXP, 1));
-# 	nm = PROTECT(allocVector(STRSXP, 1));
-#     }
-#     SET_STRING_ELT(nm, 0, mkChar("values"));
-#     setAttrib(ret, R_NamesSymbol, nm);
-#     SET_VECTOR_ELT(ret, 0, values);
-#     UNPROTECT(4);
-#     return ret;
-# }
-
-```
-
-Again, I'm not an expert. I'm going to call in "the expert"
-
-## START CHATGPT
-
-## Conversation on Understanding Fortran Code
-
-### User:
-Hello, I'm trying to figure out what this Fortran code does.
-
-### Assistant:
-Sure, I can help with that. Please share the Fortran code you'd like to understand.
-
-### User:
-```fortran
-F77_CALL(dsyevr)(jobv, range, uplo, &n, rx, &n,
-                 &vl, &vu, &il, &iu, &abstol, &m, rvalues,
-                 rz, &n, isuppz,
-                 work, &lwork, iwork, &liwork, &info);
-```
-
-### Assistant:
-The Fortran code you've provided is a call to a function named `dsyevr`, which is part of the LAPACK (Linear Algebra PACKage) library. The `dsyevr` function is used to compute selected eigenvalues and, optionally, the corresponding eigenvectors of a real symmetric matrix.
-
-Here's a breakdown of the parameters and what the function does:
-
-1. **`jobv`**: Specifies whether to compute eigenvectors (`'V'`) or not (`'N'`).
-
-2. **`range`**: Specifies the range of eigenvalues to find:
-   - `'A'`: All eigenvalues.
-   - `'V'`: Eigenvalues within the interval `[vl, vu]`.
-   - `'I'`: Eigenvalues with indices in the range `[il, iu]`.
-
-3. **`uplo`**: Specifies whether the matrix is upper triangular (`'U'`) or lower triangular (`'L'`).
-
-4. **`n`**: The order of the matrix (number of rows/columns).
-
-5. **`rx`**: The array containing the symmetric matrix whose eigenvalues and eigenvectors are to be computed.
-
-6. **`vl`, `vu`**: If `range = 'V'`, these specify the lower and upper bounds of the interval.
-
-7. **`il`, `iu`**: If `range = 'I'`, these specify the indices of the smallest and largest eigenvalues to be returned.
-
-8. **`abstol`**: The absolute error tolerance for the eigenvalues. 
-
-9. **`m`**: The total number of eigenvalues found.
-
-10. **`rvalues`**: The array to store the computed eigenvalues.
-
-11. **`rz`**: The array to store the computed eigenvectors if they are required.
-
-12. **`isuppz`**: An integer array that indicates which columns of `rz` contain the eigenvectors.
-
-13. **`work`**: Workspace array for intermediate calculations.
-
-14. **`lwork`**: The length of the `work` array.
-
-15. **`iwork`**: An integer workspace array.
-
-16. **`liwork`**: The length of the `iwork` array.
-
-17. **`info`**: Output parameter that indicates the success or failure of the computation.
-
-#### Summary
-This call is used to find specific eigenvalues (and optionally, eigenvectors) of a real symmetric matrix, depending on the `range` and `jobv` parameters. The results, including the eigenvalues and eigenvectors, are stored in the provided arrays (`rvalues`, `rz`).
-
-Would you like a more detailed explanation of any specific part?
-
-### User:
-How does it compute `rvalues` and `rz`?
-
-### Assistant:
-The `dsyevr` function computes the eigenvalues (`rvalues`) and eigenvectors (`rz`) of a real symmetric matrix using a combination of methods designed to be efficient and accurate. Here's an overview of how these computations are typically performed within the function:
-
-#### 1. Matrix Reduction to Tridiagonal Form
-The first step in computing the eigenvalues and eigenvectors is to reduce the input symmetric matrix `rx` to a tridiagonal form. This is done using a series of Householder transformations. The tridiagonal matrix has the same eigenvalues as the original matrix but is easier to work with computationally.
-
-#### 2. Computation of Eigenvalues and Eigenvectors
-Depending on the `range` parameter, `dsyevr` employs the following strategies:
-   - **All Eigenvalues (`range = 'A'`)**: The function computes all eigenvalues of the tridiagonal matrix using a bisection method and, optionally, eigenvectors using an inverse iteration method.
-   - **Eigenvalues in a Specific Range (`range = 'V'`)**: Eigenvalues within a specified interval `[vl, vu]` are computed. The bisection method is often used to isolate the eigenvalues within this range.
-   - **Eigenvalues by Index (`range = 'I'`)**: Only the eigenvalues with indices `[il, iu]` are computed.
-
-#### 3. Refinement of Eigenvalues
-The eigenvalues are refined to high precision, typically by using the bisection method or the QR algorithm. This step ensures that the computed eigenvalues are as accurate as possible within the specified tolerance `abstol`.
-
-#### 4. Computation of Eigenvectors
-If the `jobv` parameter is set to `'V'`, the eigenvectors corresponding to the computed eigenvalues are calculated. This is done by applying the inverse of the Householder transformations (used in the reduction to tridiagonal form) to the eigenvectors of the tridiagonal matrix. The eigenvectors are then normalized.
-
-#### 5. Final Assembly
-The eigenvalues are stored in the array `rvalues`, and the corresponding eigenvectors are stored in the matrix `rz`. The `isuppz` array indicates which columns of `rz` contain the computed eigenvectors.
-
-#### 6. Output and Information Flag
-The function returns the number of eigenvalues found in `m`, and the `info` parameter is used to indicate success or failure. If `info = 0`, the computation was successful; otherwise, it indicates an error.
-
-#### Summary of Methods
-- **Tridiagonal Reduction**: Simplifies the matrix while preserving eigenvalues.
-- **Bisection or QR Algorithm**: Ensures accurate computation of eigenvalues.
-- **Inverse Iteration**: Computes eigenvectors efficiently after eigenvalues are determined.
-
-Would you like to delve deeper into any specific method used in these steps?
-
-### User:
-When does it use bisection vs QR?
-
-### Assistant:
-The choice between the bisection method and the QR algorithm in `dsyevr` depends on the nature of the eigenvalue computation required and the range specified (`range = 'A'`, `'V'`, or `'I'`).
-
-#### Bisection Method
-The bisection method is typically used when you need to find eigenvalues in a specific range or a subset of eigenvalues. It is particularly useful in the following scenarios:
-
-1. **Range-Specified Eigenvalue Search (`range = 'V'` or `range = 'I'`)**:
-   - **`range = 'V'`**: When you want eigenvalues within a specific interval `[vl, vu]`, the bisection method is used to isolate and refine these eigenvalues. The bisection method works well for finding roots (eigenvalues) within a given interval, making it suitable for this task.
-   - **`range = 'I'`**: When you're interested in a subset of eigenvalues by index, say the `il`-th to `iu`-th eigenvalues, the bisection method can also be applied to isolate and compute only these eigenvalues.
-
-2. **When High Precision is Needed for Specific Eigenvalues**:
-   - The bisection method can be more reliable for computing eigenvalues to a high precision when you need only a few eigenvalues or eigenvalues within a narrow range. This method is less sensitive to rounding errors compared to the QR algorithm, especially when dealing with very small or very large eigenvalues.
-
-#### QR Algorithm
-The QR algorithm is used when all eigenvalues of the matrix are required, typically when `range = 'A'`:
-
-1. **All Eigenvalues (`range = 'A'`)**:
-   - When the goal is to compute all eigenvalues of the matrix, the QR algorithm is generally preferred. The QR algorithm iteratively reduces the matrix and computes all eigenvalues at once, which can be more efficient than using bisection for every eigenvalue.
-   - The QR algorithm is well-suited for this task because it handles the entire spectrum of eigenvalues efficiently and is often faster when all eigenvalues are needed.
-
-#### Summary of When Each Method is Used
-- **Bisection Method**:
-  - Used when `range = 'V'` or `range = 'I'`.
-  - Applicable for finding eigenvalues within a specific range or a subset by index.
-  - Preferable when high precision is needed for specific eigenvalues.
-
-- **QR Algorithm**:
-  - Used when `range = 'A'` (all eigenvalues).
-  - Efficient for computing all eigenvalues of the matrix.
-
-This distinction allows `dsyevr` to balance efficiency and accuracy depending on the specific needs of the eigenvalue problem being solved. If you need more details on how these methods are implemented in LAPACK or how they perform in practice, I can provide further insights.
-
-### User:
-Can you output this conversation into a format that can easily be copied and pasted into a markdown document?
-
-### Assistant:
-Certainly! Here's the entire conversation placed within a single code block:
-
-[Include the entire conversation above in a blockquote with appropriate markdown syntax.]
-
-
-## END CHATGPT
-
-
-Honestly pretty helpful. 
+[Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
+
+
+# 8/21/24 A Two-fer
+
+I realized that I did not push any of my work yesterday. All good, its will just get put out with todays.
+
+I am going to focus on finsihed the updated readme for the DM project today, and hopefully start on the simute_dmreg.ado and neccessary java modifications to get that done.
+
+Lets go!
+
+## A DM to-do list
+
+I realized that our estimator is not ready to go out of the box. I dont have anything to convert user data into a form that is acceptable for the Andres and Shi (2014) procedure. I think there might be more things like this, so I'm going to create a running list
+
+- Incorporate a function that takes user data and normalizes it as in Andrews and Shi (2014). this should be done in the moments class. as we can use the normal data for estimation, but we want to create out cubes with normalized data.
+- 
+
+# 8/20/24: Lets get this bread
+
+Were doing 4 things today:
+
+1. Write introduction to MuniProject, focusing on the big picture of why a urban area would want to go forward with a municipal merger
+  + Why would a change in the municipal structure make for larger future welfare outcomes vs. the status quo
+  + Why do reduced form merger analysis fail?
+2. Start on the in depth readme file for DM
+  + Pick up where stephan's user guide leaves off
+  + Possibly start backwards
+3. Set up simulate_dmreg.ado
+  + separate stata command to run a monte carlo
+  + This should probably be step 2
+4. Rewrite about page to reflect changes to site structure
+
+Lets go!
+
+# 8/19/24: Back to Work
+
+Its a new week and lets make it more productive than the last. The previous week was interesting as it was the first full work week where I worked exclusively on this site. I really like the structure that the site provides and I think that it is making me a bit more efficient. That being said, after a week of doing this I think theres a change that I would like to make. I will probably instate this change tonight, as it will require a bit of site restructing.
+
+I think that the categorization of everything is not quite where it should be. I think the blog should be a stand alone section that contains basic thoughts and daily agendas. Further, I don't think I want to have as big of a separation between paper summaries and projects. So the new format is going to have the blog on its own, and then just a singular Projects section. Within the project section, I will have several sections (think headers) all on the same page with links to the various topics. So the projects page will have a header called Works in Progress for things that are not finished. Once something is finished, it will be catagorize into either Paper Summaries, Papers, or Memorandums. An example of each category will probably help. My McMillen 2001 paper summary would go into the paper summaries section. The KLR 2023 will still be in the works in progress, but will eventually move into the paper summaries section. My three research projects are works in progress, but will eventually be moved into a section called Papers (when that change is made I'm not sure, probably when it goes out into the world). All other topics like the FFF (that I missed) and the deep dive into the `mvrnorm` function will eventually find a home in the Memorandums section. 
+
+So thats the change. But for the actual work day, I want to finish the `mvrnorm` memo, then I should work on KLR 2023. After working on that, I think I want to refresh the intro to the MuniProject, including a ``big picture" section that I discussed with Bart. 
+
+So thats the plan. Lets go. 
+
+## Update
+
+Just had a meeting with my advisor. Seems interested in the FKRB stuff, but wants to talk more about our Dickstein Morales project. I'll need to fit that into my schedule. As I am an RA on that project, I'm not sure I want to share all the details of that on here, so its mostly going to be offline work. 
+
+Heres what i need to do for our next meeting
+
+- Update readme
+  + Prioritize the main options
+  + Take a step towards the user guide in terms of thoroughness.
+- Change defaults to always use the max functions
+
+So theres that. I got to a good point on the `mvrnorm` memo, so I am going to switch gears and start back up on the KLR 2023 paper summary
+
+## Questions for Bart
+
+I want to simulate municipal mergers. Do I need the entire US, or can I just focus on St. Louis? 
+
+- Having the US allows me to put a changing utility value on St. Louis's welfare. I can then say that they are getting either better or worse
+- Is the middle ground best? I estimate the big KLR model on the US metro areas, and then a smaller KLR on St. Louis's values?
+- That seems a lot easier than decomposing everyones.
+- I do have a time series of St. Louis, and I can do a similar slow income convergence exercise as KLR
+- How do I want to model St. Louis specifically
+  + Each muni is a firm (use Census of Gov)
+  + I need capital and population share as observables. (done)
+  + I have to make an assumption on the In and Out Migration Matrices
+  + Trade matrices can be some function of the commercial tax revenue
+  + Each muni (firm) produces workers with some productivity and amenities
+  + Should I group all municipalities that would be merged into a single firm right off the bat?
+    + The counterfactual would be a shock to amenities and productivity that comes from merging.
+    + Is this implying economies of scale?
+    + Is that assuming a positive shock?
+- treat school quality as an unobserved heterogeneity in amenities
+- frame the model for working for any municipality, the application is on St. Louis
+  
+
 
 # 8/16/24
 

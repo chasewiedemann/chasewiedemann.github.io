@@ -532,7 +532,7 @@ summary(missing_one[,c("zipcode","EMP","ESTAB","PAYANN")])
 ```
 So we only really have an issue with 4837. So we need to impute these guys. But do we have their location?
 
-```{r}
+```{r,eval = F}
 missing_both = missing_one[is.na(missing_one$geopoint),]
 summary(missing_both[,c("zipcode","EMP","ESTAB","PAYANN")])
 ```
@@ -540,7 +540,7 @@ So we only have 146 that are missing both location and area.
 
 What about the ones that we are missing only area. Where are they?
 
-```{r}
+```{r,eval = F}
 missing_have_loc = missing[!is.na(missing$Longitude) & missing$EMP != 0,]
 library(sf)
 library(ggplot2)
@@ -615,7 +615,7 @@ tt = tt %>% select(zipcode,City, State,EMP,ESTAB,PAYANN,year,INTPTLAT00,INTPTLON
 
 We now have all the data by year, merged in with everythign else. Let collapse this to a single file and then get rid of all the extra stuff to free up some space on my hard drive
 
-```{r}
+```{r,eval = F}
 library(dplyr)
 clean_zbp_full = function(){
 for (i in 1:length(years)) {
@@ -635,3 +635,188 @@ saveRDS(tt,filename)
 }
 ```
 
+# Making changes
+
+I am reworking the framing of this project. I'm not sure if this code is going to be used anymore, but lets save it for posterity in the mini-blog
+
+# Data
+
+We are going to be using the County Business Patterns Zipcode Files 1994-2022 for this project. These are basically a summary statistic of the Business Registrar at the zip code level. The zip codes used here are not *exactly* the same as the zip codes you are probably thinking of. I should be more precise and say that they are ZCTA codes. Traditional zip codes are used by the postal service and are frequently changed. The census uses ZCTA codes to maintain data continuity through their tract and block system. I will be using zip code and ZCTA interchangeably here, but technically I always mean the ZCTA.  
+
+## Getting the Data
+
+As we are concerned with a timeseries, the data availability in 1994 will dictate what variables we use moving forward. We can look at the API's variables page to see what is available
+
+```{r,eval = F}
+library(kableExtra)
+url = "https://api.census.gov/data/1994/zbp/variables.html"
+read_html(url) %>% html_table() %>% data.frame %>% select(Name, Label) %>% kable()
+```
+From this, we will take Total Number of Employees, Total Number of Establishments, Total Annual Payroll.
+
+These are available for every year, but we do need to take take because the name of the SIC Codes update every few years. Even as we are only using the top level SIC code, we still need to account for this in the code because the API will send information broken out into every SIC code if we do not specifiy. This results in data that is almost too large to hold in memory. 
+
+We also need to bring in additional information about the area and location of each zipcode and we would like ShapeFiles in order to make figures. To do the bulk of the work, we will be using the `tigris` package. The code below gets their zipcode shapefiles for the years 2000, 2010, and 2020.
+
+```{r,eval = F}
+library(tigris)
+### This can fail. So I usually run it before hand and make sure I have everything, then run the rest
+zip2000 = zctas(year = 2000)
+zip2010 = zctas(year = 2010)
+zip2020 = zctas(year = 2020)
+saveRDS(zip2000,"Data/zip2000.rds")
+saveRDS(zip2010,"Data/zip2010.rds")
+saveRDS(zip2020,"Data/zip2020.rds")
+```
+Unfortunately, there seems to be some zipcodes in ZBP that are not in the tigris files. This means that we will not be able to plot these zipcodes, but we still would like to include them in our anaylsis. For that, we make use of 3 additional files.
+
+First comes from a Stanford Center for Population Health Sciences. A link to the crosswalk is [here](https://redivis.com/StanfordPHS). I have put the crosswalk in the Data folder as `zip_latlong_crosswalk.csv`. I will stick to the tigris definitions as a main source, but will default to these for missing values. The Stanford data does not have zipcode area, so we need to supplement that as well. We can get that from the National Neighborhood Data Archive, which uses the National Land Cover Database. The link to that crosswalk is [here](https://www.openicpsr.org/openicpsr/project/128862/version/V1/view) and is stored as `zip_area_crosswalk.csv`. Finally, we still have a few missing values, so we bring in a fourth dataset to fill in some more missing values. This data comes from some ArcGIS website that can be accessed [here](https://hub.arcgis.com/datasets/esri::usa-zip-code-boundaries/about). The data comes from TomTom, a geographic mapping service. 
+
+The following code first scrapes the Census ZBP API and merges with the crosswalks, for each year. After, it goes year by year and creates standardized variables by combining the crosswalk data in a preference order of Tigris>Stanford>NNDA>TomTom. 
+
+Fair warning. If you want to run this, it takes some time.
+
+```{r,eval = F}
+library(dplyr)
+library(rvest)
+years = 2006:2018
+prepare_zbp_full = function(){
+### Load crosswalks
+area_cross = read.csv("Data/zip_area_crosswalk.csv")
+area_cross2 = read.csv("Data/USA_ZIP_CODE_Boundaries.csv")
+latlong_cross = read.csv("Data/zip_latlong_crosswalk.csv")
+
+### Clean zip of crosswalks
+area_cross$zip = paste0("00000",area_cross$zcta19)
+area_cross2$zip = paste0("00000",area_cross2$ZIP_CODE)
+latlong_cross$zip = paste0("00000",latlong_cross$Zip)
+
+area_cross$zip = substr(area_cross$zip,nchar(area_cross$zip)-4,nchar(area_cross$zip))
+area_cross2$zip = substr(area_cross2$zip,nchar(area_cross2$zip)-4,nchar(area_cross2$zip))
+latlong_cross$zip = substr(latlong_cross$zip,nchar(latlong_cross$zip)-4,nchar(latlong_cross$zip))
+
+zip2000 = readRDS("Data/zip2000.rds")
+zip2010 = readRDS("Data/zip2010.rds")
+zip2020 = readRDS("Data/zip2020.rds")
+
+
+for (i in 1:length(years)) {
+cur_year = years[i]
+if (cur_year %in% 1994:1997) {
+  cur_sic = "SIC"
+} else if (cur_year %in% 1998:2002) {
+  cur_sic = "NAICS1997"
+} else if (cur_year %in% 2003:2007){
+  cur_sic = "NAICS2002"
+} else if (cur_year %in% 2008:2011){
+  cur_sic = "NAICS2007"
+} else if (cur_year %in% 2012:2016){
+  cur_sic = "NAICS2012"
+} else {
+  cur_sic = "NAICS2017"
+}
+
+url = paste0("https://api.census.gov/data/",cur_year,"/zbp?get=EMP,ESTAB,PAYANN&for=zipcode:*&",cur_sic,"=00 ")
+tt = read_html(url) %>% html_text() %>% strsplit(.,"\n") %>% unlist()
+
+var_names = tt[1] %>% strsplit(",") %>% unlist() %>% gsub("[^a-zA-Z]", "", .)
+  data = tt[-1]
+  data = data %>% strsplit(",") %>% unlist() %>%
+          gsub("null",NA,.) %>% gsub('"','', .) %>% gsub("\\]","",.)  %>% gsub("\\[","",.) %>%
+          matrix(ncol =5,byrow = T) %>% data.frame()
+  
+  colnames(data) = var_names
+  data$year = years[i]
+
+## Cleaning
+### Append Zeros to make Zips Length 5
+data$zip = paste0("00000",data$zipcode)
+data$zip = substr(data$zip,nchar(data$zip)-4,nchar(data$zip))
+
+### Make our Numeric values numeric
+data$EMP = as.numeric(data$EMP)
+data$ESTAB = as.numeric(data$ESTAB)
+data$PAYANN = as.numeric(data$PAYANN)
+
+### Remove 99999 and 00501
+data = data[!(data$zip %in% c("99999","00501")),]
+
+### Year Independent Merge
+data = merge(data,area_cross2,all.x = T,by = "zip")
+data = merge(data,latlong_cross,all.x = T, by = "zip")
+
+### Year Dependent Merges
+if (cur_year <= 2005) {
+  data = merge(data,zip2000,all.x = T, by.x = "zip",by.y = "ZCTA5CE00")
+} else if (cur_year <= 2015) {
+  data = merge(data,zip2010,all.x = T, by.x = "zip",by.y = "ZCTA5CE10")    
+} else{
+  data = merge(data,zip2020,all.x = T, by.x = "zip",by.y = "ZCTA5CE20")
+}
+
+if (cur_year <= 2001) {
+  data = merge(data,area_cross[area_cross$year_intp == 2001,],all.x = T, by = "zip")
+} else if (cur_year >= 2016) {
+  data = merge(data,area_cross[area_cross$year_intp == 2016,],all.x = T, by = "zip")
+} else{
+  data = merge(data, area_cross[area_cross$year_intp == cur_year,],all.x = T, by = "zip")
+}
+
+filename = paste0("Data/ZBP_FULL/full_zbp",cur_year,".rds")
+saveRDS(data,filename)
+}
+}
+
+clean_zbp_full = function(){
+for (i in 1:length(years)) {
+  print(years[i])
+file_location = paste0("Data/ZBP_FULL/full_zbp",years[i],".rds")
+tt = readRDS(file_location) %>%
+    select(zip,EMP,ESTAB,PAYANN,year,Shape__Area,contains("ALAND"),zcta_area,Latitude,Longitude,contains("INTPTLAT"),contains("INTPTLON"),geometry)
+names(tt)[which(grepl("ALAND",names(tt)))] = "ALAND"
+names(tt)[which(grepl("INTPTLAT",names(tt)))] = "LAT"
+names(tt)[which(grepl("INTPTLON",names(tt)))] = "LON"
+
+tt = tt %>%
+  mutate(area = ifelse(!is.na(ALAND),ALAND,ifelse(!is.na(zcta_area),zcta_area,Shape__Area)),
+           lat = ifelse(!is.na(LAT),LAT,Latitude),
+           lon = ifelse(!is.na(LON),LON,Longitude)) %>%
+  select(zip,year,EMP,ESTAB,PAYANN,lat,lon,geometry)
+
+tt$lat = as.numeric(tt$lat)
+tt$lon = as.numeric(tt$lon)
+filename = paste0("Data/ZBP/ZBP",years[i],".rds")
+saveRDS(tt,filename)
+}
+}
+
+
+```
+
+
+```{r,eval = F}
+prepare_zbp_full()
+clean_zbp_full()
+```
+
+## Intro rewrite
+
+What do I want to say?
+
+- Municipal mergers are a polcy tool
+  + What are the expected consequences?
+  + Economies of scale is just the tip of the iceberg
+- Hard to study due to it being a rare event
+- Most evidence is reduced form and focuses on the statistics of the merged parties
+- Does not consider the effect of the merger on the urban area as a whole
+- Cohesion policy: Just like the EU, but on a much smaller scale
+- start with a simple model and run with that
+
+### Simple model
+
+Each municipality $i$ in time $t$ can be described by its population $l_{it}$, its tax revenue $r_{it}$, and its unobserved amenities $b_{it}$ and productivity $z_{it}$.
+
+In each period $t$, municipality spends its last periods tax revenue on current period amenities $b_{it}$, which depends on the level of tax revenue, the population, and productivity
+
+$$ b_{it} = f(r_{i,t-1},l_{i,t-1}, z_{it}) +\epsilon_{it}$$
+Consumers make location decisions to maximize utility. Dvorkin

@@ -1,0 +1,260 @@
+---
+title: "Drawing from a Distribtion"
+output: html_document
+
+---
+
+What does it mean to draw from a distribution? It's something we take
+for granted as we have simple functions in programming languages that
+provide random draws at the click of a button. But what are these
+functions doing? In this post, I want to take a deep dive into what
+actually happens when we call one of these functions. 
+
+As emblematic of the process. I am going to look at the `mvrnorm`
+function. This function lets us draw from a multivariate normal
+distribution. The key difference between the `mvrnorm` function and its univariate cousin `rnorm` is that we allow for a correlation structure between each component in the vectors. Put simply, we can enforce that entry $i$ of the output vector is correlated to entry $j$. This is accomplished by supplying a covariance matrix $\Sigma$ (`sigma` in the code). Here's the function taken from the `MASS` package source
+that can be found [here](https://rdrr.io/cran/MASS/src/R/mvrnorm.R)
+
+```{r}
+# file MASS/R/mvrnorm.R
+# copyright (C) 1994-2015 W. N. Venables and B. D. Ripley
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 or 3 of the License
+#  (at your option).
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  http://www.r-project.org/Licenses/
+#
+mvrnorm <-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p <- length(mu)
+    if(!all(dim(Sigma) == c(p,p))) stop("incompatible arguments")
+    if(EISPACK) stop("'EISPACK' is no longer supported by R", domain = NA)
+    eS <- eigen(Sigma, symmetric = TRUE)
+    ev <- eS$values
+    if(!all(ev >= -tol*abs(ev[1L]))) stop("'Sigma' is not positive definite")
+    X <- matrix(rnorm(p * n), n)
+    if(empirical) {
+        X <- scale(X, TRUE, FALSE) # remove means
+        X <- X %*% svd(X, nu = 0)$v # rotate to PCs
+        X <- scale(X, FALSE, TRUE) # rescale PCs to unit variance
+    }
+    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    nm <- names(mu)
+    if(is.null(nm) && !is.null(dn <- dimnames(Sigma))) nm <- dn[[1L]]
+    dimnames(X) <- list(nm, NULL)
+    if(n == 1) drop(X) else t(X)
+}
+
+```
+
+Beautiful.
+
+Here it is with just the minimal operational code, no
+documentation,checks to make sure things don't go screwy, or internal
+scaling (empirical).
+
+```{r}
+mvrnorm <-
+    function(n = 1, mu, Sigma, tol=1e-6, empirical = FALSE, EISPACK = FALSE)
+{
+    p <- length(mu)
+    eS <- eigen(Sigma, symmetric = TRUE)
+    ev <- eS$values
+    X <- matrix(rnorm(p * n), n)
+    
+    X <- drop(mu) + eS$vectors %*% diag(sqrt(pmax(ev, 0)), p) %*% t(X)
+    
+
+     drop(X)
+}
+```
+
+Lets write this out in words, Lets assume $n=1$ so we are just
+simulating a single vector
+
+-   $p$ is the dimension of the vector we wish to simulate
+-   We then extract the eigenvalues and vectors from the provided
+    $\Sigma$ matrix
+-   We then initiate the vector as draws
+    from the standardized univariate distribution
+-   We then multiply the eigenvectors of $\Sigma$ by a diagonal matrix
+    containing the square roots of eigenvalues of $\Sigma$, but with all
+    negative eigenvalues replaced with zero, and then this gets
+    multiplied by the transpose of the vector of univariate draws
+-   We add the supplied mean of our vector $\mu$ to the vector above
+-   We then output that vector
+
+The real work of the function starts with an eigen-decomposition of the
+supplied $\Sigma$ matrix. As it turns out, this is a pretty involved
+process involving a series of functions. Most functions just do a bit of cleaning
+and checks, then call another function. Let's go through it. I'll place
+a link to the source code for each step
+
+-   `eigen` calls the function `La_rs` [Link to eigen](https://github.com/SurajGupta/r-source/blob/master/src/library/base/R/eigen.R)
+-   `La_rs` calls the `Fortran` function `F77_CALL` with `dsyenv` as the main argument [Link toLa_rs](https://github.com/SurajGupta/r-source/blob/master/src/modules/lapack/Lapack.c#L139)
+-   `dsyenv` actually does some work. But mainly it calls `dsytrd` and
+    `dstein`, to do that work, [Link to dsyenv](https://github.com/Reference-LAPACK/lapack/blob/master/SRC/dsyevr.f)
+    -   `dsytrd` is used to reduce $\Sigma$ into a tridiagonal form [Link to dsytrd](https://github.com/Reference-LAPACK/lapack/blob/master/SRC/dsytrd.f)
+    -   `dstemr` computes eigenvalues and vectors using the dqds algorithm [Link to dstemr](https://github.com/Reference-LAPACK/lapack/blob/master/SRC/dstemr.f)
+
+The last line is written in `Fortran` which is not my specialty. It's also some pretty optimized numerical analysis, another area where I am not an expert. So let's
+ask the "expert"
+
+## START CHATGPT
+
+### Mathematical Explanation: `DSYTRD`
+
+The `DSYTRD` subroutine is used to reduce a real symmetric matrix $A$ to
+a tridiagonal form $T$ through an orthogonal similarity transformation.
+This process is a key step in many linear algebra algorithms, especially
+those that compute eigenvalues and eigenvectors.
+
+#### Objective:
+
+The primary goal of `DSYTRD` is to transform a symmetric matrix $A$ into
+a tridiagonal matrix $T$ using an orthogonal matrix $Q$ such that:
+
+$$
+Q^T \cdot A \cdot Q = T
+$$
+
+Here: - $A$ is the original symmetric matrix of order $n$. - $T$ is the
+resulting tridiagonal matrix, with non-zero elements only on the
+diagonal and the first superdiagonal (or subdiagonal). - $Q$ is an
+orthogonal matrix, meaning $Q^T \cdot Q = I$ where $I$ is the identity
+matrix.
+
+#### The Mathematical Process:
+
+1.  **Householder Transformations:**
+    -   The orthogonal matrix $Q$ is constructed as a product of $n-1$
+        Householder reflectors: $$
+        Q = H_1 \cdot H_2 \cdot \dots \cdot H_{n-1}
+        $$
+    -   Each Householder reflector $H_i$ is of the form: $$
+        H_i = I - \tau_i \cdot v_i \cdot v_i^T
+        $$
+    -   Here, $\tau_i$ is a scalar, and $v_i$ is a vector chosen to zero
+        out specific elements below the diagonal (or above, depending on
+        the implementation).
+2.  **Transformation to Tridiagonal Form:**
+    -   The matrix $A$ is successively reduced by applying these
+        Householder reflectors: $$
+        A^{(i+1)} = H_i^T \cdot A^{(i)} \cdot H_i
+        $$
+    -   After applying all $H_i$, the resulting matrix $T = A^{(n)}$ is
+        tridiagonal.
+3.  **Orthogonal Similarity Transformation:**
+    -   The full transformation is represented as: $$
+        Q^T \cdot A \cdot Q = (H_1 \cdot \dots \cdot H_{n-1})^T \cdot A \cdot (H_1 \cdot \dots \cdot H_{n-1}) = T
+        $$
+    -   This ensures that the matrix $A$ is diagonalized (or nearly
+        diagonalized) while preserving its eigenvalues, as the
+        transformation is orthogonal.
+4.  **Output Structure:**
+    -   The diagonal elements of the tridiagonal matrix $T$ are stored
+        in the array $D$.
+    -   The off-diagonal elements are stored in the array $E$.
+    -   The vectors $v_i$ that define the Householder reflectors are
+        stored in the strictly lower (or upper) part of the matrix $A$,
+        and the scalars $\tau_i$ are stored in the array $\tau$.
+
+#### Summary:
+
+The `DSYTRD` function is crucial for preparing a symmetric matrix for
+eigenvalue computations by reducing it to a simpler tridiagonal form
+while maintaining the properties of the original matrix through
+orthogonal transformations. This reduction facilitates efficient and
+accurate computation of eigenvalues and eigenvectors.
+
+## END CHATGPT
+
+Thanks AI! Let's have it do `dstemr` next.
+
+## START CHATGPT
+
+### Mathematical Explanation: `DSTEMR` (Eigenvectors Case)
+
+The `DSTEMR` subroutine is designed to compute the eigenvalues and, optionally, the eigenvectors of a real symmetric tridiagonal matrix \( T \). When eigenvectors are requested, the subroutine employs advanced techniques to ensure both accuracy and efficiency.
+
+#### Objective:
+
+Given a symmetric tridiagonal matrix \( T \), the goal of `DSTEMR` is to compute:
+- The eigenvalues \( \lambda_1, \lambda_2, \dots, \lambda_n \) of \( T \).
+- The corresponding eigenvectors \( v_1, v_2, \dots, v_n \), such that \( T \cdot v_i = \lambda_i \cdot v_i \) for each \( i \).
+
+#### The Mathematical Process:
+
+1. **Initial Reduction and Clustering:**
+   - The matrix \( T \) is analyzed to identify clusters of close eigenvalues. These clusters indicate regions where eigenvalues are very close to each other, requiring special treatment to compute accurate eigenvectors.
+   - A key technique used here is the \( LDL^T \) factorization, which expresses \( T - \sigma I = L D L^T \), where \( L \) is a lower triangular matrix, \( D \) is diagonal, and \( \sigma \) is a shift close to the eigenvalues of the cluster.
+
+2. **Computation of Eigenvalues:**
+   - The eigenvalues of \( T \) are computed using a combination of methods:
+     - **Bisection:** For eigenvalues that are well-separated from others, a simple bisection method is used.
+     - **dqds Algorithm:** For clusters of close eigenvalues, the dqds (differential quotient difference with shifts) algorithm is used to refine their computation.
+
+3. **Refinement of Eigenvalues:**
+   - Once the eigenvalues are computed to a suitable accuracy, they are refined further, particularly within clusters, to ensure that small errors in \( T \) lead to correspondingly small errors in the eigenvalues.
+
+4. **Computation of Eigenvectors:**
+   - For each computed eigenvalue, the corresponding eigenvector is calculated. This involves forming a rank-revealing twisted factorization, which allows the eigenvector to be computed with high accuracy.
+   - The computed eigenvectors are orthogonal, meaning that for any \( i \) and \( j \), \( v_i^T \cdot v_j = 0 \) if \( i \neq j \).
+
+5. **Orthogonality and Normalization:**
+   - After computing the eigenvectors, they are normalized to ensure that \( v_i^T \cdot v_i = 1 \) for all \( i \).
+   - The eigenvectors are stored in the matrix \( Z \), with each column \( Z(:,i) \) corresponding to the eigenvector \( v_i \).
+
+#### Summary:
+
+The `DSTEMR` subroutine is a highly specialized tool for computing eigenvalues and eigenvectors of symmetric tridiagonal matrices. When eigenvectors are requested, it ensures that they are computed with high accuracy and orthogonality, using advanced algorithms tailored to the structure of the matrix.
+
+## END CHATGPT
+
+So we now have an explaination of whats going on. I don't think I can do any better than just parroting what ChatGPT just told us, so we will take that as given. We can now move onto the rest of the `mvrnorm` function.
+
+The next step is very interesting. We are trying to get a correlation structure in our outputed vector, but the only "randomness" comes from calls to the standardized univariate normal distribution (`rnorm`). Let's give this a bit of notation. Because I want to do some analysis of the parts, what they are calling $X$ I am going to call $u$. Let $g(u_i)$ be the quantile function of the standard normal distribution. This function takes a random uniform draw $u_i \in (0,1)$ as and argument, and gives us back a draw from $\mathcal N(0,1)$. 
+
+As an aside, I looked into the `rnorm` in a similar way that I am looking into `mvrnorm` currently. The function `rnorm` is actually, you guessed it, just a wrapper to a `C` function `qnorm5`. That code gets very into the weeds, and I don't think that we would gain any additional intuition from going through it. For those that *are* interested, [here](https://github.com/SurajGupta/r-source/blob/master/src/nmath/qnorm.c) is a link to the source for `qnorm5`. Go down to the `INVERSION` case to see what actually gets used when you call `rnorm`.
+
+But back to the task at hand. Given our notation and simplification of only simulating one vector, the line after the eigen-decomposition provides us with the vector
+$$ u = (g(u_1),g(u_2),\dots, g(u_p)) $$
+
+We now move onto the final step before outputting our vector. Let $V$ be the matrix of eigenvectors and $\sqrt{\lambda}$ be a diagonal matrix of the square roots of the eigenvalues of $\Sigma$. Both of these quantities are provided by the eigen-decompositon discussed above. Further, because we are using covariance matrices, we know that $\Sigma$ will at least be positive **semi**-definite. This is just a property of covariance matrices that tells us that all eigenvalues will be non-negative. This means that we can, for all intents and purposes, ignore the max operator in the code. Let $\mu$ be the provided mean of the vector we wish to simulate. The vector that we output, which we will call $v$, is given by
+$$ v= \mu + V\sqrt{\lambda}u' $$
+
+As $g(u_i)\sim \mathcal N(0,1)$, the term on the right is going to be mean zero. The only thing that changes the mean is $\mu_i$, and that is all that $\mu_i$ does. Lets just assume that $\mu_i=0$, as its not going to change anything. Lets look at a numerical example to get some more intuition. Lets first create a positively correlated $\Sigma$ matrix
+$$\Sigma = \begin{pmatrix} 1 & .5 \\ .5 & 1 \end{pmatrix} $$
+This matrix is positively correlated because of the positive off-diagonal terms. We now can preform the eigen-decomposition numerically and display the eigenvalues and vectors
+
+```{r}
+library(matrixcalc)
+set.seed(1)
+Sigma = rbind(c(1,.5),c(.5,1))
+eigs = eigen(Sigma)
+lambda = eigs$values
+V = eigs$vectors
+print("Eigenvalues")
+print(lambda)
+print("Eigenvectors")
+print(V)
+```
+Because we have equal terms on the diagonal, we get a nice looking eigenvectors. Lets now look at the matrix $V\sqrt{\lambda}$, remembering that $\sqrt{\lambda}$ is a diagonal matrix.
+
+```{r}
+V%*% diag(sqrt(lambda))
+```
+What is our output vector $v$ going to look like. Using the values from this example, we have that
+$$ v = V\sqrt{\lambda}u' = \begin{pmatrix} .866 & -.5 \\ .866 & .5\end{pmatrix}\begin{pmatrix} g(u_1) \\ g(u_2)\end{pmatrix} = \begin{pmatrix}.866g(u_1) -.5g(u_2) \\ .866g(u_1) +.5g(u_2)\end{pmatrix} $$
+We see that our output vector $v$ is some linear combination of the two $g(u_i)$ random draws. Due to these being normally distributed, we have some nice properties about scaling and adding these random variables. 
+
+

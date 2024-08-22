@@ -11,11 +11,19 @@ output: html_document
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
-## Current Projects
+## Works in Progress
 
-- [Dynamic Subcenter Identification](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
+- [Municipal Mergers in Dynamic Spatial General Equilbrium](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
   + A Description of the Project
 - [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Projects/FKRB/Replication.html)
   + A Description of the Project
-- [Dickstein - Morales Estimator](https://chasewiedemann.github.io/Site/Projects/dmEstimator/Replication.html)
-  + A Description of the Project
+- [Kleinman, Liu, \& Redding (2023): Dynamic Spatial Equilibrium](https://chasewiedemann.github.io/Site/Projects/KLR_2023/Summary.html)
+  + Paper Summary
+
+
+## Paper Summaries
+
+
+- [McMillen (2001): Nonparametric Employment Subcenter Identification](https://chasewiedemann.github.io/Site/Projects/McMillen_2001/Summary.html)
+  + Identifying Employment Subcenters Using a Two Stage Non-Parametric Procedure (LWR and Flexible Fourier)
+  
