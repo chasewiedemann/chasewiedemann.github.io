@@ -6,6 +6,10 @@ output: html_document
 [Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
 
+# 8/23/24: A Four-fer
+
+Im done today and will push. I think I have the intro to the muniproject finsihed tho
+
 # 8/22/24: A Three-fer
 
 I again forgot to push this out. Ill do it today I swear. I am trying to finish the DM project. I have the readme in a place that is pretty good, just need the code to be a touch nicer. It runs, but its incredibly ugly. Instead of trying to rebuild Rome in a day, lets work on the worst parts of the code and get those better. As we make gradual improvements, we will eventually get to a place where the code is not as bad.
