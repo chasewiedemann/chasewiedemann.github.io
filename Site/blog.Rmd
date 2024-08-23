@@ -6,6 +6,31 @@ output: html_document
 [Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
 
+# 8/22/24: A Three-fer
+
+I again forgot to push this out. Ill do it today I swear. I am trying to finish the DM project. I have the readme in a place that is pretty good, just need the code to be a touch nicer. It runs, but its incredibly ugly. Instead of trying to rebuild Rome in a day, lets work on the worst parts of the code and get those better. As we make gradual improvements, we will eventually get to a place where the code is not as bad.
+
+We need to do two things, get the options to line up with the readme file. Theres no reason that the user should have to use our jargon, lets make it easy on them. We also need to make sure the default are actually the defaults. 
+
+After, I need to  make the testing methods static. creating a new object every test is wrecking memory and causign it to be incredibly slow. 
+
+Lets get those two things done. After that, we can very easily finish the readme. 
+
+What needs to change
+
+- useCartesian needs to become useHypercubes() X
+- numChunks needs to become nQuantiles() X
+- make sure pariwise is default X
+- change useS1 ti useMMM() X
+- testType gets chagned to useAS() X
+- make sure max is default S function X
+- make sure maxboot is default test X
+- allow access to B(), alpha(), T0(), and T1() X
+
+Done, done and done with those checks. The notation for 
+
+
+
 # 8/21/24 A Two-fer
 
 I realized that I did not push any of my work yesterday. All good, its will just get put out with todays.
