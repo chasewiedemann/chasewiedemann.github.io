@@ -3,8 +3,24 @@ title: "Blog"
 output: html_document
 ---
 
-[Home](https://chasewiedemann.github.io/index.html) \| [About](https://chasewiedemann.github.io/Site/about.html) \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
+[Home](https://chasewiedemann.github.io/index.html)  \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
+
+# 8/25/24 Site Restructuring
+
+Finally have my head above water, and I am going to spend the rest of the night restructing the site. Lets made a to-do list, and try not to go off on tangents. The major change that I am going to make is that I am not going to have a public mini-blog. That seems like a bit too much information. The blog is still going to be up, and Im going to use it a bit more throughout the day, but the miniblogs were getting cumbersome, and I'm not sure if basically just writting out text verbatim from the text is all that legal/ethical when I am doing paper summaries.
+
+TODO
+
+- Remove links to Paper Summaries and Mini-blogs
+- Rewrite about me page to reflect not having mini blogs
+- rewrite home page to be a bit cooler
+
+OK. Let us go.
+
+## Update
+
+Do I need an about me page? I think I say everything that I want to say about myself on the homepage. Or I can at least add a couple things so that I can remove it. Less is more sometimes
 
 # 8/23/24: A Four-fer
 

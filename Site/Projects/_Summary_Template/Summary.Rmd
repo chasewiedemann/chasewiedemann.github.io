@@ -11,11 +11,8 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 ```
 
 [Home](https://chasewiedemann.github.io/index.html) |
-[About](https://chasewiedemann.github.io/Site/about.html) |
 [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
 [Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
-[Summary](`r sum_link`)|
-[Mini-Blog](`r miniblog_link`)|
 

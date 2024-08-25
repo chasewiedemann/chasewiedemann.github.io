@@ -1,28 +1,3 @@
----
-title: "Mini-Blog"
-output: html_document
----
-
-
-```{r,echo = F}
-base_dir = getwd()
-base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
-wp_link = paste0(base_url,"/WorkingPaper.html")
-ws_link = paste0(base_url,"/WorkingSlides.html")
-rep_link = paste0(base_url,"/Replication.html")
-miniblog_link = paste0(base_url,"/MiniBlog.html")
-```
-
-[Home](https://chasewiedemann.github.io/index.html) |
-[About](https://chasewiedemann.github.io/Site/about.html) |
-[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
-[Paper Summaries](https://chasewiedemann.github.io/Site/Summaries/summaries.html) |
-[Blog](https://chasewiedemann.github.io/Site/blog.html) |
-
-[Working Paper](`r wp_link`)|
-[Working Slides](`r ws_link`)|
-[Replication](`r rep_link`)|
-[Mini-Blog](`r miniblog_link`)|
 
 ```{r}
 library(dplyr)
