@@ -369,8 +369,8 @@ pre code {
 <p><a href="https://chasewiedemann.github.io/index.html">Home</a> | <a href="https://chasewiedemann.github.io/Site/about.html">About</a> | <a href="https://chasewiedemann.github.io/Site/Projects/projects.html">Projects</a>
 | <a href="https://chasewiedemann.github.io/Site/Summaries/summaries.html">Paper
 Summaries</a> | <a href="https://chasewiedemann.github.io/Site/blog.html">Blog</a> |</p>
-<p><a href="https://chasewiedemann.github.io/Site/Summaries/KLR_2023/Summary.html">Summary</a>|
-<a href="https://chasewiedemann.github.io/Site/Summaries/KLR_2023/MiniBlog.html">Mini-Blog</a>|</p>
+<p><a href="https://chasewiedemann.github.io/Site/Projects/KLR_2023/Summary.html">Summary</a>|
+<a href="https://chasewiedemann.github.io/Site/Projects/KLR_2023/MiniBlog.html">Mini-Blog</a>|</p>
 <div id="plan" class="section level1">
 <h1>Plan</h1>
 <p>This is a big paper. I want to first go through the authors companion
@@ -745,7 +745,716 @@ products given as <span class="math display">\[ u_{nt}^w =
 b_{nt}c^w_{nt}, c_{nt}^w = \left[ \sum_{i=1}^N
 (c_{ni}^w)^{\theta/(\theta+1)}\right]^{(\theta+1)/\theta}, \theta =
 \sigma -1, \sigma &gt;1 \]</span></li>
+<li>the superscript <span class="math inline">\(w\)</span> is used to
+denote workers, (as opposed to?)</li>
+<li><span class="math inline">\(\sigma&gt;1\)</span> is the constant
+elasticity of substitution which relates to <span class="math inline">\(\theta = \sigma -1\)</span> which is the trade
+elasticity.</li>
+<li>Indirect utility function <span class="math display">\[ u_{nt}^w =
+\frac{b_{nt}w_{nt}}{p_{nt}}, p_{nt} = \left [ \sum_{i=1}^N
+p_{nit}^{-\theta} \right ]^{-1/\theta} \]</span></li>
+<li>Where <span class="math inline">\(b_{nt}\)</span> are amenities in
+location <span class="math inline">\(n\)</span>, <span class="math inline">\(w_{nt}\)</span> is the workers wage, and the dual
+price index <span class="math inline">\(p_{nt}\)</span> that depends on
+the price of varieties sourced at each location <span class="math inline">\(p_{nit}\)</span> ### Capital Accumulation</li>
+<li>Landlords in each location choose their consumption and investment
+to maximize their intertemporal utility subject to their budget
+constraint.</li>
+<li>Intertemportal utility for landlords is the expected presdent
+discounted valued of their flow utility <span class="math display">\[
+v_{it}^k = \mathbb E_t \sum_{s=0}^\infty
+\beta^{t+s}\frac{(c^k_{i,t+s})^{1-1/\psi})}{1 - 1/\psi} \]</span></li>
+<li>The superscript <span class="math inline">\(k\)</span> denotes
+landlords</li>
+<li>the ocnsumption index <span class="math inline">\(c_{it+s}^k\)</span> is the same as the worker
+index <span class="math inline">\(c_{nt}^w\)</span></li>
+<li><span class="math inline">\(\beta\)</span> is the discount rate</li>
+<li><span class="math inline">\(\psi\)</span> is the intertemporal
+elasticity of substition</li>
+<li>because landlords are geographically immobile, we dont care about
+amenities in their flow utility (they say this doesnt matter in eq)</li>
+<li>We assume that the investment technology in each location use the
+varieties from all location with the same functional form as
+consumption.</li>
+<li>Landlords can produce one unit of capital in their location using
+one unit of the consumption index in that location.
+<ul>
+<li>This is forcing landlords to be symmetric (an interesting
+extension)</li>
+</ul></li>
+<li>This capital depreciates at a constant rate of <span class="math inline">\(\delta\)</span>, and we can let <span class="math inline">\(\delta\)</span> be greater than new
+investment</li>
+<li>the intertemporal budget constaint for landlords in each location
+require that total income from the existing stock of capital <span class="math inline">\(r_{it}k_{it}\)</span> equals the total value of
+their consumption <span class="math inline">\(p_{it}c_{it}^k\)</span>
+(Think profit) plus the total value of net investment <span class="math inline">\(p_{it}(k_{it+1} - 1-\delta k_{it})\)</span></li>
+<li>this gives the following expression <span class="math display">\[
+r_{it}k_{it} = p_{it}(c_{it}^k _ k_{it+1} - (1-\delta)d_{it})
+\]</span></li>
+<li>Let <span class="math inline">\(R_{it} \equiv 1-\delta +
+\frac{r_{it}}{p_{it}}\)</span></li>
+<li>Lemma 1: The optimal consumption of location <span class="math inline">\(i&#39;s\)</span> landlords satisfies <span class="math inline">\(c_{it} = \zeta_{it}R_{it}k_{it}\)</span> where
+<span class="math inline">\(\zeta_{it}\)</span> is defined recursively
+as <span class="math display">\[\zeta_{it}^{-1}= 1 +
+\beta^{\psi}(\mathbb E_t[
+R_{it+1}^{\psi-1/\psi}\zeta_{it+1}^{-1/\psi}])^{\psi} \]</span>
+Landlords optimal saving and investment satisfy <span class="math inline">\(k_{it+1} =
+(1-\zeta_{it})R_{it}k_{it})\)</span></li>
+<li>Lemma 1 shows that landlords have alienar saving rate <span class="math inline">\((1-\zeta_{it})\)</span> out of current period
+wealth <span class="math inline">\(R_{it}k_{it}\)</span></li>
+<li>This savings rate is endogenous and forward-looking and depends on
+the expectation of the sequence of futrue returns on capital <span class="math inline">\(\{R_{it+s}\}^\infty_{s=1}\)</span>, the discount
+rate <span class="math inline">\(\beta\)</span>, and the intertemporal
+elasticity of substiution <span class="math inline">\(\psi\)</span></li>
+<li>For a special case of log utility <span class="math inline">\(\psi
+=1\)</span>, landlords have a constant saving rate <span class="math inline">\(\beta\)</span> i.e. <span class="math inline">\(k_{it+1} = \beta R_{it}k_{it}\)</span></li>
+<li>As landlords are geographically immobile, this generates gradual
+adjustment in local capitial due to consumption smoothing.</li>
+<li>Another model that can explain the same results is adjustment costs,
+but it is not nearly as tractable as this model.</li>
+<li>In steady state, even though the capital to labor ration <span class="math inline">\(k^*_i/l^*_i\)</span> can differ across locations,
+there is a common real rental rate in terms of the consumption good
+across all locations <span class="math inline">\(r^*_i/p_i^*\)</span></li>
+<li>They have an extension in online supplement S.4.8 that shows how we
+can let landlords invest in other locations, which could be how I get
+entry into the model. ### Worker migration decisions</li>
+<li>After supplying labor and spending wage income on consumption in
+each period <span class="math inline">\(t\)</span>, workers observe
+idiosyncratic mobility shocks <span class="math inline">\(\epsilon_{gt}\)</span> and decide where to
+move.</li>
+<li>The value function for a worker in location <span class="math inline">\(i\)</span> in bet <span class="math inline">\(t\)</span> (<span class="math inline">\(\mathbb
+V_{it}^w\)</span>) is equal to the current flow of utiliy in that
+location plus the expeceted continuation value form the optimal choice
+of location:</li>
 </ul>
+<p><span class="math display">\[ \mathbb V_{it}^w = log(u_{it}^w) + \max
+\beta \mathbb E_t[\mathbb V_{gt+1}^w] - \kappa_{git} + \rho\epsilon_{gt}
+\} \]</span> - <span class="math inline">\(\beta\)</span> is the
+discount rate, <span class="math inline">\(\mathbb E_t\)</span> is the
+expectation in period <span class="math inline">\(t\)</span> over future
+location charactertistic. Because workers live hand to mouth, we assume
+log utility for workers and there is no role for the intertemporal
+elasticity of subsitution in their consumption decision. - Assume that
+<span class="math inline">\(\epsilon_{gt}\)</span> follows a Type-1 EV
+distribution with <span class="math inline">\(\gamma\)</span> the
+constant subtracted out. - <span class="math inline">\(\rho\)</span>
+controls the dispersion of idiosyncratic mobility shocks - Assume the
+bilateral migration costs <span class="math inline">\(\kappa\)</span>
+satisfy <span class="math inline">\(\kappa_{iit} =1\)</span> and <span class="math inline">\(\kappa_{nit} &gt;1\)</span> ### Market clearing -
+Goods market clearing implies that income in each location, which is the
+sum of workers and landlords, is equal to the expenditure on the poods
+produced by that location <span class="math display">\[ w_{it}l_{it} +
+r_{it}k_{it} = \sum_{n=1}^N S_{nit}(w_{nt}l_{nt} + r_{nt}k_{nt})
+\]</span> - Assume that trade is balance, but we can extend that later -
+Capital market clearing imples that the rental rate for capital is
+detemined by the requirement that landlords income from the ownership of
+capital equals payments for its use. Using profit mazimization and a
+zero profit assumtion, the market clearing condition for capital is
+given by <span class="math display">\[ r_{it}k_{it} =
+\frac{1-\mu}{\mu}w_{it}l_{it} \]</span> - Where <span class="math inline">\(\mu\)</span> is the relative share of labor to
+capital in the production technology. So this is something I will need
+to change.</p>
+</div>
+<div id="general-equilibrium" class="section level3">
+<h3>General Equilibrium</h3>
+<ul>
+<li>given the state variable <span class="math inline">\(\{l_{i0},k_{i0}\}\)</span>, the general
+equilibrium of the economy is the stochastic process of allocation and
+prices such that firms in each location choose input to maximize
+profits, workers make consumption and migration decisions to maximize
+utility, landlords make consumption and investment decsiions to maximize
+utility, and prices clear all markets, with an appropriate measurability
+constaint with respect to the realization of location fundamentals.</li>
+<li>We can see this as a sequence of five endogenous variables <span class="math inline">\(\{l_{it},k_{it},w_{it},R_{it},v_{it}\}_{t=0}^\infty\)</span>
+<ul>
+<li>All other endogenous variables of the model can be recovered as a
+function of these 5</li>
+</ul></li>
+</ul>
+<div id="capital-returns-and-accumulation" class="section level4">
+<h4>Capital Returns and accumulation</h4>
+<ul>
+<li>Using capital market clearning, the gross return on capital in each
+location must satisfy</li>
+</ul>
+<p><span class="math display">\[ R_{it} = (1-\delta +
+\frac{1-\mu}{\mu}\frac{w_{it}l_{it}}{p_{it}k_{it}}) \]</span> - this
+makes the price index</p>
+<p><span class="math display">\[ p_{nt} = \left[ \sum_{i=1}^N
+\left(w_{it}(\frac{1-\mu}{\mu})^{1-\mu}(l_{it}/k_{it})^{1-\mu}\tau_{ni}/z_i
+\right)^{-\theta}\right ]^{-1/\theta} \]</span> - the law of motion for
+capital then become</p>
+<p><span class="math display">\[ k_{it+1} = (1-\zeta_{it})(1-\delta +
+\frac{1-\mu}{\mu}\frac{w_{it}l_{it}}{p_{it}k_{it}})k_{it} \]</span> ####
+Goods market clearing</p>
+<ul>
+<li>The CES expenditure share, the equilbirum pricing rule, and the
+capital market clearing condition in the goods makret clearing
+condition, and the requirement that income equals expenditure on the
+goods produced by a location can be written solely in terms of labor
+income</li>
+</ul>
+<p><span class="math display">\[ w_{it}l_{it} = \sum_{n=1}^N
+S_{nit}w_{ni}l_{ni} \]</span> <span class="math display">\[ S_{nit} =
+\frac{(w_{it}(l_{it}/k_{it})^{1-\mu}
+\tau_{ni}/z_i)^{-\theta}}{\sum_{m=1}^N (w_{mt}(l_{mt}/k_{mt})^{1-\mu}
+\tau_{nm}/z_m)^{-\theta}} \]</span> - Now define <span class="math display">\[ T_{int} \equiv
+\frac{S_{nit}w_{nt}l_{nt}}{w_{it}l_{it}} \]</span> - we used the
+property that capital income is a constant multiple of labor income,
+<span class="math inline">\(S_{nit}\)</span> is the expenditure share of
+importer <span class="math inline">\(n\)</span> on exporter <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>, and we have defined <span class="math inline">\(T_{int}\)</span> as the corresponding income share
+of exporter <span class="math inline">\(i\)</span> from importer <span class="math inline">\(n\)</span> at time <span class="math inline">\(t\)</span> - note that the order of the subscripts
+switches between <span class="math inline">\(S\)</span> and <span class="math inline">\(T\)</span>, as these are going to correspond to
+rows and columns of a matrix, respectively.</p>
+</div>
+<div id="worker-value-function" class="section level4">
+<h4>Worker value function</h4>
+<ul>
+<li>the value function, indirect utility function and properties of the
+EV distribution give us the expected value from living in location <span class="math inline">\(n\)</span> at time <span class="math inline">\(t\)</span> after taking expectation with respect
+to the idiosyncratic mobility shocks <span class="math inline">\(\epsilon_{gt}\)</span>
+<ul>
+<li>i.e. <span class="math inline">\(v^w_{nt} = \mathbb
+E_\epsilon[\mathbb V^w_{nt}]\)</span></li>
+</ul></li>
+<li>this can be written as</li>
+</ul>
+<p><span class="math display">\[ v_{nt}^w = log(b_{nt}) +
+log(\frac{w_{nt}}{p_{nt}}) + \rho log\left( \sum_{g=1}^N (\exp(\beta
+\mathbb E_t v^w_{gt+1})/\kappa_{gnt})^{1/\rho} \right) \]</span> - where
+the expectation <span class="math inline">\(\mathbb E_t\mathbb
+E_\epsilon[\mathbb V^w_{nt+1}]]\)</span> is taken over future
+fundamental <span class="math inline">\(\{z_{is},b_{is}\}_{s=t+1}^\infty\)</span></p>
+</div>
+<div id="population-flow" class="section level4">
+<h4>Population flow</h4>
+<ul>
+<li>Using properties of the EV distribution, the population flow
+condition for the evolution of the population distribution over time is
+given by</li>
+</ul>
+<p><span class="math display">\[ l_{gt+1} = \sum_{i=1}^N D_{igt}l_{it}
+\]</span> <span class="math display">\[ D_{igt} =
+\frac{(\exp(\beta\mathbb E_t
+v^w_{gt+1})/\kappa_{git})^{1/\rho}}{\sum_{m=1}^N (\exp(\beta\mathbb E_t
+v^w_{mt+1})/\kappa_{gmt})^{1/\rho} } \]</span> - now define</p>
+<p><span class="math display">\[ E_{git} \equiv
+\frac{l_{it}D_{igt}}{l_{gt+1}} \]</span> - Where <span class="math inline">\(D_{igt}\)</span> is the outmigration probabi;ity
+from location <span class="math inline">\(i\)</span> to location <span class="math inline">\(g\)</span> between time <span class="math inline">\(t\)</span> and <span class="math inline">\(t+1\)</span>. - <span class="math inline">\(E_{git}\)</span> is the corresponding inmigration,
+with the subscripts switched as these again are going to correspond to
+rows and columns of a matrix. + Think of <span class="math inline">\(E\)</span> is to <span class="math inline">\(D\)</span> as <span class="math inline">\(T\)</span> is to <span class="math inline">\(S\)</span></p>
+</div>
+</div>
+<div id="properties-of-general-equilbirum" class="section level3">
+<h3>Properties of General Equilbirum</h3>
+<ul>
+<li>Given the state variables <span class="math inline">\(\{l_{it},
+k_{it}\}\)</span> and the realized location fundamental <span class="math inline">\(\{z_{it},b_{it}\}\)</span>, the general
+equilibrium in each period is detemined as in a standard static
+internation trade mdoel. Between periods, the evolution of the stock of
+capital <span class="math inline">\(\{k_{it}\}\)</span> is determined by
+the equilibrium saving rate, and the dynamics of the population
+distribution <span class="math inline">\(\{l_{it}\}\)</span> are
+determined by the gravity equation for migration.</li>
+<li>Definition1 Equilbirum: given the state variables <span class="math inline">\(\{l_{i0},k_{i0}\}\)</span> in each location in an
+intial period <span class="math inline">\(t=0\)</span>, an equilbirum s
+a stochastic process of wages, capital returns, expected values, mass of
+works, and stock of capital in each location, <span class="math inline">\(\{w_{it},R_{it},v_{it}l_{it+1},k_{it+1}\}\)</span>
+measureable with respect to the fundamental shocks up to time <span class="math inline">\(t\)</span> (<span class="math inline">\(\{z_{is},b_{is}\}_{s=1}^t\)</span>) and solves the
+value function, the population flow condition, the goods market clearing
+condition, and the cpaital market clearing and accumulation condition,
+with the saving rate determined by lemma 1.</li>
+<li>Define a deterministic stead-state eq as one in which the
+fundamental <span class="math inline">\(\{z_i^*,b_i^*\}\)</span> and the
+endogenous variables <span class="math inline">\(\{l_i^*,k_i^*,w_i^*,R_i^*,v_i^*\}\)</span> are
+constant over time, where we use the star to denote steady state
+values.</li>
+<li>Definition 2 Steady State: A steady state of the economy is an
+equibrium in which all loation specific fundamentals and ednogenous
+variables (wages, expected value, mass of workers, and stock of capital)
+are time invariant</li>
+</ul>
+</div>
+<div id="suficent-conditions-for-existence-of-a-unique-steady-state" class="section level3">
+<h3>Suficent conditions for existence of a unique steady state</h3>
+<ul>
+<li>the sufficent conditions for existence of a unique steady state are
+expressed in terms of a coefficient matrix <span class="math inline">\(A\)</span> of model paramters <span class="math inline">\(\{\psi,\theta,\beta,\rho,\mu,\delta\}\)</span> as
+in Allen, Arkolakis, and Li (2020)</li>
+<li>Proposition 1 Existence and Uniqueness: A sufficent condition for
+the existence and unique steady state spatial distribution of economic
+activity up to a choice of units given time-invariant location
+fundaments is that the spectral radius of the coefficient matrix <span class="math inline">\(A\)</span> of model parameters is less than or
+equal to 1</li>
+<li>Proof: Online Appendix B.2</li>
+</ul>
+</div>
+<div id="trade-and-migration-share-matrices" class="section level3">
+<h3>Trade and Migration share matrices</h3>
+<ul>
+<li>Let <span class="math inline">\(S\)</span> be the <span class="math inline">\(N\times N\)</span> matrix with the <span class="math inline">\(ni^{th}\)</span> element equal to importer <span class="math inline">\(n\)</span>’s expenditure on exporter <span class="math inline">\(i\)</span></li>
+<li>Let <span class="math inline">\(T\)</span> be the <span class="math inline">\(N\times N\)</span> matrix with the <span class="math inline">\(ni^{th}\)</span> element equal to the fraction of
+income that exporter <span class="math inline">\(i\)</span> derives from
+selling to importer <span class="math inline">\(n\)</span>.</li>
+<li>Call <span class="math inline">\(S\)</span> the expenditure share
+matrix and <span class="math inline">\(T\)</span> the income share
+matrix.</li>
+<li><span class="math inline">\(S_{ni}\)</span> captures the importance
+of <span class="math inline">\(i\)</span> as a supplier to location
+<span class="math inline">\(n\)</span> and <span class="math inline">\(T_{in}\)</span> captures the impoirtance of <span class="math inline">\(n\)</span> as a buyer for country <span class="math inline">\(i\)</span>.</li>
+<li>Note that in <span class="math inline">\(S\)</span> rows are buyers
+and columns are supplier, whereas in matrix <span class="math inline">\(T\)</span>, rows are supplier and columns are
+buyers.</li>
+<li>Now let <span class="math inline">\(D\)</span> be the <span class="math inline">\(N\times N\)</span> matrix with the <span class="math inline">\(ni^{th}\)</span> element equat to the share of
+outmigrant from origin <span class="math inline">\(n\)</span> to
+destination <span class="math inline">\(i\)</span>. Let <span class="math inline">\(E\)</span> be the <span class="math inline">\(N\times N\)</span> matrix with the <span class="math inline">\(ni^{th}\)</span> element equal to the share of
+in-migrants from origin <span class="math inline">\(n\)</span> to
+destination <span class="math inline">\(i\)</span></li>
+<li>Call <span class="math inline">\(D\)</span> the outmigration matrix
+and <span class="math inline">\(E\)</span> the inmigration matrix</li>
+<li><span class="math inline">\(D_{ni}\)</span> captures the likelihood
+that a worker in lokation <span class="math inline">\(n\)</span>
+migrates to lcoation <span class="math inline">\(i\)</span>.</li>
+</ul>
+</div>
+<div id="dynamic-exact-hat-algebra" class="section level3">
+<h3>Dynamic Exact-Hat Algebra</h3>
+<ul>
+<li>Exact hat algebra allows us to preform counterfactuals under perfect
+foresight in migration models from Caliendo, Dvorkin and PArro (2019) to
+incorporate forward-looking investment decisions</li>
+<li>Suppose we observe the spatial distribution of economic activity
+somewhere along the transition path toward an unobserved steady
+state.</li>
+<li>given the initial observed endogeounous variables of the model, we
+solve for the conomies trasition path in time differences <span class="math inline">\(\dot{x_{t+1}} = x_{t+1}/x_t\)</span> for any
+anticipated convergent sequence of future chagnes in fundamentals,
+without having to solve for the unobserved inital level of
+fundamentals.</li>
+<li>Proposition 2 Dynamic Exact Hat Algebra: Given an intial observed
+allocation of the economy <span class="math inline">\(\{\{l_{i0}}_{i=1}^N,\{k_{i0}}_{i=1}^N,\{S_{ni0}}_{i=1}^N,\{D_{ni-1}}_{i=1}^N\}\)</span>,
+and a convergent sequence of future cahnges in fundamentals under
+perfect foresight <span class="math display">\[ \{
+\{\dot{z_{it}}\}_{i=1}^N,\}.\{\dot{b_{it}}\}_{i=1}^N,\}.\{\dot{\tau_{it}}\}_{i=1}^N,\}.\{\dot{\kappa_{it}}\}_{i=1}^N,\}\}
+\]</span> the solution for the sequence of changes in the models
+endougenous variables does not require information on the level of
+fundamentals <span class="math display">\[ \{
+\{z_{it}\}_{i=1}^N,\}.\{b_{it}\}_{i=1}^N,\}.\{\tau_{it}\}_{i=1}^N,\},\{\kappa_{it}\}_{i=1}^N,\}\}
+\]</span></li>
+<li>Proof: Online Appendix B.3</li>
+<li>The inital observed endogenous variables and the equilbirum
+conditions ofthe model control for the unobserved initial levle of
+fundamentals.</li>
+<li>From this proposition, we can use dynamic exact-hat algebra method
+to solve for the unobserved initial steady state in the absence of any
+further changes in fundamentals.</li>
+<li>We can also use this approach to solve counterfactuals for the
+transition path of the spatial distirubtion of eonomic activity in
+response to assumed sequences of future chagnes in fundamentals.</li>
+<li>We can invert the model to solve for the unobserved chagnes in
+productivity, amenities, trade costs, and migration costs that are
+implied by the observed chagnes in the endogenous variables of the model
+under perfect foresight (Online Supplement S.2.1)</li>
+<li>We can undertake this model inversion along the transition path
+without making assumption about the precise sequence of future
+fundamentals, becasue the observed changes in migration flows and the
+captial stock capture agents expectation about this sequence of futrue
+fundamentals.</li>
+</ul>
+</div>
+</div>
+<div id="specteral-analysis" class="section level2">
+<h2>Specteral Analysis</h2>
+<ul>
+<li>To further understand the roles of capital and labor dynamics, we
+now linearize the model to provide an analytical chaacterization of the
+economies transition path using spectral analysis</li>
+<li>Focus on on shocks to productivity and amenities, but show that the
+appraoch generalizes to incorporate shocks on migration and trade costs
+later</li>
+<li>As an overview, we are going to toally differentiate the genreal
+equilbrium conditions of the mdoel and derive a linearized system of
+equations that fully characterizes the transtion path of the economy up
+to the first order.</li>
+<li>We then solve this linearized system in closed form under a wide
+range of different assumptions about agents expectation</li>
+<li>We start with the simplest case in which agents learn about a
+one-time unanticipated shock to fundamentals</li>
+<li>We then do the special case of more complicated shocks, but in two
+symmetric regions.</li>
+<li>We then show that the model accomodates the case in which agents
+learn about any expected convergence sequence of futre shocks to
+fundamental under perfect foresight</li>
+<li>Then do the case in which agents ovserve an initial shock to
+fundamentals, and then form rational expectations about future shocks
+that are known to be stochastic</li>
+<li>For each case, we show that the clsoed form solution for the
+trasntion path depends on an impact matrix, which captures the inital
+impact of the shock to fundamentals on the state variables in the period
+in which they occur, and a trasition matrix, which governs the updating
+of the state variables over time.</li>
+<li>the impact and transtion matrices only depend on the strucural
+parameters of the model, and the observed matrices of expenditure shares
+<span class="math inline">\(S\)</span>, income Share <span class="math inline">\(T\)</span>, outmigration Shares <span class="math inline">\(D\)</span>, and inmigration shares <span class="math inline">\(E\)</span>. and hence provide first-order
+sufficent statstics for teh economies trasniton path.</li>
+<li>Using an eigen decompostion of the trasntion matrix, we sthow that
+bot hteh rate of converges to steady state and the evolution of the
+state variables along the stanstion path can be written soley in terms
+of the eighen values and eigenvectosr of the the trasnition matrix.</li>
+<li>this allows us to show that the rate of convergence to steady state
+is slow and heterogenous and to demonstarate that capital accumulation
+and migration interact to shape the persisent and deterogenous impact of
+local shock.</li>
+</ul>
+<div id="transition-path" class="section level4">
+<h4>Transition path</h4>
+<ul>
+<li>suppose that we observe the state variables <span class="math inline">\(\{l_t,k_t\}\)</span> (these are now vectors) and
+the trade and migration share matrices <span class="math inline">\(\{S,T,D,E\}\)</span> of the economy at time <span class="math inline">\(t=0\)</span></li>
+<li>We may not be at steady state at this time, but we assume that it is
+on a convergent path toward a steady state with constant fundamentals
+<span class="math inline">\(\{z,b,\kappa,\tau\}\)</span> (again,
+vectors).</li>
+<li>This is the initial steady state</li>
+<li>Let <span class="math inline">\(\tilde x_{it+1} = log x_{it+1} - log
+x_{it}\)</span> denote a log deviation from the intial steady state for
+all variables except for the workers value function, for which we will
+abuse notation and let the tilde represent a deviation in levels <span class="math inline">\(\tilde v_{it} = v_{it} - v_i^*\)</span></li>
+<li>we begin by totally differentiating the gen eq conditons of the
+model around the unobserved inital steady state. Holding constant the
+aggregate labor endowment, trade costs and migration costs.</li>
+<li>This gives us a system of linear equations that characterizes the
+economies transtion path up to the first order <span class="math display">\[
+\begin{aligned}
+\tilde p_t &amp;= S(\tilde w_t - \tilde z_t - (1-\mu)(\tilde k_t -
+\tilde l_t)) \\
+\tilde k_{t+1} &amp;= \tilde k_t + (1- \beta(1-\delta))(\tilde w_t -
+\tilde p_t - \tilde k_t + \tilde l_t) \\
+&amp;+(1-\beta(1-\delta))\frac{1-\beta}{\beta}(\psi -1)\times \mathbb
+E_t \sum_{s=1}^\infty \beta^s(\tilde w_{t+s} - \tilde p_{t+s} - \tilde
+k_{t+s} - \tilde l_{t+s}) \\
+[I - T + \theta(I-TS)]\tilde w_t &amp;= [-(I-T)\tilde l_t+
+\theta(I-TS)(\tilde z_t +(1-\mu)(\tilde k_t-\tilde l_t)] \\
+\tilde l_{t+1} &amp;= E\tilde l_t+ \frac{\beta}{\rho}(I-ED)\mathbb E_t
+\tilde v_{t+1} \\
+\tilde v_t &amp;= \tilde w_t - \tilde p_t + \tilde b_t + \beta D\mathbb
+E_t \tilde v_{t+1}
+\end{aligned}
+\]</span></li>
+<li>the derivation for this is in Oline Appendix B.4.4</li>
+<li>Note that there are no terms in teh change in the trade and
+migration share matrices, because these terms are second oder in the
+underling taylor series expantion because they involve interations
+between the chagnes in productive and amenities and the resulting chagne
+in trade and migration shares.</li>
+<li>As we consider first order chagnes in productivity and amenities,
+these second-order non-lienar terms drop out of the linearization</li>
+<li>We can then write the trade and migration share matrices with no
+time subscript for first-order changes in productivity and amenities.
+<ul>
+<li>Is this a reasonable assumption for me to make?</li>
+</ul></li>
+</ul>
+</div>
+<div id="transition-dynamics-for-a-one-time-shock" class="section level4">
+<h4>Transition dynamics for a one-time shock</h4>
+<ul>
+<li>We solve the economies transtion path in repsonse to a one-time
+shock. We suppose that agents learn at time <span class="math inline">\(t=0\)</span> that a one0time, unexpected, and
+permanent change in productivity and amenities from time <span class="math inline">\(t=1\)</span> onwards.</li>
+<li>Under this assumption, we write the sequence of future fundamentals
+(productivties and amenities) relative to the inital levels as <span class="math inline">\((\tilde z_t,\tilde b_t) = (\tilde z,\tilde
+b)\)</span> and we no longer need the expectation operator in the last 4
+lines of equations above</li>
+<li>Models transiton dynamics can be reduced to the following linear
+system of second-order difference equation in the state-variables <span class="math display">\[ \Psi \tilde x_{t+2} = \Gamma \tilde x_{t+1} +
+\Theta\tilde x_t + \Pi\tilde f \]</span></li>
+<li>Where <span class="math inline">\(\tilde x_t = (\tilde l_t, \tilde
+k_t)&#39;\)</span> is the <span class="math inline">\(2N\times
+1\)</span> vector of state variable and <span class="math inline">\(\tilde f\)</span> is a <span class="math inline">\(2N\times 1\)</span> vector of shockt to
+fundamentals, and <span class="math inline">\(\Psi,\Gamma,\Pi\)</span>
+are each <span class="math inline">\(2N\times 2N\)</span> matrices that
+depend on the structural parameters of the model <span class="math inline">\(\{\psi,\theta,\beta,\rho,\my,\delta\}\)</span> and
+the ovserved trade and migration share matrices <span class="math inline">\(\{S,T,D,E\}\)</span>.</li>
+<li>The matrix system of equation is solved using the method of
+undetermined coefficients following Uhlig (1999) to obtain a closed-form
+solution for thet economies transtion path in terms of an impact matrix
+<span class="math inline">\(R\)</span> which captures the initial impact
+of the fundmanental shocks and a trasition matrix <span class="math inline">\(P\)</span> which governs the evolution of state
+vairables over time.</li>
+<li>Specifically, one can show that the <span class="math inline">\(4N\times 4N\)</span> matrix</li>
+</ul>
+<p><span class="math display">\[ \begin{pmatrix}\Psi &amp; 0 \\ 0 &amp;
+I \end{pmatrix}^{-1} \begin{pmatrix} \Gamma &amp; \Theta \\ I &amp; 0
+\end{pmatrix} \]</span> Has eigenvectors of the form <span class="math inline">\([\lambda_ku_k,u_k]&#39;\)</span> where <span class="math inline">\(\{\lambda_k\}\)</span> are the corresponding eigen
+values and <span class="math inline">\(\{u_k\}\)</span> arre the <span class="math inline">\(2N\times 1\)</span> vecors. If the eigenvalues are
+stable, <span class="math inline">\(|\lambda_k|&lt; 1\)</span>, then the
+linearized system is stable and has a unique stable trasntion path. -
+Propostition 3 Transtion Path: Suppose that the economy at time <span class="math inline">\(t=0\)</span> is on a convergence path toward an
+intial steady state with constant fundamentals <span class="math inline">\((z,b,\kappa,\tau)\)</span>. At time <span class="math inline">\(t=0\)</span>, agents learn about one-time,
+permanent shocks to productivity and amenities (<span class="math inline">\(\tilde f= [\tilde z, \tilde b]&#39;\)</span>) from
+time <span class="math inline">\(t=1\)</span> onwards. There exists a
+<span class="math inline">\(2N\times 2N\)</span> transtion matrix <span class="math inline">\(P\)</span> and a <span class="math inline">\(2N\times 2N\)</span> impact matrix <span class="math inline">\(R\)</span> such that the second-order difference
+equation system above has a closed form solution of the form <span class="math display">\[ \tilde x_{t+1} = P\tilde x_t + R \tilde f,
+\forall t \geq 0 \]</span> The transition matrix <span class="math inline">\(P\)</span> satisfies</p>
+<p><span class="math display">\[ P = U \Lambda U^{-1} \]</span></p>
+<p>Where <span class="math inline">\(\Lambda\)</span> os a diagonal
+matrix of <span class="math inline">\(2N\)</span> stable eigenvalues and
+<span class="math inline">\(U\)</span> is a matrix stacking the
+corresponding <span class="math inline">\(2N\)</span> eigenvectors. the
+impact matrix <span class="math inline">\(R\)</span> is given by <span class="math display">\[ R = (\Psi P + \Psi - \Gamma)^{-1}\Pi \]</span>
+Where <span class="math inline">\((\Psi,\Gamma,\Theta,\Pi)\)</span> are
+the matrices from the system of second-order difference equations -
+Proof: Online appendix B.4.6 - The solutions ofr these matrices <span class="math inline">\(P,R\)</span> depend only on the structural
+paramters of the model and the observed trade and migration share
+matrices ### Convergence Dynamics vs Fundamental Shocks - Using the
+clsoed form solution in Proposition 3, the transition path of the
+economies state variables can be additively decompsed into the
+contributions of convergence dynamics given intial conditions and
+fundamental shocks. - Taking the first expression from proposition 3 and
+applying across time periods, we obtain <span class="math display">\[
+log(x_t) - log(x{-1}) = \sum_{s=0}^t P^s(log(x_0) - log(x_{-1}) ) +
+\sum_{s=0}^{t-1} P^sR\tilde f \]</span> - Where the first term on the
+right is the convergence given intial fundamentals and the seond term is
+dynamics from the fundamental shock - If we have no shock <span class="math inline">\(\tilde f = 0\)</span> then the convergence is
+govern only by the inital conditions and converges over time to <span class="math display">\[ log(x^*_{init}) = \lim_{t\to \infty} log(x_{-1})
++ (I-P)^{-1}(log(x_0) - log(x_{-1})) \]</span> Where <span class="math inline">\((I-P)^{-1} = \sum_{s=0}^\infty P^s\)</span> is
+well defined under the condtion that the spectral radius of <span class="math inline">\(P\)</span> is smaller than one. - In contrast, if
+the economy is intially in a steady state at time 0, the first term on
+the right hand side is zero, and the trastion path of the state
+variables is solely driven bt the seoncd term for fundamental shocks,
+and follows</p>
+<p><span class="math display">\[ \tilde x_t = log(x_t) - log(x_0) =
+\sum_{s=0}^{t-1} P^sR\tilde f = (I-P^t)(I-P)^{-1}R\tilde f, \forall
+t\geq 1 \]</span> - In the period <span class="math inline">\(t=1\)</span> when shocks occur, the response of
+the state variables is <span class="math inline">\(\tilde x_1 = R\tilde
+f\)</span>. Taking the limit as <span class="math inline">\(t\to
+\infty}\)</span>, the comparitive static steady state response is <span class="math display">\[ \lim_{t\to\infty} \tilde x_t = log(x^*_{new}) 0
+log(x^*_{init}) = (I-P)^{-1}R\tilde f \]</span> - A key implication of
+this additive separability in the decomposition is that we can examine
+the economies dynamic response to fundamental shocks separately from its
+converages towards an intal steady state with unchanged fundamentals. -
+That lets us focus on an economy that is initially in a steady state (is
+that something I can test empirically?) ### Spectral analysis of the
+transition matrix - This section provides furher analytical
+characterization of the roles of capital and labor dynamics in shaping
+the economies gradual adjustment to shocks using a spectral analysis of
+the transtiona matrix - Decompose the transition matrix into <span class="math inline">\(P = U \Lambda V\)</span> + <span class="math inline">\(\Lambda\)</span> contains the eigenvalues in
+decreasing order and <span class="math inline">\(V = U^{-1}\)</span> -
+For each eigen value <span class="math inline">\(\lambda_h\)</span> the
+<span class="math inline">\(h^{th}\)</span> column of <span class="math inline">\(U\)</span> (<span class="math inline">\(u_h\)</span>) and the <span class="math inline">\(h^{th}\)</span> row of <span class="math inline">\(V\)</span> (<span class="math inline">\(v&#39;_h\)</span>) are the right and left
+eigenvectors of <span class="math inline">\(p\)</span> respectively,
+such that</p>
+<p><span class="math display">\[ \lambda_h u_h = Pu_h, \lambda_h
+v&#39;_h = v&#39;_h P \]</span> - This tells us that <span class="math inline">\(u_h (v&#39;_h)\)</span> is the vector when left
+(right) multiplied by <span class="math inline">\(P\)</span> is
+proportional to itself but scaled by the corresponding eigenvalue <span class="math inline">\(\lambda_h\)</span> - Both <span class="math inline">\(\{u_h\}\)</span> and <span class="math inline">\(\{v&#39;_h\}\)</span> are bases that span the
+<span class="math inline">\(2N\)</span> dimensional vector space ####
+Eigenshocks - We now introduce a particular type of shock to
+fundamentals that proves useful for characterizing the models transtion
+dynamics. - Define an eigenshock as a nonzero shock to productivity and
+amenties <span class="math inline">\(\tilde f_h\)</span>, for which the
+initial impact of these shocks on the state variables <span class="math inline">\(R \tilde f\)</span> coincides with a real
+eigenvector of the transiton matrix <span class="math inline">\(u_h\)</span> or the zero vector - Eigenshocks
+<span class="math inline">\(\{\tilde f_h\}\)</span> also form a bases
+for the <span class="math inline">\(2N\)</span> dimensional shock space.
+- Each eigenvector of <span class="math inline">\(P\)</span> with a
+nonzero eigenvalue has a corresponding eigenshock for which <span class="math inline">\(R\tilde f_h = u_h\)</span> - Let the nonzero
+eigenvalues be called non-trivial, because it affects the dynamics of
+the state variables. - <span class="math inline">\(P\)</span> has an
+eingen vector <span class="math inline">\([1,\dots ,1,0,\dots
+,0]&#39;\)</span> with a zero eigenvalue <span class="math inline">\(\lambda_1= 0\)</span> because population shares
+sum to one and thus one of hte 2N dimensions of the state space is
+redundant - the corresponding fundamental shock <span class="math inline">\(\tilde f_1\)</span> is a vector of a common
+amenity shock to all location. Such a common amenity shock affects
+worker flow utility, but does not affect any prices or quantities in the
+equilibrium, and thus is trivial in the sense that it does not affect
+the dynamics of the state variables. Let the first index always be this
+trivial eigencomponent. - In general, empirical shocks should not have
+to correspond to an eigenshock. - But we can use these eigenshocks to
+characterize the impact of any empircal shock using the followign two
+properties + We can slve for these shocks from the sobseved data because
+the impact matrix <span class="math inline">\(R\)</span> and the
+transtion matrix <span class="math inline">\(P\)</span> depend soley on
+our observed trade and migration share matrices and the strucutral
+parameters of the model + Any empirical productivity and amenity shocks
+<span class="math inline">\(\tilde f\)</span> can be expresed as a
+lienar combination of the eigen shocks <span class="math inline">\(\tilde f_h\)</span> where the weights or loadings
+in this linear combination can be recovered via OLS of the observed
+shocks on the eignshocks. - Using this property, the transtion path of
+the state variables in response to any empirical productivty and amenity
+shocks can be expressed solely in terms of the eigenvalues and eigne
+vectors of the trasntion matrix - Proposition 4 Spectral Analysis:
+Consider an economiy that is initally in steady state at time <span class="math inline">\(t=0\)</span> when agents learn about onetime,
+permanent shock to productivty and amenities, from time <span class="math inline">\(t=1\)</span> onwards. the trasnsition path of hte
+state variables can be written as a linear combination of the eigen
+values and eigenvectors of the stranstion matrix <span class="math display">\[ \tilde x_t = \sum_{s=0}^{t-1} P^wR\tilde f =
+\sum_{h=1}^{2N} \frac{1-\lambda_h&#39;}{1-\lambda_h}u_ha_h \]</span>
+Where the weights <span class="math inline">\(a_h\)</span> can be be
+recovered as the coefficents in a regression of the observed shocks
+<span class="math inline">\(\tidle f\)</span> on the eigen shocks <span class="math inline">\(\tilde f_h\)</span> - Proof: ONline Appendix B.4.9
+- the speed of convergece to steady state for an eigen shock as measured
+by the half-life of convergence to steady state depens solely on the
+associated eigen value of the transtion matrix and is summarized in the
+following proposition - Prop 5 Speed of Convergence: Consider an economy
+that is intially in steady state at time <span class="math inline">\(t=0\)</span> and agents learn about a one0time,
+permanent shoc to productive and amenities form time <span class="math inline">\(t=1\)</span> onwards. Suppose that these shocks
+are a nontrivial eigenshock, for which teh intial impact on the state
+variables at time <span class="math inline">\(t=1\)</span> conicides
+with a real eigenvector <span class="math inline">\(u_h\)</span> of the
+trasition matrix <span class="math inline">\(P\)</span>. The trasntion
+path of the state variables in response to such as shock is</p>
+<p><span class="math display">\[ \tilde x_t = \sum_{j=2}^{2N}
+\frac{1-\lambda_j&#39;}{1-\lambda_j}u_jv_j&#39;u_j =
+\frac{1-\lambda_h&#39;}{1-\lambda_h}u_h \Rightarrow log(x_{t+1}) -
+log(x_t) = \lambda_h^tu_h \]</span> - Proof: Oline appendix B.4.9 - The
+impact of a nontrivial eigenshock on the state variables in each time
+period is always proportional to the corresponding eigne vector and
+ecays expontially at a rate determined by the associated eigenvalue -
+These eigen values fully summarize the economies speed of convergence in
+response to eigenshcoks, even in our setting with a high dimensional
+state space, a rich geography of trade and migration costs, and multiple
+sources of dynamics - In general, each eigenshock has a different speed
+of convergence as captured by its eigenvalue which reflects the fact
+thta the speed of convergence to steady state does not only depend on
+strucutreal parameters but also on the incidence of the shock on the
+labor and captial state variables in each location.</p>
+</div>
+<div id="two-location-example" class="section level3">
+<h3>Two location example</h3>
+<ul>
+<li>We now look at an example with two symmetric location that begin in
+steady state. Location symmetry and triade and migration friction imply
+that the expenditrue and migration share matrices <span class="math inline">\(S\)</span> and <span class="math inline">\(D\)</span> are symmetric and diagonal-dominant,
+with <span class="math inline">\(T=S\)</span> and <span class="math inline">\(E=D\)</span></li>
+<li>Suppose that at time <span class="math inline">\(t=0\)</span> agents
+learn about one-time, permanent shock to productivity and amenities
+captured by the vector <span class="math inline">\(\tilde f\)</span> in
+log-deviation form the intial steady state values</li>
+<li>The process follows three steps</li>
+<li>First, we write the dynamic response of the state vairables in log
+deviation form the intial steady state value <span class="math inline">\(\tilde x_t = [log(l_t) - log(l^*),log(k_t) -
+log(k^*)]&#39;\)</span> using Proposition 3 <span class="math display">\[ \tilde x_{t+1} = P\tilde x_t + R\tilde f,
+\forall t \geq 0, \tilde x_0 = 0 \]</span></li>
+<li>therefore, the intial impact of the fundamental shock <span class="math inline">\(\tilde f\)</span> is governed by the impact matrix
+<span class="math inline">\(R\)</span> via</li>
+</ul>
+<p><span class="math display">\[ \tilde x_1 = R\tilde f \]</span> - the
+subsequent updating of the state variables is regulated by the trasntion
+matrix <span class="math inline">\(P\)</span></p>
+<p><span class="math display">\[ \tilde x_{t+1} - \tilde x_t = P^t
+\tilde x_1, \forall t\geq 0 \]</span></p>
+<ul>
+<li>since each location ahs two state variables, population and capital
+stock, the transtion matrix <span class="math inline">\(P\)</span> is
+<span class="math inline">\(4\times 4\)</span>. Likewise, becasue each
+location is subject to two shocks (to productivity and amenities), the
+impact matrix is also 4x4.</li>
+<li>In step 2, we express this dynamic response of the state variables
+in terms of the eigenvectors and eigenvalues of the trasition matrix
+<span class="math inline">\(P\)</span> using prop 4. First we rewrite
+the recurisvie formulation in sequence form <span class="math inline">\(\tilde x_t\)</span> =
+(_{s=0}<sup>{t-1}P</sup>s)Rf$.</li>
+<li>Next we use a eigendecompistion of <span class="math inline">\(P\)</span> to rewrite the summation over iterative
+powers of <span class="math inline">\(P\)</span> as a summation ver the
+components of the eigenbasis of <span class="math inline">\(P\)</span>
+<span class="math display">\[ \tilde x_t = \sum_{h=1}^4
+\frac{1-\lambda_h&#39;}{1-\lambda_h}u_hv&#39;_hR\tilde f \]</span></li>
+<li>in step 3, we write the impact of an empircal shock on the state
+variables <span class="math inline">\((R\tilde f)\)</span> as a lienar
+combination of the eigenshocks using prop 5. First define a nontrivial
+eigenshock <span class="math inline">\(\tilde f_h\)</span> as a shock to
+the fundamnetals for which the initial impact of the shock on the state
+variable <span class="math inline">\(R\tilde_h\)</span> correspons to a
+right eigenvector of the trastion matrix <span class="math inline">\((u_h)\)</span>.</li>
+<li>for such a non-trivial eigenshock, the dynamic impact on the state
+variables can be fully characterized by the $h^{th} eigencomponent alone
+<span class="math display">\[ \tilde x_{t+1} - \tilde x_t |_{\tilde f =
+\tilde f_h} = \lambda_h^t u_h, \tilde x_t|_{\tilde f= \tilde f_h} =
+\frac{1-\lambda_h&#39;}{1-\lambda_h}u_h \]</span></li>
+<li>the rate of convergence to the new steady state depends only on the
+corresponding eigenvalue <span class="math inline">\(\lambda_h\)</span>.</li>
+<li>the larger the value of this eigenvalue, the slower the rate of
+convergence to steady state.</li>
+<li>seond, we use the property that the impact of any empircal shock
+<span class="math inline">\(R\tilde f\)</span> can be written as a
+linear combination of the impact of the eigenshocks <span class="math inline">\(R\tilde f = \sum_{i=1}^{2N}a_iR\tilde
+f_i\)</span>, where we can recover the weights in this linear
+combination form a a regresion.</li>
+<li>the eigenvectors and eigne values of <span class="math inline">\(P\)</span> depend not only on the model paramters
+but also on the entire trade and migration matrices.</li>
+<li>But in the symmetric two location example, the four eignevectors of
+the trastion matrix <span class="math inline">\(P\)</span> take the
+simple form</li>
+</ul>
+<p><span class="math display">\[ [1,1,0,0,]&#39;,[0,0,1,1]&#39;,
+[1,-1,\alpha,-\alpha]&#39;, [1, -1, -\xi, \xi] \]</span> For some
+constants <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\xi\)</span> that depend on model parameters aand
+the trade and migration share, as shown in appendix B.4.10 - The
+eigenvectors of <span class="math inline">\(P\)</span> have an
+intutitive interprestation - the first eigenvector has an associated
+eigenvalue of zoer and corresponding eigenshock of <span class="math inline">\([\tilde z_1, \tilde z_2, \tilde b_1, \tilde
+b_2]&#39; = [0,0,1,1]&#39;\)</span>. this tricival eigenshock captures a
+common amentity shock to both location that leaves population shares and
+captial stocks unchaned. - the assocaited eigenvalue is zero, since the
+intial and new steady state coincide, such that there is immediate
+convergence with no trastional dynamics. - the second eigen vector has
+an associated eigen shock of exactly the opposite order. This
+eigencompoment captures a common productivity shock to both location -
+Becasue we are symmetric, this leaves population shares unchanged, such
+that the first two entries are 0. - but his productivity shock leads to
+a symmetric reduction in the consumer orice index, and hence the cost of
+captial in both location, which affects capital dynamics in bot
+hlocation symmetrically, which makes the thrid and fourth entries in
+<span class="math inline">\(u_2\)</span> equal. - In the symmetric
+example, captial dynamics in response to this common productivity shock
+are the smae as they would be in a single location clsoed economy. - the
+eigenvalue of thsi componeent can be charcterized analytically. - in the
+specail case in whihc landlords have a unitary elasticity of intermporal
+substitution (log utility), the corresponding eigenvalue is <span class="math inline">\([1-(1-\beta(1-\delta)\mu)]\)</span> - the
+remaining two eigne vectors captures shocks that are asymetric across
+location. - the thrid eigenvector is associated with an eigenshock
+dependent on a constant <span class="math inline">\(c\)</span> - the
+fourth eigen vector is assocaied with an eigen shock dependent on a
+constant <span class="math inline">\(d\)</span>. - in both cases, the
+deviations of the state variables form stated state in location 1 take
+the same absilute value, but have the opposite sign to the deviations of
+the steate variables from steady state for location 2. - We cannot
+theortically sing the constants <span class="math inline">\(\alpha,\xi,c,d\)</span>, we find fumerically that
+ll these parameters are positive for realistic parameter values. - Under
+sign restriction, <span class="math inline">\(u_3\)</span> can be
+thought of as capturing the case in which productivity and amentity
+shocks are positively correlated across location, and the other
+eigenvecotr capture the case in which they are negatively correalte. -
+The third eigen value captures the case the new steady steate values of
+labor and captial are both above their intiavl value in the location
+that experience positive shocks , and both below in their intal vales in
+the in the location that experience negative shocks. - In contrast, the
+fourth eigenvector captures the case in which productivty and amenity
+shocks are negatively orrelated across location. Therefore, each
+location experience productivity and amenity shocks that are the
+oppostie sign to one another. - Consequently, the new steady steate
+features a higher population shrae but lower capital in one location,
+and lower population share but higher captial stock in the other
+location. - In all numerical simulation, we find that the eigenvalue for
+the thrid eigenvector is higher than the fourth - this tells us that
+economies experiecne slower convergence to steady state if productity
+and amentity shocks are positively correlated across location - the
+reason is the interaction between the marginal productivitys of capital
+and labor in the production technology. - When both captiual and labor
+are above steady state, the high captial stock raise the marginal
+product of labor, which retards the downward adjustment of labor -
+similarly, the high labor suply incrase the marginal priduct for
+captual, which dampens the dowanward adjustment of captial - when bot
+hcaptial and labor abelow steady state, the opposite logic applies - Any
+pattern of prodcutivity and amenity shocks aross the two symmetic
+location can be captured by a linar combination of these four types of
+shocks. #### Transtion dynamic for sequences of shocks. - above has
+focused on trastion dynamics for a one-time shock, the approach
+generalized to a sequence of shocks - Prop S.1 in the Oline Supplement
+S.2.3 provides the closed form solution for the eoncomis trasntiion path
+for any convergent equence of future shock to productiveies and amenties
+under perfect foresight -</p>
 </div>
 </div>
 </div>
