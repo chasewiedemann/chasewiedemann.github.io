@@ -6,7 +6,15 @@ output: html_document
 [Home](https://chasewiedemann.github.io/index.html)  \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
 
-# 8/25/24 Site Restructuring
+# 8/25/24 Monday, Monday
+
+This ones for all the The Mamas & The Papas fans. Lets work on the FKRB project today. What do we want to get done? 
+
+- Use the DGP of HHO (2022) as a good baseline
+- Incorporate the choice function from $\mathbb R^k \to \{0,1\}^K$
+- Incorporate Elastic Net into the Theory (Why should it work?)
+
+# 8/24/24 Site Restructuring
 
 Finally have my head above water, and I am going to spend the rest of the night restructing the site. Lets made a to-do list, and try not to go off on tangents. The major change that I am going to make is that I am not going to have a public mini-blog. That seems like a bit too much information. The blog is still going to be up, and Im going to use it a bit more throughout the day, but the miniblogs were getting cumbersome, and I'm not sure if basically just writting out text verbatim from the text is all that legal/ethical when I am doing paper summaries.
 
