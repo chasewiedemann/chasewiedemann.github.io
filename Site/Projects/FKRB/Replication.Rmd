@@ -22,7 +22,7 @@ miniblog_link = paste0(base_url,"/MiniBlog.html")
 
 # Models without Unobserved Heterogenity 
 
-Consider a simple discrete choice model where the agents share a common utility function $u(X_t;\beta)$ and make choices over $J+1$ alternatives. The menu $X_t$ contains the characteristics of the alternatives in choice setting $t$ that the researcher believes effect utility and $s_t$ is a vector of choice probabilities that the researcher has collected. In all settings of interest this extremely simple model will be rejected by our data. Given that agents share a common utility function, they will all value the alternatives the same, and will all choose the same alternative to maximize utility. Contrast that with our observation that $s_t$ contains $J+1$ alternatives are present and likely has more than one positive choice probability.
+Consider a simple discrete choice model where the agents share a common utility function $u(X_t;\beta)$ and make choices over $J+1$ alternatives. The menu $X_t$ contains the characteristics of the alternatives in choice setting $t$ that the researcher believes effect utility and $s_t$ is a vector of choice probabilities that the researcher has collected. In all settings of interest this extremely simple model will be rejected by our data. Given that agents share a common utility function, they will all value the alternatives the same, and will all choose the same alternative to maximize utility. Contrast that with our observation that $s_t$ contains $J+1$ alternatives and likely has more than one positive choice probability in any interesting application.
 
 The logical next step is to add an idiosyncratic preference shock to our agents utility function. This allows us to model agent $i$'s vector of utility for the alternatives as
 $$ u_{it} = u(X_t;\beta) + \epsilon_i $$
@@ -30,37 +30,35 @@ Where $\epsilon_i$ is a $J\times 1$ random vector from a distribution $F_\epsilo
 $$ \delta_t = \mathbb E_\epsilon\left[u_{it}\right] = u(X_t;\beta) $$
 Another way to view the expectation taken over $F_\epsilon$ is through the infinite sum
 $$ \delta_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N u_{it} + \epsilon_i $$
-To transition from mean utility $\delta_t$ to choice probabilities, we can incorporate a choice function into the infinite sum. Let $\gamma:\mathbb R^{J+1} \to \{0,1\}^{J+1}$ be such a choice function, i.e. let $\gamma_i(x) = 1 \iff x_i = \max_{0\leq i \leq J} x_i$ and 0 otherwise. The choice function is incorporated in the infinte sum as follows
+To transition from mean utility $\delta_t$ to choice probabilities, we can incorporate a choice function into the infinite sum. Let $\gamma:\mathbb R^{J+1} \to \{0,1\}^{J+1}$ be such a choice function, i.e. let $\gamma_i(x) = 1 \iff x_i = \max_{0\leq i \leq J} x_i$ and 0 otherwise. The choice function is incorporated in the infinite sum as follows
 
 $$ s_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N \gamma(u_{it} + \epsilon_i) $$
 
 Two important properties of the choice function are worth examining. First, the choice function is invariant to to location. Consider a constant vector $\mu \in \mathbb R^{J+1}$, meaning $\mu_i = \mu_j, \forall i,j$.  Note that $\gamma(x) = \gamma(x+\mu)$ for all constant vectors $\mu$. This is because the choice function is only concerned with the ordinal ranking of the utilities, and a change in location does not effect ordinal rankings. Second, the choice function is invariant to positive scaling. Letting $\sigma \in \mathbb R_{++}$ be a positive scalar, we see that $\gamma(x) = \gamma(\sigma \cdot x)$. This second property differs from the first property in the fact that for a fixed utility level $u_i$ and location $\mu$, the resulting choice probabilities associated with the infinite sum depends on the choice of $\sigma$. This is because as $\sigma\to \infty$, the relative differences between components in $u_i$ tend to matter less and less, and $s_t$ tends towards the constant market share value, $\overline s_j = \frac{1}{J+1}, \forall j$. Conversely, as $\sigma\to 0$, the relative differences between components in $u_i$ become more and more dominate, and in the limit we are back to the case without any idiosyncratic shocks to preferences. 
 
-Given a normalization on $\mu$ and $\sigma$, Berry (1994) shows that there is a bijection between mean utilities $\delta_t$ and any vector of choice probabilities (including the one we observe) $s_t$. This allows us to take any vector of choice probabilities $s_t$ and associate them with a unique value of $\delta_t$. We can then map $X_t$ onto $\delta_t$ to recover $\beta$.
+Given a normalization on mean utilities and $\sigma$, Berry (1994) shows that there is a bijection between mean utilities $\delta_t$ and any vector of choice probabilities (including the one we observe) $s_t$. This allows us to take any vector of choice probabilities $s_t$ and associate them with a unique value of $\delta_t$. We can then map $X_t$ onto $\delta_t$ to recover $\beta$. It is important to state here that not all normalizations are created equal. Different normalizations will lead to different values of $\delta_t$. When we map $X_t$ onto $\delta_t$, changes in the normalization change the value of $\beta$ that we recover. While $\beta$ is a primitive, these normalizations are completely absent from the theoretical data-generating process. We now move onto examinging these normalizations in greater detail.  
 
-This bijection is facilitated by the distribution function $F_\epsilon$. Distribution functions can be seen as a mapping from the triple $(\delta,\mu,\sigma)$ into the space of choice probabilities. A more intuitive way to examine this mapping is through the inverse mapping from the choice probabilities into $(\delta,\mu,\sigma)$. The inverse maps of distribution functions are called quantile functions. Without normalization, quantile functions are not functions at all, but rather a correspondence between $s_t$ and the triple. What does this mean? For any observed choice probability $s_0$ and any mean utility $\delta_0$, there exists $(\mu_0,\sigma_0)$ such that the quantile function will associate the $s_0$ with $\delta_0$, i.e. $F_\epsilon^{-1} (s_0,\mu^*,\sigma^*) = \delta_0$. Further, $(\mu_0,\sigma_0)$ are not themselves unique.  Another way of stating this same property is that the quantile function spans $\mathbb R^{J+1}$ if we allow $\sigma$ and $\mu$ to vary. Normalizations pin down the values of $\mu$ and $\sigma$, which restrict the quantile function to be a bijective function, facilitating inversion. 
+### Effect of Normalizations
 
+This bijection is facilitated by the distribution function $F_\epsilon$. Distribution functions can be seen as a mapping from the triple $(\delta,\mu,\sigma)$ into the space of choice probabilities. The distribution function allows us to "smooth" the choice function in such a way that is parsimonious with the assumption that we observe $N\to \infty$ agents. A more intuitive way to examine this mapping is through the inverse mapping from the choice probabilities into $(\delta,\mu,\sigma)$. The inverse maps of distribution functions are called quantile functions. Without normalization, quantile functions are not functions at all, but rather a correspondence between $s_t$ and the triple. What does this mean? For any observed choice probability $s_0$ and any mean utility $\delta_0$, there exists $(\mu_0,\sigma_0)$ such that the quantile function will associate the $s_0$ with $\delta_0$, i.e. $F_\epsilon^{-1} (s_0,\mu_0,\sigma_0) = \delta_0$. Further, the pair $(\mu_0,\sigma_0)$ are not themselves unique.  Another way of stating this same property is that the quantile function spans $\mathbb R^{J+1}$ if we allow $\sigma$ and $\mu$ to vary. Normalizations pin down the values of $\mu$ and $\sigma$, which restrict the quantile function to be a bijective function, facilitating inversion. 
 
+To see the normalizations in action, choose a specific choice probability $s_0$, fix $\sigma=\sigma_0$ and let $\mu$ vary. The quantile function now maps $s_0$ into a subset of $\mathbb R^{J+1}$ instead of the entire space as before. We can interpolate through the subset defined by $s_0$ and $\sigma$ with our free parameter $\mu$. The graph of this interpolation can be seen as a line through $\mathbb R^{J+1}$, and changing $s_0$ while holding $\sigma_0$ fixed creates lines that combine to make the entire space $\mathbb R^{J+1}$. How does a specific $s_0$ with a fixed $\sigma_0$ get associated to a particular line? We can first examine the constant choice probability $\overline s$ introduced before. This choice probability tells us that on average, consumers are indifferent between all $J+1$ alternatives. It stands to reason that the mean utilities associated with these should be associated with the line that contains all constant utilities, which includes the origin. For example, with two choice alternatives, the line associated with $\overline s$ is simply the $45^\circ$ line. 
 
-Now choose a specific choice probability $s_0$, fix $\sigma=\sigma_0$ and let $\mu$ vary. The quantile function now maps $s_0$ into a subset of $\mathbb R^{J+1}$ instead of the entire space as before. We can interpolate through the subset defined by $s_0$ and $\sigma$ with our free parameter $\mu$. The graph of this interpolation can be seen as a line through $\mathbb R^{J+1}$, and changing $s_0$ while holding $\sigma_0$ fixed creates lines that combine to make the entire space $\mathbb R^{J+1}$. How does a specific $s_0$ with a fixed $\sigma_0$ get associated to a particular line? We can first examine the constant choice probability $\overline s$ introduced before. This choice probability tell us that on average, consumers are indifferent between all $J+1$ alternatives. It stands to reason that the mean utilities associated with these should be associated with the line that contains all constant utilities, which includes the origin. For example, with two choice alternatives, the line associated with $\overline s$ is simply the $45^\circ$ line. 
+Lets now take a step of size $\Delta_s$ away from $\overline s$ in the first dimension. The because choice probabilities are constrained to be strictly positive and sum to one, the size of $\Delta_s$ is restricted and the resulting choice probability $s_0$ looks like 
 
-Lets now take a step of size $\Delta$ away from $\overline s$ in the first dimension. The resulting choice probability $s_0$ looks like 
+$$ s_0 = \begin{pmatrix} \frac{1}{J+1} + \Delta_s \\ \frac{1}{J+1} - \frac{\Delta_s}{J} \\ \vdots \\ \frac{1}{J+1} - \frac{\Delta_s}{J} \end{pmatrix}  $$
 
-$$ s_0 = \begin{pmatrix} \frac{1}{J+1} + \Delta \\ \frac{1}{J+1} - \frac{\Delta}{J} \\ \vdots \\ \frac{1}{J+1} - \frac{\Delta}{J} \end{pmatrix}  $$
+Intuitively, the line of utilities that is interpolated by $\mu$ should be greater in the first dimension, and equal in the remaining dimensions, for all values of $\mu$. Again in the case where we have two alternatives, if the first dimension is plotted on the X-axis, then the line of utilities should be parallel and below the $45^\circ$ line. Three observations are important to note here. First, how the size of $\Delta_s$ corresponds to a change in the utilities, $\Delta_u$, is determined by the value of $\sigma$.  For a fixed choice of $\Delta_s$, a large value for $\sigma$ will cause $\Delta_u$ to be large, and the line interpolated by $\mu$ to shift further from the line of constant vectors. A small value of $\sigma$ will cause the line to remain close to the constant vectors. Second, $\overline s$ is "special" in the sense that it is the only choice probability that coincides with its utility value. The "lines" that $\mu$ interpolates through must cover the entirety of $\mathbb R^{J+1}$ when interpolating through all possible choice probabilities, so they expand outside the simplex that contains choice probabilities. Third, consider a hypersphere centered at $\overline s$. As the direction of the lines are fixed, the hypersphere will have exactly $J+1$ lines that are exactly tangent. These choice probabilities are related, and are simply permutations. 
 
-Intuitively, the line of utilities that is interpolated by $\mu$ should be greater in the first dimension, and equal in the remaining dimensions, for all values of $\mu$. Again in the case where we have two alternatives, if the first dimension is plotted on the X-axis, then the line of utilities should be parallel and above the $45^\circ$ line. Three observations are important to note here. First, how the size of $\Delta$ corresponds to a change in the utilities is determined by the value of $\sigma$. For a fixed choice of $\Delta$, a large value for $\sigma$ will cause the line to shift further from the line of constant vectors, and a small value of $\sigma$ will cause the line to remain close to the constant vectors. Second, $\overline s$ is "special" in the sense that it is the only choice probability that coincides with its utility value. The "lines" that $\mu$ interpolates through must cover the entirety of $\mathbb R^{J+1}$, so they expand outside the simplex that contains choice probabilities. Third, consider a hypersphere centered at $\overline s$. As the direction of the lines are fixed, the hypersphere will have exactly $J+1$ lines that are exactly tangent. These choice probabilities are related, and are simply permutations.     
-
-
-To start gaining intuition, we can view these normalizations within the infinite sum
-
-$$ s_t = \lim_{N\to\infty} \frac{1}{N}\sum_{i=1}^N \gamma\big(u_{it} + \mu   +\sigma\epsilon_i \big) $$ 
-The interaction between $\epsilon$ and the normalizations become transparent in this form. The assumption that $F_\epsilon$ was mean zero can just as easily be viewed as the mean being captured by the $\mu$ term. As the choice function $\gamma$ is invariant to location, this assumption has no real empirical content, so $\mu$ can be seen as a free parameter. The $\sigma$ normalization, notation appropriately chosen, acts as the variance of the idiosyncratic shock. From this line of reasoning, we can always choose the standard distribution function (mean zero and variance one), and then allow normalizations to impact the mapping. 
-
-A simple way to choose this canonical member, and therefore create a bijection that allows us to invert this model for $\delta_t$, is to normalize the mean utility of one alternative to zero.  While any of the alternatives can be normalized, the common way this is preformed is to normalize the mean utility of the outside alternative. The outside alternative is the alternative where our agent did not choose any of the other alternatives. If we were studying a choice environment regarding the market for transportation services, this alternative would capture all agents who decided to walk or bike. Let $j=0$ be the index of the outside alternative. This normalization selects exactly one member of each equivalence class because $\delta_{0t} + \alpha_0 = 0$ for exactly one value of $\alpha$. 
+As laid out, once we have fixed $\sigma$ to some value, we are left with a set of $\delta_t +\mu$ that are all mapped to the same choice probability. We can view this as an equivalence class, and the bijection can be established by choosing a single member of each equivalence class. A simple way to choose this canonical member is to normalize the mean utility of one alternative to zero.  While any of the alternatives can be normalized, the common way this is preformed is to normalize the mean utility of the outside alternative. The outside alternative is the alternative where our agent did not choose any of the other alternatives. If we were studying a choice environment regarding the market for transportation services, this alternative would capture all agents who decided to walk or bike. Let $j=0$ be the index of the outside alternative. This normalization selects exactly one member of each equivalence class because $\delta_{0t} + \mu_0 = 0$ for exactly one value of $\mu$. 
 
 This bijection holds for all choices of $F_\epsilon$. However, assuming that $F_\epsilon$ is just $J$ copies of the single dimensional Type-1 Extreme Value distribution allows for this bijection to have a closed form solution given by
 $$ s_{jt} = \frac{e^{\delta_{jt}}}{\sum_{k=0}^J e^{\delta_{kt}}} $$
-This follows from properties of that (univariate) Type-1 Extreme Value distribution and a derivation can be found in Train (2002). Then, using our conveniently chosen normalization, we can write
+This follows from properties of that (univariate) Type-1 Extreme Value distribution and a derivation can be found in Train (2002). We can then attempt to invert this function for $\delta_t$ and yeild
+
+$$ log(s_{jt}) = \delta_{jt} - log\left(\sum_{k=0}^J e^{\delta_{kt}} \right) $$
+
+Then, using our conveniently chosen normalization, we can write
 $$ s_{0t} = \frac{e^{\delta_{0t}}}{\sum_{k=0}^J e^{\delta_{kt}}} = \frac{1}{\sum_{k=0}^J e^{\delta_{kt}}} $$
 We see that this normalization has given us the value of the denominator of our expression. We can then divide by the value of this denominator and take the natural log to yield $\delta_{jt}$ as
 $$ 
@@ -119,34 +117,112 @@ Where the final equality comes from $\lim_{N\to \infty} \frac{|R_b^N|}{N} = f_\n
 
 We can then evaluate this integral on a grid. Assume we have $\overline R\to \infty$ grid points $\{\beta_r\}$ distributed through $\mathbb R^K$. Let $\theta^r = f_\nu(\beta_r)$. Take evaluations of the utility function, $u(X_t;\beta_r$) at each point on this grid. As $\overline R\to \infty$  we maintain equality and have
 $$ \tilde \delta_t =  \int_\Omega u(X_t;\tilde \beta + \nu_i)f_\nu(z) \,dz = \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r u(X_t;\beta_r) $$
-Using our standard inversion formula, we have the infeasible estimating equation
-$$ \tilde \delta_{jt} = \frac{s_{jt}}{s_{0t}} = \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r u(X_t;\beta_r) $$
+Using our standard inversion formula, we have the unfeasible estimating equation
+$$ \tilde \delta_{jt} = \frac{s_{jt}}{s_{0t}} = \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r u(X_{jt};\beta_r) $$
 To make this estimating equation feasible, we use a finite, yet large, $R$. As the set of true $\{\theta\}$ are defined as the density $f_\nu$, our estimation procedure requires that our recovered $\{\hat\theta\}$ behave as a density as well. This means that $\hat\theta_r \geq 0$ and $\sum_{r=1}^R \hat\theta^r = 1$. This can easily be accomplished via constrained least squares and the following estimating equation.  
-$$ \delta_{jt} = \sum_{r=1}^R \hat\theta^r u(X_t;\beta_r) + u_{jt} $$
-### Code Example
+$$ \delta_{jt} = \sum_{r=1}^R \hat\theta^r u(X_{jt};\beta_r) + u_{jt} $$
 
-Here we will generate an exotic distribution for $f_\nu$, and recover that distribution through a discrete choice framework. Our ``true" distribution will be the mixture of two, two dimensional, normal distributions given as 
-$$ g_1 \sim \mathcal N(\begin{pmatrix} 2 \\ 2 \end{pmatrix},\begin{pmatrix} 1 & .5 \\ .5 & 1\end{pmatrix}), g_2 \sim \mathcal N(\begin{pmatrix} -1 \\ 1 \end{pmatrix},\begin{pmatrix} 1 & -.5 \\ -.5 & 1\end{pmatrix}) $$
-Along with a confounding distribution that only enters
-With mixture weights given as
+Given that $\{\hat\theta\}$ has been recovered, we can then as what can we do with such an object? Ideally, we would be able to draw from such a distribution to 
 
-$$ f_\nu = \frac{1}{2} g_1 + \frac{1}{4}g_2 + \frac{1}{4} g_3 $$
-We can then look simulate from this distribution and view are 
+## Code Example
+
+Here we will be running a horserace against the existing method of FKRB and the new method, which we will refer to as the Utility Method. What is expected? We should see that FKRB beats out the Utility Method when we are comparing against estimated choice probabilities. However, we should expect for the Utiltiy Method to beat out the FKRB method when testing simularity to the DGP. We further expect the utility method to win out when we simulate a counterfactual change. This will be accomplished by first estimating $\{\hat\theta\}$ for both models, and then testing preformance on a new dataset that contains one few, or one more alternative $J$. 
+
+### DGP
+
+We build off the continuous data generating process of Heiss, Hetzenecker, \& Osterhaus (2022) to a market level sample for our examples. The process for simulating data is as follows, and is replicated in the code below.
+
+#### Covariates
+
+We restrict to the case of two covariates. To begin, $J-1$ $(X_1,X_2)$ pairs with $X_1$ is drawn from $U(0,5)$ while $X_2$ is drawn from $U(-3,1)$. Then for $M$ markets, we draw $J-1$ $(\Delta X_1,\Delta X_2)$ pairs from a mean zero multivariate normal distribution to simulate variation across markets. To more accurately capture real world data, we allow for the covariance of $\Delta X_1$ and $\Delta X_2$ to be .1 while the diagonal terms are restricted to .25. This captures the fact that higher price $X_1$, is often associated with higher quality $X_2$ in production. These deviates are then added to the base ($X_1,X_2$) pair to create inside good market data $(X_{m1},X_{m2})$. As we are restricting to linear models, row of (0,0) is appended to each market data for the outside option.
+
+#### $F(\beta)$
+
+$F(\beta)$ is simulated from a mixture of two bivariate normal distributions. Let $\beta_i$ be simulated as follows
+
+$$ \beta_i \sim .5 \cdot \mathcal N( \begin{pmatrix} -2.2 \\ -2.2 \end{pmatrix},\begin{pmatrix} .8 & .15 \\ .15 & .8 \end{pmatrix}) + .5 \cdot \mathcal N( \begin{pmatrix} 1.3 \\ 1.3 \end{pmatrix},\begin{pmatrix} .8 & .15 \\ .15 & .8 \end{pmatrix}) $$
+
+The following code simulates from such a data generating process. 
+
+
 ```{r}
-require(MASS)
-require(ggplot2)
-K = 2
+library(MASS)
+library(evd)
+createData = function(J,M){
+  N = 50000
+  df = list()
+  gumbel = Gumbel(0,1)
+  X = cbind(runif(J-1,0,5),runif(J-1,-3,1))
+  sigma = rbind(c(.8,.15),c(.8,.15))
 
-drawF_nu = function(N){
-.5*mvrnorm(N,c(5,5),rbind(c(1,.5),c(.5,1)))+.25*mvrnorm(N,c(0,1),rbind(c(1,-.5),c(-.5,1)))+.25*mvrnorm(N,c(0,-1),rbind(c(2,-1),c(-1,1)))
+  for (i in 1:M) {
+ Xm = rbind(c(0,0),X + t(mvrnorm(J-1,c(0,0), rbind(c(.25,.1),c(.1,.25)))))
+ beta = .5 *mvrnorm(N,c(-2.2,-2.2),sigma) + .5 * mvrnorm(N,c(1.3,1.3),sigma)
+ u = Xm %*%beta  +matrix(rgumbel(J*N),J,N)
+ s = as.numeric(table(colMaxs(u))/N)
+ df[[i]] = cbind(i,0:(J-1),s,Xm)
+  }
+  return(do.call(rbind,df))
 }
-N = 10000
-ggdf = data.frame(drawF_nu(N))
-ggplot(ggdf,aes(x = X1, y = X2)) + geom_density_2d_filled()
-
+data = createData(5,3)
 ```
 
- 
+### Grid
+
+We wish to use a large grid to simulate a researcher being unaware of the true data generating process. To that end, we let the grid be defined over $[-10,10]\times [-10,10]$ with $R^2$ points uniformly distributed across the grid.
+
+```{r}
+createGrid = function(R){
+ as.matrix(expand.grid(seq(-10,10,length.out = R), seq(-10,10,length.out = R)))
+}
+```
+
+### Z Matrix
+
+Both implementations require the formation of the $Z$ matrix. The utility method allows for a simple matrix multiplication
+
+```{r}
+createZ_utility = function(R,data){
+  grid = createGrid(R)
+  return(data[,4:5] %*% t(grid))
+}
+createZ_utility(5,data)
+```
+
+The FKRB method requires us to transform utilities into choice probabilities before estimation
+
+```{r}
+createZ_FKRB = function(R,data,J,M){
+  grid = createGrid(R)
+  Z = exp(data[,3:4] %*%  t(grid))
+  
+  for (i in 1:nrow(grid)) {
+  temp =  Z[,i]
+  Z[,i] = temp/ rep(.colSums(temp,5,M),each = J)
+  }
+  return(Z)
+}
+```
+
+### Estimation
+
+The utility method requires us to invert choice probabilities prior to estimation
+
+```{r}
+invert_s = function(data,J,M){
+  s = data[,3]
+  s0 = rep(s[data[,2] == 0],each = J)
+  return(log(s/s0))
+
+}
+```
+
+
+
+
+
+
+
 
 
 

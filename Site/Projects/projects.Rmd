@@ -15,8 +15,6 @@ output: html_document
   + Examines how Market Inefficiencies in the Market for Municipalities can be Rectified by Municipal Mergers
 - [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Projects/FKRB/Replication.html)
   + Examines Identification and Estimation of Unobserved Heterogeneity through the Use of Grids
-- [Kleinman, Liu, \& Redding (2023): Dynamic Spatial Equilibrium](https://chasewiedemann.github.io/Site/Projects/KLR_2023/Summary.html)
-  + Paper Summary
 - [Deep Dive on Generating Random Vectors](https://chasewiedemann.github.io/Site/Projects/mvrnorm/mvrnorm_deep_dive.html)
   + Examining How R Generates Random Vectors with Covariance
 
