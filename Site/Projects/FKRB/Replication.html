@@ -382,8 +382,8 @@ that the researcher has collected. In all settings of interest this
 extremely simple model will be rejected by our data. Given that agents
 share a common utility function, they will all value the alternatives
 the same, and will all choose the same alternative to maximize utility.
-Contrast that with our observation that <span class="math inline">\(s_t\)</span> contains <span class="math inline">\(J+1\)</span> alternatives are present and likely
-has more than one positive choice probability.</p>
+Contrast that with our observation that <span class="math inline">\(s_t\)</span> contains <span class="math inline">\(J+1\)</span> alternatives and likely has more than
+one positive choice probability in any interesting application.</p>
 <p>The logical next step is to add an idiosyncratic preference shock to
 our agents utility function. This allows us to model agent <span class="math inline">\(i\)</span>’s vector of utility for the
 alternatives as <span class="math display">\[ u_{it} = u(X_t;\beta) +
@@ -404,7 +404,7 @@ probabilities, we can incorporate a choice function into the infinite
 sum. Let <span class="math inline">\(\gamma:\mathbb R^{J+1} \to
 \{0,1\}^{J+1}\)</span> be such a choice function, i.e. let <span class="math inline">\(\gamma_i(x) = 1 \iff x_i = \max_{0\leq i \leq J}
 x_i\)</span> and 0 otherwise. The choice function is incorporated in the
-infinte sum as follows</p>
+infinite sum as follows</p>
 <p><span class="math display">\[ s_t = \lim_{N\to\infty}
 \frac{1}{N}\sum_{i=1}^N \gamma(u_{it} + \epsilon_i) \]</span></p>
 <p>Two important properties of the choice function are worth examining.
@@ -427,29 +427,41 @@ market share value, <span class="math inline">\(\overline s_j =
 between components in <span class="math inline">\(u_i\)</span> become
 more and more dominate, and in the limit we are back to the case without
 any idiosyncratic shocks to preferences.</p>
-<p>Given a normalization on <span class="math inline">\(\mu\)</span> and
-<span class="math inline">\(\sigma\)</span>, Berry (1994) shows that
-there is a bijection between mean utilities <span class="math inline">\(\delta_t\)</span> and any vector of choice
+<p>Given a normalization on mean utilities and <span class="math inline">\(\sigma\)</span>, Berry (1994) shows that there is
+a bijection between mean utilities <span class="math inline">\(\delta_t\)</span> and any vector of choice
 probabilities (including the one we observe) <span class="math inline">\(s_t\)</span>. This allows us to take any vector of
 choice probabilities <span class="math inline">\(s_t\)</span> and
-associate them with a unique value of <span class="math inline">\(\delta_t\)</span>. We can then map <span class="math inline">\(X_t\)</span> onto <span class="math inline">\(\delta_t\)</span> to recover <span class="math inline">\(\beta\)</span>.</p>
+associate them with a unique value of <span class="math inline">\(\delta_t\)</span>. We can then map <span class="math inline">\(X_t\)</span> onto <span class="math inline">\(\delta_t\)</span> to recover <span class="math inline">\(\beta\)</span>. It is important to state here that
+not all normalizations are created equal. Different normalizations will
+lead to different values of <span class="math inline">\(\delta_t\)</span>. When we map <span class="math inline">\(X_t\)</span> onto <span class="math inline">\(\delta_t\)</span>, changes in the normalization
+change the value of <span class="math inline">\(\beta\)</span> that we
+recover. While <span class="math inline">\(\beta\)</span> is a
+primitive, these normalizations are completely absent from the
+theoretical data-generating process. We now move onto examinging these
+normalizations in greater detail.</p>
+<div id="effect-of-normalizations" class="section level3">
+<h3>Effect of Normalizations</h3>
 <p>This bijection is facilitated by the distribution function <span class="math inline">\(F_\epsilon\)</span>. Distribution functions can be
 seen as a mapping from the triple <span class="math inline">\((\delta,\mu,\sigma)\)</span> into the space of
-choice probabilities. A more intuitive way to examine this mapping is
+choice probabilities. The distribution function allows us to “smooth”
+the choice function in such a way that is parsimonious with the
+assumption that we observe <span class="math inline">\(N\to
+\infty\)</span> agents. A more intuitive way to examine this mapping is
 through the inverse mapping from the choice probabilities into <span class="math inline">\((\delta,\mu,\sigma)\)</span>. The inverse maps of
 distribution functions are called quantile functions. Without
 normalization, quantile functions are not functions at all, but rather a
 correspondence between <span class="math inline">\(s_t\)</span> and the
 triple. What does this mean? For any observed choice probability <span class="math inline">\(s_0\)</span> and any mean utility <span class="math inline">\(\delta_0\)</span>, there exists <span class="math inline">\((\mu_0,\sigma_0)\)</span> such that the quantile
 function will associate the <span class="math inline">\(s_0\)</span>
-with <span class="math inline">\(\delta_0\)</span>, i.e. <span class="math inline">\(F_\epsilon^{-1} (s_0,\mu^*,\sigma^*) =
-\delta_0\)</span>. Further, <span class="math inline">\((\mu_0,\sigma_0)\)</span> are not themselves
+with <span class="math inline">\(\delta_0\)</span>, i.e. <span class="math inline">\(F_\epsilon^{-1} (s_0,\mu_0,\sigma_0) =
+\delta_0\)</span>. Further, the pair <span class="math inline">\((\mu_0,\sigma_0)\)</span> are not themselves
 unique. Another way of stating this same property is that the quantile
 function spans <span class="math inline">\(\mathbb R^{J+1}\)</span> if
 we allow <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\mu\)</span> to vary. Normalizations pin down the
 values of <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>, which restrict the quantile
 function to be a bijective function, facilitating inversion.</p>
-<p>Now choose a specific choice probability <span class="math inline">\(s_0\)</span>, fix <span class="math inline">\(\sigma=\sigma_0\)</span> and let <span class="math inline">\(\mu\)</span> vary. The quantile function now maps
+<p>To see the normalizations in action, choose a specific choice
+probability <span class="math inline">\(s_0\)</span>, fix <span class="math inline">\(\sigma=\sigma_0\)</span> and let <span class="math inline">\(\mu\)</span> vary. The quantile function now maps
 <span class="math inline">\(s_0\)</span> into a subset of <span class="math inline">\(\mathbb R^{J+1}\)</span> instead of the entire
 space as before. We can interpolate through the subset defined by <span class="math inline">\(s_0\)</span> and <span class="math inline">\(\sigma\)</span> with our free parameter <span class="math inline">\(\mu\)</span>. The graph of this interpolation can
 be seen as a line through <span class="math inline">\(\mathbb
@@ -458,69 +470,69 @@ while holding <span class="math inline">\(\sigma_0\)</span> fixed
 creates lines that combine to make the entire space <span class="math inline">\(\mathbb R^{J+1}\)</span>. How does a specific
 <span class="math inline">\(s_0\)</span> with a fixed <span class="math inline">\(\sigma_0\)</span> get associated to a particular
 line? We can first examine the constant choice probability <span class="math inline">\(\overline s\)</span> introduced before. This
-choice probability tell us that on average, consumers are indifferent
+choice probability tells us that on average, consumers are indifferent
 between all <span class="math inline">\(J+1\)</span> alternatives. It
 stands to reason that the mean utilities associated with these should be
 associated with the line that contains all constant utilities, which
 includes the origin. For example, with two choice alternatives, the line
 associated with <span class="math inline">\(\overline s\)</span> is
 simply the <span class="math inline">\(45^\circ\)</span> line.</p>
-<p>Lets now take a step of size <span class="math inline">\(\Delta\)</span> away from <span class="math inline">\(\overline s\)</span> in the first dimension. The
-resulting choice probability <span class="math inline">\(s_0\)</span>
-looks like</p>
+<p>Lets now take a step of size <span class="math inline">\(\Delta_s\)</span> away from <span class="math inline">\(\overline s\)</span> in the first dimension. The
+because choice probabilities are constrained to be strictly positive and
+sum to one, the size of <span class="math inline">\(\Delta_s\)</span> is
+restricted and the resulting choice probability <span class="math inline">\(s_0\)</span> looks like</p>
 <p><span class="math display">\[ s_0 = \begin{pmatrix} \frac{1}{J+1} +
-\Delta \\ \frac{1}{J+1} - \frac{\Delta}{J} \\ \vdots \\ \frac{1}{J+1} -
-\frac{\Delta}{J} \end{pmatrix}  \]</span></p>
+\Delta_s \\ \frac{1}{J+1} - \frac{\Delta_s}{J} \\ \vdots \\
+\frac{1}{J+1} - \frac{\Delta_s}{J} \end{pmatrix}  \]</span></p>
 <p>Intuitively, the line of utilities that is interpolated by <span class="math inline">\(\mu\)</span> should be greater in the first
 dimension, and equal in the remaining dimensions, for all values of
 <span class="math inline">\(\mu\)</span>. Again in the case where we
 have two alternatives, if the first dimension is plotted on the X-axis,
-then the line of utilities should be parallel and above the <span class="math inline">\(45^\circ\)</span> line. Three observations are
-important to note here. First, how the size of <span class="math inline">\(\Delta\)</span> corresponds to a change in the
-utilities is determined by the value of <span class="math inline">\(\sigma\)</span>. For a fixed choice of <span class="math inline">\(\Delta\)</span>, a large value for <span class="math inline">\(\sigma\)</span> will cause the line to shift
-further from the line of constant vectors, and a small value of <span class="math inline">\(\sigma\)</span> will cause the line to remain
+then the line of utilities should be parallel and below the <span class="math inline">\(45^\circ\)</span> line. Three observations are
+important to note here. First, how the size of <span class="math inline">\(\Delta_s\)</span> corresponds to a change in the
+utilities, <span class="math inline">\(\Delta_u\)</span>, is determined
+by the value of <span class="math inline">\(\sigma\)</span>. For a fixed
+choice of <span class="math inline">\(\Delta_s\)</span>, a large value
+for <span class="math inline">\(\sigma\)</span> will cause <span class="math inline">\(\Delta_u\)</span> to be large, and the line
+interpolated by <span class="math inline">\(\mu\)</span> to shift
+further from the line of constant vectors. A small value of <span class="math inline">\(\sigma\)</span> will cause the line to remain
 close to the constant vectors. Second, <span class="math inline">\(\overline s\)</span> is “special” in the sense
 that it is the only choice probability that coincides with its utility
 value. The “lines” that <span class="math inline">\(\mu\)</span>
-interpolates through must cover the entirety of <span class="math inline">\(\mathbb R^{J+1}\)</span>, so they expand outside
-the simplex that contains choice probabilities. Third, consider a
+interpolates through must cover the entirety of <span class="math inline">\(\mathbb R^{J+1}\)</span> when interpolating
+through all possible choice probabilities, so they expand outside the
+simplex that contains choice probabilities. Third, consider a
 hypersphere centered at <span class="math inline">\(\overline
 s\)</span>. As the direction of the lines are fixed, the hypersphere
 will have exactly <span class="math inline">\(J+1\)</span> lines that
 are exactly tangent. These choice probabilities are related, and are
 simply permutations.</p>
-<p>To start gaining intuition, we can view these normalizations within
-the infinite sum</p>
-<p><span class="math display">\[ s_t = \lim_{N\to\infty}
-\frac{1}{N}\sum_{i=1}^N \gamma\big(u_{it} + \mu   +\sigma\epsilon_i
-\big) \]</span> The interaction between <span class="math inline">\(\epsilon\)</span> and the normalizations become
-transparent in this form. The assumption that <span class="math inline">\(F_\epsilon\)</span> was mean zero can just as
-easily be viewed as the mean being captured by the <span class="math inline">\(\mu\)</span> term. As the choice function <span class="math inline">\(\gamma\)</span> is invariant to location, this
-assumption has no real empirical content, so <span class="math inline">\(\mu\)</span> can be seen as a free parameter. The
-<span class="math inline">\(\sigma\)</span> normalization, notation
-appropriately chosen, acts as the variance of the idiosyncratic shock.
-From this line of reasoning, we can always choose the standard
-distribution function (mean zero and variance one), and then allow
-normalizations to impact the mapping.</p>
-<p>A simple way to choose this canonical member, and therefore create a
-bijection that allows us to invert this model for <span class="math inline">\(\delta_t\)</span>, is to normalize the mean
-utility of one alternative to zero. While any of the alternatives can be
-normalized, the common way this is preformed is to normalize the mean
-utility of the outside alternative. The outside alternative is the
-alternative where our agent did not choose any of the other
-alternatives. If we were studying a choice environment regarding the
-market for transportation services, this alternative would capture all
-agents who decided to walk or bike. Let <span class="math inline">\(j=0\)</span> be the index of the outside
+<p>As laid out, once we have fixed <span class="math inline">\(\sigma\)</span> to some value, we are left with a
+set of <span class="math inline">\(\delta_t +\mu\)</span> that are all
+mapped to the same choice probability. We can view this as an
+equivalence class, and the bijection can be established by choosing a
+single member of each equivalence class. A simple way to choose this
+canonical member is to normalize the mean utility of one alternative to
+zero. While any of the alternatives can be normalized, the common way
+this is preformed is to normalize the mean utility of the outside
+alternative. The outside alternative is the alternative where our agent
+did not choose any of the other alternatives. If we were studying a
+choice environment regarding the market for transportation services,
+this alternative would capture all agents who decided to walk or bike.
+Let <span class="math inline">\(j=0\)</span> be the index of the outside
 alternative. This normalization selects exactly one member of each
 equivalence class because <span class="math inline">\(\delta_{0t} +
-\alpha_0 = 0\)</span> for exactly one value of <span class="math inline">\(\alpha\)</span>.</p>
+\mu_0 = 0\)</span> for exactly one value of <span class="math inline">\(\mu\)</span>.</p>
 <p>This bijection holds for all choices of <span class="math inline">\(F_\epsilon\)</span>. However, assuming that <span class="math inline">\(F_\epsilon\)</span> is just <span class="math inline">\(J\)</span> copies of the single dimensional Type-1
 Extreme Value distribution allows for this bijection to have a closed
 form solution given by <span class="math display">\[ s_{jt} =
 \frac{e^{\delta_{jt}}}{\sum_{k=0}^J e^{\delta_{kt}}} \]</span> This
 follows from properties of that (univariate) Type-1 Extreme Value
-distribution and a derivation can be found in Train (2002). Then, using
-our conveniently chosen normalization, we can write <span class="math display">\[ s_{0t} = \frac{e^{\delta_{0t}}}{\sum_{k=0}^J
+distribution and a derivation can be found in Train (2002). We can then
+attempt to invert this function for <span class="math inline">\(\delta_t\)</span> and yeild</p>
+<p><span class="math display">\[ log(s_{jt}) = \delta_{jt} -
+log\left(\sum_{k=0}^J e^{\delta_{kt}} \right) \]</span></p>
+<p>Then, using our conveniently chosen normalization, we can write <span class="math display">\[ s_{0t} = \frac{e^{\delta_{0t}}}{\sum_{k=0}^J
 e^{\delta_{kt}}} = \frac{1}{\sum_{k=0}^J e^{\delta_{kt}}} \]</span> We
 see that this normalization has given us the value of the denominator of
 our expression. We can then divide by the value of this denominator and
@@ -547,6 +559,7 @@ minimizes the total contribution of <span class="math inline">\(\xi_t\)</span> a
 strategy has the additional benefit of being able to incorporate
 techniques to deal with misspecification error such as instrumental
 variables.</p>
+</div>
 </div>
 <div id="models-with-unobserved-hetrogeity" class="section level1">
 <h1>Models with Unobserved Hetrogeity</h1>
@@ -663,10 +676,10 @@ maintain equality and have <span class="math display">\[ \tilde \delta_t
 =  \int_\Omega u(X_t;\tilde \beta + \nu_i)f_\nu(z) \,dz =
 \lim_{\overline R\to\infty} \sum_{r=1}^{\overline R} \theta^r
 u(X_t;\beta_r) \]</span> Using our standard inversion formula, we have
-the infeasible estimating equation <span class="math display">\[ \tilde
+the unfeasible estimating equation <span class="math display">\[ \tilde
 \delta_{jt} = \frac{s_{jt}}{s_{0t}} = \lim_{\overline R\to\infty}
-\sum_{r=1}^{\overline R} \theta^r u(X_t;\beta_r) \]</span> To make this
-estimating equation feasible, we use a finite, yet large, <span class="math inline">\(R\)</span>. As the set of true <span class="math inline">\(\{\theta\}\)</span> are defined as the density
+\sum_{r=1}^{\overline R} \theta^r u(X_{jt};\beta_r) \]</span> To make
+this estimating equation feasible, we use a finite, yet large, <span class="math inline">\(R\)</span>. As the set of true <span class="math inline">\(\{\theta\}\)</span> are defined as the density
 <span class="math inline">\(f_\nu\)</span>, our estimation procedure
 requires that our recovered <span class="math inline">\(\{\hat\theta\}\)</span> behave as a density as
 well. This means that <span class="math inline">\(\hat\theta_r \geq
@@ -674,29 +687,150 @@ well. This means that <span class="math inline">\(\hat\theta_r \geq
 1\)</span>. This can easily be accomplished via constrained least
 squares and the following estimating equation.<br />
 <span class="math display">\[ \delta_{jt} = \sum_{r=1}^R \hat\theta^r
-u(X_t;\beta_r) + u_{jt} \]</span> ### Code Example</p>
-<p>Here we will generate an exotic distribution for <span class="math inline">\(f_\nu\)</span>, and recover that distribution
-through a discrete choice framework. Our ``true” distribution will be
-the mixture of two, two dimensional, normal distributions given as <span class="math display">\[ g_1 \sim \mathcal N(\begin{pmatrix} 2 \\ 2
-\end{pmatrix},\begin{pmatrix} 1 &amp; .5 \\ .5 &amp; 1\end{pmatrix}),
-g_2 \sim \mathcal N(\begin{pmatrix} -1 \\ 1
-\end{pmatrix},\begin{pmatrix} 1 &amp; -.5 \\ -.5 &amp; 1\end{pmatrix})
-\]</span> Along with a confounding distribution that only enters With
-mixture weights given as</p>
-<p><span class="math display">\[ f_\nu = \frac{1}{2} g_1 +
-\frac{1}{4}g_2 + \frac{1}{4} g_3 \]</span> We can then look simulate
-from this distribution and view are</p>
-<pre class="r"><code>require(MASS)
-require(ggplot2)
-K = 2
+u(X_{jt};\beta_r) + u_{jt} \]</span></p>
+<p>Given that <span class="math inline">\(\{\hat\theta\}\)</span> has
+been recovered, we can then as what can we do with such an object?
+Ideally, we would be able to draw from such a distribution to</p>
+<div id="code-example" class="section level2">
+<h2>Code Example</h2>
+<p>Here we will be running a horserace against the existing method of
+FKRB and the new method, which we will refer to as the Utility Method.
+What is expected? We should see that FKRB beats out the Utility Method
+when we are comparing against estimated choice probabilities. However,
+we should expect for the Utiltiy Method to beat out the FKRB method when
+testing simularity to the DGP. We further expect the utility method to
+win out when we simulate a counterfactual change. This will be
+accomplished by first estimating <span class="math inline">\(\{\hat\theta\}\)</span> for both models, and then
+testing preformance on a new dataset that contains one few, or one more
+alternative <span class="math inline">\(J\)</span>.</p>
+<div id="dgp" class="section level3">
+<h3>DGP</h3>
+<p>We build off the continuous data generating process of Heiss,
+Hetzenecker, &amp; Osterhaus (2022) to a market level sample for our
+examples. The process for simulating data is as follows, and is
+replicated in the code below.</p>
+<div id="covariates" class="section level4">
+<h4>Covariates</h4>
+<p>We restrict to the case of two covariates. To begin, <span class="math inline">\(J-1\)</span> <span class="math inline">\((X_1,X_2)\)</span> pairs with <span class="math inline">\(X_1\)</span> is drawn from <span class="math inline">\(U(0,5)\)</span> while <span class="math inline">\(X_2\)</span> is drawn from <span class="math inline">\(U(-3,1)\)</span>. Then for <span class="math inline">\(M\)</span> markets, we draw <span class="math inline">\(J-1\)</span> <span class="math inline">\((\Delta
+X_1,\Delta X_2)\)</span> pairs from a mean zero multivariate normal
+distribution to simulate variation across markets. To more accurately
+capture real world data, we allow for the covariance of <span class="math inline">\(\Delta X_1\)</span> and <span class="math inline">\(\Delta X_2\)</span> to be .1 while the diagonal
+terms are restricted to .25. This captures the fact that higher price
+<span class="math inline">\(X_1\)</span>, is often associated with
+higher quality <span class="math inline">\(X_2\)</span> in production.
+These deviates are then added to the base (<span class="math inline">\(X_1,X_2\)</span>) pair to create inside good
+market data <span class="math inline">\((X_{m1},X_{m2})\)</span>. As we
+are restricting to linear models, row of (0,0) is appended to each
+market data for the outside option.</p>
+</div>
+<div id="fbeta" class="section level4">
+<h4><span class="math inline">\(F(\beta)\)</span></h4>
+<p><span class="math inline">\(F(\beta)\)</span> is simulated from a
+mixture of two bivariate normal distributions. Let <span class="math inline">\(\beta_i\)</span> be simulated as follows</p>
+<p><span class="math display">\[ \beta_i \sim .5 \cdot \mathcal N(
+\begin{pmatrix} -2.2 \\ -2.2 \end{pmatrix},\begin{pmatrix} .8 &amp; .15
+\\ .15 &amp; .8 \end{pmatrix}) + .5 \cdot \mathcal N( \begin{pmatrix}
+1.3 \\ 1.3 \end{pmatrix},\begin{pmatrix} .8 &amp; .15 \\ .15 &amp; .8
+\end{pmatrix}) \]</span></p>
+<p>The following code simulates from such a data generating process.</p>
+<pre class="r"><code>library(MASS)
+library(evd)
+createData = function(J,M){
+  N = 50000
+  df = list()
+  gumbel = Gumbel(0,1)
+  X = cbind(runif(J-1,0,5),runif(J-1,-3,1))
+  sigma = rbind(c(.8,.15),c(.8,.15))
 
-drawF_nu = function(N){
-.5*mvrnorm(N,c(5,5),rbind(c(1,.5),c(.5,1)))+.25*mvrnorm(N,c(0,1),rbind(c(1,-.5),c(-.5,1)))+.25*mvrnorm(N,c(0,-1),rbind(c(2,-1),c(-1,1)))
+  for (i in 1:M) {
+ Xm = rbind(c(0,0),X + t(mvrnorm(J-1,c(0,0), rbind(c(.25,.1),c(.1,.25)))))
+ beta = .5 *mvrnorm(N,c(-2.2,-2.2),sigma) + .5 * mvrnorm(N,c(1.3,1.3),sigma)
+ u = Xm %*%beta  +matrix(rgumbel(J*N),J,N)
+ s = as.numeric(table(colMaxs(u))/N)
+ df[[i]] = cbind(i,0:(J-1),s,Xm)
+  }
+  return(do.call(rbind,df))
 }
-N = 10000
-ggdf = data.frame(drawF_nu(N))
-ggplot(ggdf,aes(x = X1, y = X2)) + geom_density_2d_filled()</code></pre>
-<p><img src="data:image/png;base64,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" width="672" /></p>
+data = createData(5,3)</code></pre>
+</div>
+</div>
+<div id="grid" class="section level3">
+<h3>Grid</h3>
+<p>We wish to use a large grid to simulate a researcher being unaware of
+the true data generating process. To that end, we let the grid be
+defined over <span class="math inline">\([-10,10]\times
+[-10,10]\)</span> with <span class="math inline">\(R^2\)</span> points
+uniformly distributed across the grid.</p>
+<pre class="r"><code>createGrid = function(R){
+ as.matrix(expand.grid(seq(-10,10,length.out = R), seq(-10,10,length.out = R)))
+}</code></pre>
+</div>
+<div id="z-matrix" class="section level3">
+<h3>Z Matrix</h3>
+<p>Both implementations require the formation of the <span class="math inline">\(Z\)</span> matrix. The utility method allows for a
+simple matrix multiplication</p>
+<pre class="r"><code>createZ_utility = function(R,data){
+  grid = createGrid(R)
+  return(data[,4:5] %*% t(grid))
+}
+createZ_utility(5,data)</code></pre>
+<pre><code>##             [,1]       [,2]      [,3]       [,4]      [,5]       [,6]       [,7]       [,8]      [,9]     [,10]      [,11]      [,12] [,13]     [,14]     [,15]      [,16]
+##  [1,]   0.000000   0.000000  0.000000  0.0000000  0.000000   0.000000   0.000000  0.0000000  0.000000  0.000000   0.000000   0.000000     0  0.000000  0.000000   0.000000
+##  [2,] -19.760770  -9.476633  0.807504 11.0916411 21.375778 -20.164522  -9.880385  0.4037520 10.687889 20.972026 -20.568274 -10.284137     0 10.284137 20.568274 -20.972026
+##  [3,]  -6.658430   1.065808  8.790046 16.5142839 24.238522 -11.053453  -3.329215  4.3950229 12.119261 19.843499 -15.448476  -7.724238     0  7.724238 15.448476 -19.843499
+##  [4,] -27.373029 -18.121837 -8.870645  0.3805474  9.631740 -22.937707 -13.686515 -4.4353224  4.815870 14.067062 -18.502384  -9.251192     0  9.251192 18.502384 -14.067062
+##  [5,]  18.567569  21.065390 23.563211 26.0610323 28.558854   6.785963   9.283784 11.7816055 14.279427 16.777248  -4.995642  -2.497821     0  2.497821  4.995642 -16.777248
+##  [6,]   0.000000   0.000000  0.000000  0.0000000  0.000000   0.000000   0.000000  0.0000000  0.000000  0.000000   0.000000   0.000000     0  0.000000  0.000000   0.000000
+##  [7,] -22.488702 -12.138690 -1.788679  8.5613326 18.911344 -21.594362 -11.244351 -0.8943394  9.455672 19.805684 -20.700023 -10.350011     0 10.350011 20.700023 -19.805684
+##  [8,]   6.139898   8.603784 11.067670 13.5315557 15.995442   0.606063   3.069949  5.5338349  7.997721 10.461607  -4.927772  -2.463886     0  2.463886  4.927772 -10.461607
+##  [9,] -28.952946 -18.799695 -8.646443  1.5068082 11.660060 -24.629725 -14.476473 -4.3232217  5.830030 15.983281 -20.306503 -10.153252     0 10.153252 20.306503 -15.983281
+## [10,]  11.542400  15.302181 19.061962 22.8217423 26.581523   2.011419   5.771200  9.5309808 13.290762 17.050542  -7.519562  -3.759781     0  3.759781  7.519562 -17.050542
+## [11,]   0.000000   0.000000  0.000000  0.0000000  0.000000   0.000000   0.000000  0.0000000  0.000000  0.000000   0.000000   0.000000     0  0.000000  0.000000   0.000000
+## [12,] -30.610754 -20.091216 -9.571679  0.9478582 11.467395 -25.824914 -15.305377 -4.7858395  5.733698 16.253235 -21.039074 -10.519537     0 10.519537 21.039074 -16.253235
+## [13,]   2.615174   5.334717  8.054259 10.7738016 13.493344  -1.411955   1.307587  4.0271296  6.746672  9.466214  -5.439085  -2.719542     0  2.719542  5.439085  -9.466214
+## [14,] -23.157825 -15.285625 -7.413425  0.4587750  8.330975 -19.451113 -11.578913 -3.7067126  4.165488 12.037688 -15.744400  -7.872200     0  7.872200 15.744400 -12.037688
+## [15,]  -4.752033   1.678804  8.109642 14.5404802 20.971318  -8.806855  -2.376017  4.0548212 10.485659 16.916497 -12.861676  -6.430838     0  6.430838 12.861676 -16.916497
+##            [,17]       [,18]     [,19]     [,20]      [,21]       [,22]      [,23]      [,24]      [,25]
+##  [1,]   0.000000   0.0000000  0.000000  0.000000   0.000000   0.0000000   0.000000   0.000000   0.000000
+##  [2,] -10.687889  -0.4037520  9.880385 20.164522 -21.375778 -11.0916411  -0.807504   9.476633  19.760770
+##  [3,] -12.119261  -4.3950229  3.329215 11.053453 -24.238522 -16.5142839  -8.790046  -1.065808   6.658430
+##  [4,]  -4.815870   4.4353224 13.686515 22.937707  -9.631740  -0.3805474   8.870645  18.121837  27.373029
+##  [5,] -14.279427 -11.7816055 -9.283784 -6.785963 -28.558854 -26.0610323 -23.563211 -21.065390 -18.567569
+##  [6,]   0.000000   0.0000000  0.000000  0.000000   0.000000   0.0000000   0.000000   0.000000   0.000000
+##  [7,]  -9.455672   0.8943394 11.244351 21.594362 -18.911344  -8.5613326   1.788679  12.138690  22.488702
+##  [8,]  -7.997721  -5.5338349 -3.069949 -0.606063 -15.995442 -13.5315557 -11.067670  -8.603784  -6.139898
+##  [9,]  -5.830030   4.3232217 14.476473 24.629725 -11.660060  -1.5068082   8.646443  18.799695  28.952946
+## [10,] -13.290762  -9.5309808 -5.771200 -2.011419 -26.581523 -22.8217423 -19.061962 -15.302181 -11.542400
+## [11,]   0.000000   0.0000000  0.000000  0.000000   0.000000   0.0000000   0.000000   0.000000   0.000000
+## [12,]  -5.733698   4.7858395 15.305377 25.824914 -11.467395  -0.9478582   9.571679  20.091216  30.610754
+## [13,]  -6.746672  -4.0271296 -1.307587  1.411955 -13.493344 -10.7738016  -8.054259  -5.334717  -2.615174
+## [14,]  -4.165488   3.7067126 11.578913 19.451113  -8.330975  -0.4587750   7.413425  15.285625  23.157825
+## [15,] -10.485659  -4.0548212  2.376017  8.806855 -20.971318 -14.5404802  -8.109642  -1.678804   4.752033</code></pre>
+<p>The FKRB method requires us to transform utilities into choice
+probabilities before estimation</p>
+<pre class="r"><code>createZ_FKRB = function(R,data,J,M){
+  grid = createGrid(R)
+  Z = exp(data[,3:4] %*%  t(grid))
+  
+  for (i in 1:nrow(grid)) {
+  temp =  Z[,i]
+  Z[,i] = temp/ rep(.colSums(temp,5,M),each = J)
+  }
+  return(Z)
+}</code></pre>
+</div>
+<div id="estimation" class="section level3">
+<h3>Estimation</h3>
+<p>The utility method requires us to invert choice probabilities prior
+to estimation</p>
+<pre class="r"><code>invert_s = function(data,J,M){
+  s = data[,3]
+  s0 = rep(s[data[,2] == 0],each = J)
+  return(log(s/s0))
+
+}</code></pre>
+</div>
+</div>
 </div>
 
 

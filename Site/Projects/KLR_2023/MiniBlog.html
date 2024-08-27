@@ -1454,6 +1454,1126 @@ S.2.3 provides the closed form solution for the eoncomis trasntiion path
 for any convergent equence of future shock to productiveies and amenties
 under perfect foresight -</p>
 </div>
+<div id="code-review" class="section level3">
+<h3>Code REview</h3>
+<pre><code>#==================================================#
+# Dynamic Spatial General Equilibrium
+# May 2022
+# Main single sector output file
+#==================================================#
+
+#==================================================#
+# paths
+#==================================================#
+
+# the variable &quot;path&quot; must contain the path to the replication folder
+
+if Sys.iswindows()
+        if ENV[&quot;USERNAME&quot;] == &quot;Benny&quot;
+                path = &quot;C:/Users/Benny/Dropbox (Princeton)/SSTD/ECTAcondaccept/replication&quot;
+        end
+else
+        if ENV[&quot;USER&quot;] == &quot;ernestliu&quot;
+                path = &quot;/Users/ernestliu/Dropbox (Princeton)/ProjectsActive/SSTD/ECTArevision/replication&quot;
+        end
+        if ENV[&quot;USER&quot;] == &quot;nxiang&quot;
+                path = &quot;/Users/nxiang/Dropbox (Princeton)/RA-Nan-Xiang/SSTD/replication&quot; # added by Nan
+        end
+end
+
+
+# set working directory
+cd(path * &quot;/ModelSingleSector&quot;)
+
+#==================================================#
+# load packages and  functions file
+#==================================================#
+
+include(&quot;loadpackages.jl&quot;)
+include(&quot;project_functions.jl&quot;)
+
+#==================================================#
+# baseline parameters
+#==================================================#
+
+# EIS
+baseψ = 1.0
+# discounting factor
+baseβ = 0.95^5
+# migration elasticity
+baseρ = baseβ * 3.0
+# trade elasticity
+baseθ = 5.0
+# labor share in production
+baseμ = 0.65
+# persistence parameter
+baseξ = 0.0
+# depreciation
+baseδ = 1 - 0.95^5
+# tradable share
+baseγ = 0.35
+
+# year range
+years = 1960:2017
+
+#==================================================#
+# load data and prepare dataframes for model output
+#==================================================#
+
+@load &quot;data/modeldata.jld2&quot; Ddata Sdata ldata wdata rdata kdata μdata χdata γdata stateabrv statedf bilateral_data
+select!(statedf, :year, :statefp, :state, :region, :division, :areakm, :state_abrv, :pop, :gdp, :laborinc, :gos, :rgos)
+
+# number of regions
+N = length(ldata[1])
+
+#==================================================#
+# create economic regions
+#==================================================#
+
+rustbelt = [&quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Michigan&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Pennsylvania&quot;, &quot;West Virginia&quot;, &quot;Wisconsin&quot;]
+sunbelt = [&quot;Arizona&quot;, &quot;California&quot;, &quot;Florida&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;]
+othersouth = [&quot;Texas&quot;, &quot;Arkansas&quot;, &quot;Louisiana&quot;, &quot;Tennessee&quot;, &quot;Mississippi&quot;, &quot;Alabama&quot;, &quot;Georgia&quot;, &quot;South Carolina&quot;, &quot;North Carolina&quot;, &quot;Virginia&quot;]
+
+statedf.ecoregion = fill(&quot;Other North&quot;, nrow(statedf))
+statedf[in.(statedf.state, Ref(sunbelt)), :ecoregion] .= &quot;Sun Belt&quot;
+statedf[in.(statedf.state, Ref(rustbelt)), :ecoregion] .= &quot;Rust Belt&quot;
+statedf[in.(statedf.state, Ref(othersouth)), :ecoregion] .= &quot;Other South&quot;
+
+# region array
+regions = [&quot;Rust Belt&quot;; &quot;Sun Belt&quot;; &quot;Other North&quot;; &quot;Other South&quot;]
+stateregions = statedf[statedf.year.==years[1], :].ecoregion
+
+#======================================================================#
+# Recover shocks for selected years and plot changes in fundamentals
+#======================================================================#
+
+# selected years and their indices
+firstyear = 1990
+lastyear = 2000
+indfirst = findfirst(years .== firstyear)
+indlast = findfirst(years .== lastyear)
+
+# invert fundamentals for selected years
+z1, τ1, κ1, b1 = invertSymfundamentals(Ddata[indfirst], Ddata[indfirst+5], Sdata[indfirst], ldata[indfirst], χdata[indfirst], [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[indfirst]], w=wdata[indfirst])
+z2, τ2, κ2, b2 = invertSymfundamentals(Ddata[indlast], Ddata[indlast+5], Sdata[indlast], ldata[indlast], χdata[indlast], [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[indlast]], w=wdata[indlast])
+
+# relative changes in fundamentals
+ẑ = z2 ./ z1
+
+# plot changes in fundamentals - productivity (z)
+plt = histogram(ẑ, color=:crimson, alpha=0.5, legend=false, normalize=true)
+xlabel!(&quot;Relative productivity shocks $(years[indfirst])-$(years[indlast])&quot;)
+# Plots.savefig(plt, &quot;figures/recovered_zhat_$(years[indfirst])-$(years[indlast]).pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_S_6_15a.pdf&quot;)
+
+# plot changes in fundamentals - amenities (b)
+plt = histogram(b2 ./ b1, color=:crimson, alpha=0.5, legend=false, normalize=true)
+xlabel!(&quot;Relative amenity shocks $(years[indfirst])-$(years[indlast])&quot;)
+# Plots.savefig(plt, &quot;figures/recovered_bhat_$(years[indfirst])-$(years[indlast]).pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_S_6_15b.pdf&quot;)
+
+#==================================================#
+# invert fundamentals for all years and export data
+#==================================================#
+
+# preallocate space for model fundamentals
+statedf.z = fill(0.0, nrow(statedf))
+statedf.b = fill(0.0, nrow(statedf))
+statedf.kapin = fill(0.0, nrow(statedf))
+statedf.tauin = fill(0.0, nrow(statedf))
+statedf.kapout = fill(0.0, nrow(statedf))
+statedf.tauout = fill(0.0, nrow(statedf))
+statedf.kapinnorm = fill(0.0, nrow(statedf))
+statedf.tauinnorm = fill(0.0, nrow(statedf))
+
+# preallocate space for model fundamentals (annual vectors)
+zvec = [zeros(N) for t = 1:length(years)-5]
+bvec = [zeros(N) for t = 1:length(years)-5]
+τvec = [zeros(N, N) for t = 1:length(years)-5]
+κvec = [zeros(N, N) for t = 1:length(years)-5]
+
+# preallocate space for migration rates
+statedf.s = fill(0.0, nrow(statedf))
+statedf.d = fill(0.0, nrow(statedf))
+
+# preallocate space for bilateral model fundamentals
+bilateral_data.kap = fill(0.0, nrow(bilateral_data))
+bilateral_data.tau = fill(0.0, nrow(bilateral_data))
+
+
+for t = 6:length(years)
+
+        println(years[t], &quot; &quot;, t)
+
+        # parameters vector
+        parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t]]
+
+        # invert fundamentals
+        z, τ, κ, b = invertSymfundamentals(sharefunc(Ddata[t-5] .+ 10^-6), sharefunc(Ddata[t] .+ 10^-10), sharefunc(Sdata[t] .+ 10^-10), ldata[t], χdata[t], parameters, full=true)
+
+        # save productivity and amenities
+        statedf[statedf.year.==years[t], :z] .= z ./ mean(z, weights(ldata[t]))
+        zvec[t-5] .= z ./ mean(z, weights(ldata[t]))
+        statedf[statedf.year.==years[t], :b] .= b ./ mean(b, weights(ldata[t]))
+        bvec[t-5] .= b ./ mean(b, weights(ldata[t]))
+
+        # save bilateral trade and migration frictions
+        κvec[t-5] .= κ
+        τvec[t-5] .= τ
+
+        # save unilateral summary frictions
+        statedf[statedf.year.==years[t], :kapin] .= vec(exp.(sum(Ddata[t] .* log.(κ), dims=2)))
+        statedf[statedf.year.==years[t], :tauin] .= vec(exp.(sum(Sdata[t] .* log.(τ), dims=2)))
+        statedf[statedf.year.==years[t], :kapout] .= vec(exp.(sum(Emat(Ddata[t]) .* log.(κ), dims=2)))
+        statedf[statedf.year.==years[t], :tauout] .= vec(exp.(sum(Tmat(Sdata[t]) .* log.(τ), dims=2)))
+
+        # normalize by self-trade share
+        statedf[statedf.year.==years[t], :kapinnorm] .= vec(exp.(sum(Ddata[t] .* log.(κ), dims=2) ./ (1 .- diag(Ddata[t]))))
+        statedf[statedf.year.==years[t], :tauinnorm] .= vec(exp.(sum(Sdata[t] .* log.(τ), dims=2) ./ (1 .- diag(Sdata[t]))))
+
+        # save migration rates
+        statedf[statedf.year.==years[t], :s] .= vec(diag(Sdata[t]))
+        statedf[statedf.year.==years[t], :d] .= vec(diag(Ddata[t]))
+
+        bilateral_data[bilateral_data.year.==years[t], :kap] .= vec(κ)
+        bilateral_data[bilateral_data.year.==years[t], :tau] .= vec(τ&#39;)
+end
+
+# export model output
+CSV.write(&quot;data/fundamentals.csv&quot;, statedf)
+CSV.write(&quot;data/fundamentals_bilateral.csv&quot;, bilateral_data)
+
+#======================================================================#
+# compute final SS for each year
+#======================================================================#
+
+# preallocate space for model fundamentals
+statedf.l = fill(0.0, nrow(statedf))
+statedf.k = fill(0.0, nrow(statedf))
+statedf.chi = fill(0.0, nrow(statedf))
+statedf.lss = fill(0.0, nrow(statedf))
+statedf.lss_nok = fill(0.0, nrow(statedf))
+statedf.kss = fill(0.0, nrow(statedf))
+statedf.chiss = fill(0.0, nrow(statedf))
+statedf.lss_shocks = fill(0.0, nrow(statedf))
+statedf.kss_shocks = fill(0.0, nrow(statedf))
+statedf.lss_shocks_alt = fill(0.0, nrow(statedf))
+statedf.kss_shocks_alt = fill(0.0, nrow(statedf))
+
+# preallocate space for outmigration data
+outmigshares_data = zeros(length(years))
+outmigshares_ss = zeros(length(years))
+migration_ss = [zeros(size(Ddata[1])) for t = 6:length(years)]
+ssgaps = [zeros(N) for t = 1:length(years)-5]
+
+# shocks structure
+Nmat = diagm([fill(0.02, N); fill(0.028, N)])
+
+for t = 6:length(years)
+
+        println(years[t])
+        parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t]]
+
+        l0 = ldata[t-5]
+        D0 = Ddata[t-5]
+        l1 = D0&#39; * l0
+        χ0 = kdata[t-5] ./ statedf[statedf.year.==years[t-5], :].pop  #ldata[t-5]
+        χ1 = kdata[t] ./ statedf[statedf.year.==years[t], :].pop #ldata[t]
+        S0 = Sdata[t-5]
+        N = length(l0)
+
+        # fundamentals
+        z1 = zvec[t-5]
+        b1 = bvec[t-5]
+        if t &gt;= 11
+                z0 = zvec[t-10]
+                b0 = bvec[t-10]
+                f̃ = log.([z1 ./ z0; b1 ./ b0])
+        else
+                f̃ = zeros(2 * N)
+        end
+        if t &lt;= length(years) - 5
+                z2 = zvec[t]
+                b2 = bvec[t]
+                f̃alt = log.([z2 ./ z1; b2 ./ b1])
+        else
+                f̃alt = zeros(2 * N)
+        end
+
+        # matrices
+        P, R, A, B = Pmat(S0, Tmat(S0), D0, Emat(D0), parameters, AB=true)
+        auxnorm = [Qmat(D0) zeros(size(D0)); zeros(size(D0)) zeros(size(D0))]
+        P = (I - auxnorm) * P
+        R = (I - auxnorm) * R
+
+        x0 = log.([l0; χ0])
+        x1 = log.([l1; χ1])
+
+        # steady state values
+        xss = x0 + (I - P + auxnorm)^-1 * (x1 - x0)
+        lss = sharefunc(exp.(xss[1:N]))
+        χss = exp.(xss[N+1:end])
+        ssgaps[t-5] = xss - x0
+
+        # steady state values with shocks
+        xss_shocks = x0 + (I - P + auxnorm)^-1 * (R * Nmat * (I - Nmat)^-1 * f̃ + (x1 - x0))
+        lss_shocks = sharefunc(exp.(xss_shocks[1:N]))
+        χss_shocks = exp.(xss_shocks[N+1:end])
+
+        # steady state values with shocks - alternative specification
+        xss_shocks_alt = x0 + (I - P + auxnorm)^-1 * (R * (I - Nmat)^-1 * f̃alt + (x1 - x0))
+        lss_shocks_alt = sharefunc(exp.(xss_shocks_alt[1:N]))
+        χss_shocks_alt = exp.(xss_shocks_alt[N+1:end])
+
+        # compute changes in D - requires A and B matrices
+        dv_ss2init = (I - baseβ * D0)^-1 * (A * log.(lss ./ l0) + B * log.(χss ./ χ0))
+        û_ss2init = exp.((baseβ / baseρ) * dv_ss2init)
+        Dss = sharefunc(D0 .* repeat(û_ss2init&#39;, N))
+        migration_ss[t-5] .= Dss .* repeat(lss, 1, N)
+
+        #scatter(vec(Dss),vec(D0))
+        outmigshares_data[t] = 1 - tr(D0 .* (repeat(l0, 1, N)))
+        outmigshares_ss[t] = 1 - tr(Dss .* (repeat(lss, 1, N)))
+
+        # no capital steady state
+        P, R = Pmat(S0, Tmat(S0), D0, Emat(D0), [baseβ, baseρ, baseθ, 1.0, baseξ, baseδ, γdata[t]])
+        auxnorm = [Qmat(D0) zeros(size(D0)); zeros(size(D0)) zeros(size(D0))]
+        P = (I - Qmat(D0)) * P
+        R = (I - Qmat(D0)) * R
+        lss_nok = sharefunc(exp.(log.(l0) + (I - P + Qmat(D0))^-1 * (log.(l1) - log.(l0))))
+
+        statedf[statedf.year.==years[t], :l] .= l1
+        statedf[statedf.year.==years[t], :k] .= χ1 .* l1
+        statedf[statedf.year.==years[t], :lss] .= lss
+        statedf[statedf.year.==years[t], :lss_nok] .= lss_nok
+        statedf[statedf.year.==years[t], :kss] .= χss .* lss
+        statedf[statedf.year.==years[t], :chiss] .= χss
+        statedf[statedf.year.==years[t], :lss_shocks] .= lss_shocks
+        statedf[statedf.year.==years[t], :kss_shocks] .= χss_shocks .* lss_shocks
+        statedf[statedf.year.==years[t], :lss_shocks_alt] .= lss_shocks_alt
+        statedf[statedf.year.==years[t], :kss_shocks_alt] .= χss_shocks_alt .* lss_shocks_alt
+end
+
+CSV.write(&quot;data/steadystate_gaps.csv&quot;, statedf)
+
+#======================================================================#
+# compute final SS for each year - Non-linear model
+#======================================================================#
+
+# placeholders for results for the non-linear model
+statedfnl = copy(statedf)
+statedfnl.l = fill(0.0, nrow(statedfnl))
+statedfnl.k = fill(0.0, nrow(statedfnl))
+statedfnl.chi = fill(0.0, nrow(statedfnl))
+statedfnl.lss = fill(0.0, nrow(statedfnl))
+statedfnl.kss = fill(0.0, nrow(statedfnl))
+statedfnl.chiss = fill(0.0, nrow(statedfnl))
+
+# time periods for NL solution
+T = 150
+
+# fundamentals path (no changes)
+fundamentalshat_path = [[ones(N) for t = 1:T], [ones(N, N) for t = 1:T], [ones(N, N) for t = 1:T], [ones(N) for t = 1:T]]
+
+# save paths of population and capital
+lpathsnl = []
+χpathsnl = []
+
+for t = 8:length(years)
+
+        println(years[t])
+        parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t]]
+
+        l0 = ldata[t-5]
+        D0 = Ddata[t-5]
+        l1 = D0&#39; * l0
+        χ0 = kdata[t-5] ./ statedf[statedf.year.==years[t-5], :].pop  #ldata[t-5]
+        χ1 = kdata[t] ./ statedf[statedf.year.==years[t], :].pop #ldata[t]
+        S0 = Sdata[t-5]
+        N = length(l0)
+
+        # compute transition
+        upath, lpath, wpath, phpath, χpath, Rpath, ςpath, Spath, Dpath = transition2sschangesCRRA(parameters, baseψ, fundamentalshat_path, l0, l1, χ0, χ1, D0, S0, damp=0.95, ctol=10^-5, innerctol=10^-2, displaygap=false)
+
+        push!(lpathsnl, lpath)
+        push!(χpathsnl, χpath)
+
+        statedfnl[statedfnl.year.==years[t], :l] .= l1
+        statedfnl[statedfnl.year.==years[t], :k] .= χ1 .* l1
+        statedfnl[statedfnl.year.==years[t], :lss] .= lpath[:, end]
+        statedfnl[statedfnl.year.==years[t], :kss] .= χpath[:, end] .* lpath[:, end]
+end
+
+CSV.write(&quot;data/steadystate_gaps_nl.csv&quot;, statedfnl)
+
+
+#======================================================================#
+# Convergence to SS in different years - Predictive power plot
+#======================================================================#
+
+T = 20
+
+# chose years to start convergence
+yearset = [1965, 1975, 1985, 1995]
+# year ranges for each series to put on x axis
+x = [year-5:(5):(2040) for (i, year) in enumerate(yearset)]
+# parameters for each series
+params = [[baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[findfirst(years .== year)]] for year in yearset]
+# P and R matrices for each series
+PR = [Pmat(Sdata[findfirst(years .== year)-5], Ddata[findfirst(years .== year)-5], params[findfirst(yearset .== year)]) for year in yearset]
+auxnormats = [[Qmat(Ddata[findfirst(years .== year)-5]) zeros(size(Ddata[1])); zeros(size(Ddata[1])) zeros(size(Ddata[1]))] for year in yearset]
+
+# P matrices
+P = [(I - auxnormats[i]) * PR[i][1] for i = 1:length(PR)]
+# R matrices
+R = [(I - auxnormats[i]) * PR[i][2] for i = 1:length(PR)]
+
+# initial conditions for each seriesr
+x0 = [log.([(Ddata[findfirst(years .== year)-5]&#39;^-1) * ldata[findfirst(years .== year)]; χdata[findfirst(years .== year)-5]]) for year in yearset]
+x1 = [log.([ldata[findfirst(years .== year)]; χdata[findfirst(years .== year)]]) for year in yearset]
+
+# transition paths - data
+lpath = hcat(ldata...)
+χpath = hcat(χdata...)
+kpath = χpath .* lpath;
+kpath = kpath ./ sum(kpath, dims=1);
+# transition paths - model
+paths = [getPath(P[i], R[i], ones(2 * N), x0[i], x1[i], length(x[i])) for i = 1:length(PR)]
+lpaths = [paths[i][1] for i = 1:length(yearset)]
+
+for startyear in [1965, 1975, 1985, 1995]
+        g_actual = log.(lpath[:, end-2] ./ lpath[:, findfirst(years .== startyear)])
+        chosenpath = lpaths[findfirst(yearset .== startyear)]
+        g_predict = log.(chosenpath[:, Int((2015 - startyear) / 5)] ./ chosenpath[:, 2])
+        w = lpath[:, findfirst(years .== startyear)]
+        CSV.write(&quot;data/predict_$(startyear)-2015.csv&quot;, DataFrame(g_actual=g_actual, g_predict=g_predict, w=w))
+        Plots.scatter(g_predict, g_actual, smooth=true, color=:coral3, alpha=0.8, markersize=50 * w .^ 0.5, markerstrokewidth=0, legend=:false)
+end
+
+#======================================================================#
+# Recover Half-lifes of different eigen-components over time
+#======================================================================#
+
+inityear = 1965
+lastyear = 2015
+t1 = findfirst(years .== inityear)
+t2 = findfirst(years .== lastyear)
+T = 100
+N = 49
+parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t1]]
+# get shocks
+z1, τ1, κ1, b1 = invertSymfundamentals(Ddata[t1-5], Ddata[t1], Sdata[t1], ldata[t1], χdata[t1], parameters)
+z2, τ2, κ2, b2 = invertSymfundamentals(Ddata[t2-5], Ddata[t2], Sdata[t2], ldata[t2], χdata[t2], parameters)
+ẑ = z2 ./ z1
+b̂ = b2 ./ b1
+
+# compute half-lives for each year
+halflives = []
+halflives_nok = []
+α = []
+yearrang = 1965:2017
+f̃ = log.([ẑ; b̂])
+for year in yearrang
+        println(year)
+        t1 = findfirst(years .== year)
+        P, R = Pmat(Sdata[t1-5], Ddata[t1-5], [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t1]])
+        auxnorm = [Qmat(Ddata[t1-5]) zeros(size(Ddata[t1-5])); zeros(size(Ddata[t1-5])) zeros(size(Ddata[t1-5]))]
+        P = [I zeros(N, N); I I] * (I - auxnorm) * P * [I zeros(N, N); -I I]
+        R = [I zeros(N, N); I I] * (I - auxnorm) * R
+
+
+        # half-lives
+        hl = -ceil.(log(2) ./ log.(real.(eigen(P).values[2:end])))
+        U = eigen(P).vectors
+        V = U^-1
+        push!(halflives, hl)
+        push!(α, V * R * f̃)
+
+        P_nok, R_nok = Pmat(Sdata[t1-5], Ddata[t1-5], [baseβ, baseρ, baseθ, 1.0, baseξ, baseδ, γdata[t1]])
+        auxnorm = Qmat(Ddata[t1-5])
+        P_nok = (I - auxnorm) * P_nok
+        R_nok = (I - auxnorm) * R_nok
+        hl_nok = -ceil.(log(2) ./ log.(real.(eigen(P_nok).values[2:end])))
+        push!(halflives_nok, [-999 * ones(N); hl_nok])
+end
+
+nn = length(halflives[1])
+hloutput = DataFrame(vcat([[Int.(fill(yearrang[i], nn)) Int.(1:nn) 5 * halflives[i] 5 * halflives_nok[i] real.(α[i][1:end-1])] for i = 1:length(yearrang)]...), :auto)
+CSV.write(&quot;data/halflives_1965-2017.csv&quot;, hloutput)
+
+#======================================================================#
+# Changes in the slopes over time
+#======================================================================#
+
+getslope(X, y) = (X&#39; * X)^-1 * (X&#39; * y)
+demean(x) = x .- mean(x)
+
+# regression slopes of L SS-gaps on K SS-gaps
+slopes_over_time = [getslope([ones(N) ssgaps[i][1:N]], ssgaps[i][N+1:end])[2] for i = 1:length(years)-5]
+plt = Plots.plot(1965:2017, slopes_over_time, legend=:false, color=:crimson)
+hline!([0], line=(:black, :dash))
+plot!(titlefont=9, legendfont=8, ytickfont=6, xtickfont=6, yguidefontsize=6, xguidefontsize=6)
+ylabel!(&quot;Regression slope: L SS-gap on K SS-gap&quot;)
+Plots.savefig(plt, &quot;figures/slopes_over_time_gaps.pdf&quot;)
+
+# regression slopes of b-shocks on z-shocks
+slopes_over_time = [getslope([ones(N) log.(bvec[i+5] ./ bvec[i])], log.(zvec[i+5] ./ zvec[i]))[2] for i = 1:length(years)-10]
+plt = Plots.plot(1968:2015, slopes_over_time, legend=:false, color=:crimson)
+hline!([0], line=(:black, :dash))
+plot!(titlefont=9, legendfont=8, ytickfont=6, xtickfont=6, yguidefontsize=6, xguidefontsize=6)
+ylabel!(&quot;Regression slope: b -shocks on z-shocks&quot;)
+Plots.savefig(plt, &quot;figures/slopes_over_time_shocks.pdf&quot;)
+
+#==================================================#
+# Get to the steady state of a selected year
+#==================================================#
+
+# baseline year
+year0 = 1975
+t0 = findfirst(years .== year0)
+
+# parameters
+parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ]
+baseψ = 1.0
+
+# initial conditions from the data
+l0d = ldata[t0-5]
+D0d = Ddata[t0-5]
+l1d = D0d&#39; * l0d
+χ0d = kdata[t0-5] ./ statedf[statedf.year.==years[t0-5], :].pop  #ldata[t-5]
+χ1d = kdata[t0] ./ statedf[statedf.year.==years[t0], :].pop #ldata[t]
+S0d = Sdata[t0-5]
+
+# time periods for NL solution
+T = 300
+
+# fundamentals path (no changes)
+fundamentalshat_path = [[ones(N) for t = 1:T], [ones(N, N) for t = 1:T], [ones(N, N) for t = 1:T], [ones(N) for t = 1:T]]
+
+# compute transition to implied t0 steady state
+upath, lpath, wpath, phpath, χpath, Rpath, ςpath, Spath, Dpath = transition2sschangesCRRA(parameters, baseψ, fundamentalshat_path, l0d, l1d, χ0d, χ1d, D0d, S0d, damp=0.95, ctol=10^-6, innerctol=10^-5, displaygap=true)
+
+
+# initial conditions from the implied steadystate
+l0 = lpath[:, end-1]
+D0 = Dpath[end-1]
+l1 = D0&#39; * l0
+χ0 = χpath[:, end-1]
+k0 = χ0 .* l0
+χ1 = χpath[:, end-1]
+S0 = Spath[end-1]
+
+# plot entries of S and D matrices - data against implied steady-state
+function simpleScatter(x, y)
+        ols = lm(@formula(y ~ x), DataFrame(y=y, x=x))
+        note = &quot;Note: Slope coefficient: $(round(coef(ols)[2], digits=3)); standard error: $(round(stderror(ols)[2], digits=3)); R-squared: $(round(r2(ols), digits=3))&quot;
+        plt = Plots.scatter(x, y,
+                #markersize=w,
+                #color_palette=[:gray],
+                markercolor=:navy,
+                alpha=0.2,
+                markeralpha=0.2,
+                markerstrokecolor=:white,
+                markerstrokealpha=0.0,
+                #series_annotations=Plots.text.(stateabrv, 8, :black, 0.5),
+                #group=stateregions,
+                titlefont=9, legendfont=8, ytickfont=6, xtickfont=6, yguidefontsize=8, xguidefontsize=8,
+                legend=:false,
+                foreground_color_legend=nothing)
+        Plots.abline!(coef(ols)[2], coef(ols)[1], line=:dash, color=:black, label=&quot;Linear fit&quot;)
+        return plt, note
+end
+
+plt, note = simpleScatter(offd(S0d), offd(S0))
+plot!(ylabel=&quot;Off-diagonal S matrix entries - 1975 implied steady state&quot;, xlabel=&quot;Off-diagonal S matrix entries - 1975 data \n \n $(note)&quot;, size=(500, 500))
+Plots.savefig(plt, &quot;figures/mats_dataVSss_S.pdf&quot;)
+plt, note = simpleScatter(offd(D0d), offd(D0))
+plot!(ylabel=&quot;Off-diagonal D matrix entries - 1975 implied steady state&quot;, xlabel=&quot;Off-diagonal D matrix entries - 1975 data \n \n $(note)&quot;, size=(500, 500))
+Plots.savefig(plt, &quot;figures/mats_dataVSss_D.pdf&quot;)
+
+#=========================================================================================#
+# Recover fundamentals for all years
+#=========================================================================================#
+
+# placeholders for levels
+zvec = [zeros(N) for t = 1:length(years)-5]
+bvec = [zeros(N) for t = 1:length(years)-5]
+# placeholders for 5-year changes
+zhatvec = [zeros(N) for t = 1:length(years)-5]
+bhatvec = [zeros(N) for t = 1:length(years)-5]
+for t = 6:length(years)
+        println(years[t], &quot; &quot;, t)
+        parameters = [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ]
+        z, τ, κ, b = invertSymfundamentals(sharefunc(Ddata[t-5] .+ 10^-6), sharefunc(Ddata[t] .+ 10^-10), sharefunc(Sdata[t] .+ 10^-10), ldata[t], χdata[t], parameters, full=true)
+        zvec[t-5] .= z ./ mean(z, weights(ldata[t]))
+        bvec[t-5] .= b ./ mean(b, weights(ldata[t]))
+        # vectors of changes
+        if t &gt;= 11
+                zhatvec[t-5] = zvec[t-5] ./ zvec[t-10]
+                bhatvec[t-5] = bvec[t-5] ./ bvec[t-10]
+        end
+end
+
+#=========================================================================================#
+# spectral decomposition
+#=========================================================================================#
+
+# compute matrices
+P, R, A, B, Π, Ψ, Γ, H = Pmat(S0, D0, [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ], moreMatrices=true)
+# using matrices from the data and not from steady-state
+Pd, Rd = Pmat(Sdata[t0-5], Ddata[t0-5], [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ])
+# normalization matrices
+eyeN = diagm(ones(N));
+zerosN = zeros(N, N);
+auxnorm = [Qmat(D0) zeros(N, N); zeros(N, N) zeros(N, N)]
+auxnormd = [Qmat(Ddata[t0-5]) zeros(N, N); zeros(N, N) zeros(N, N)]
+# compute eigenshocks
+F = (Π + auxnorm)^-1 * (Ψ * P + Ψ - Γ) * eigen((I - auxnorm) * P).vectors
+# normalize eigenshocks
+F = F .- [zeros(N); mean(F[N+1:2*N, :], dims=2)]
+F = F ./ sum(abs.(F))
+# compute P matrix and adjust to the capital-labor space
+P = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * P * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+#P = [I zeros(N, N); I I] * (I - auxnorm) * P * [I zeros(N, N); -I I]
+# compute R matrix and adjust to the capital-labor space
+R = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * R
+# compute P and R (and adjust space) using the data matrices
+Pd = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * Pd * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+Rd = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * Rd
+
+# spectral decomposition
+U = eigen(P).vectors
+V = U^-1
+λ = eigen(P).values
+Λ = diagm(λ)
+#Fold = ([I zeros(N, N); I I] * Pmat(S0, D0, [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ])[2])^-1 * U
+vals = -(log(2) ./ log.(real.(eigen(P).values[2:end])))
+valsd = -(log(2) ./ log.(real.(eigen(Pd).values[2:end])))
+
+# comprate half-lifes for P matrix in SS and in the data
+plt = Plots.plot(5 * vals[1:end-1], color=:black, label=&quot;Trade and migration matrices from $(years[t0])&quot;)
+plot!(5 * valsd[1:end-1], color=:crimson, line=:dash, label=&quot;Matrices from the implied $(years[t0]) steady-state&quot;)
+xlabel!(&quot;Eigencomponent&quot;)
+ylabel!(&quot;Halflife&quot;)
+plot!(legend=:topleft, foreground_color_legend=nothing)
+plot!(titlefont=9, legendfont=8, ytickfont=6, xtickfont=6, yguidefontsize=8, xguidefontsize=8)
+# Plots.savefig(plt, &quot;figures/datamats_VS_impliedSSmats.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_S_6_8.pdf&quot;)
+
+# long-term shocks in the data
+fdata = log.([zvec[end-2] ./ zvec[t0]; bvec[end-2] ./ bvec[t0]])
+
+
+#=========================================================================================#
+# Plot the full spectrum of eigenvalues in the data
+#=========================================================================================#
+
+pyplot()
+
+hl = -(log(2) ./ log.(λ[2:end]));
+
+kvalog(β, δ, μ) = 1 - μ * (1 - β * (1 - δ))
+kval(β, δ, μ, ψ) = ((β + ψ * (1 - β) * (1 - kvalog(β, δ, μ)) + kvalog(β, δ, μ)) - ((β + ψ * (1 - β) * (1 - kvalog(β, δ, μ)) + kvalog(β, δ, μ))^2 - 4 * β * kvalog(β, δ, μ)) .^ 0.5) ./ (2 * β)
+
+tempψ = 1.0
+
+function plotspectrum()
+        plt = Plots.plot(1:2*N, [0.0; 5 * hl], color=:black, label=&quot;&quot;, alpha=0.5)
+        scatter!(1:2*N, [0.0; 5 * hl], color=:black, label=&quot;Halflives: -log(2)/log(λ)&quot;)
+        vline!([1], label=&quot;Eigenvector (1,...,1,0,...,0) and eigenvalue 0 (instant convergence)&quot;, color=:crimson, line=:dot)
+        vline!([N + 1], label=&quot;Eigenvector (0,...,0,1,...,1) and eigenvalue 1-μ(1-β(1-δ))&quot;, color=:navy)
+        #hline!([0.0], color=:crimson, line=:dash, label=&quot;value=0&quot;)
+        hline!([-5 * log(2) / log.(kval(baseβ, baseδ, baseμ, tempψ))], color=:navy, line=:dash, label=&quot;Halflife associated with eigenvalue 1-μ(1-β(1-δ))&quot;)
+        plot!(size=(1000, 500))
+        plot!(legend=:topleft, foreground_color_legend=nothing)
+        plot!(titlefont=9, legendfont=8, ytickfont=8, xtickfont=8, yguidefontsize=8, xguidefontsize=8)
+        xlabel!(&quot;Eigencomponent&quot;)
+        ylabel!(&quot;Halflife&quot;)
+        annotate!(25, 55, Plots.text(&quot;Components with negative K-L corr.&quot;, :black, 11))
+        annotate!(75, 55, Plots.text(&quot;Components with positive K-L corr.&quot;, :black, 11))
+        #savefig(plt, &quot;figures/newfigs/spectrum.pdf&quot;)
+end
+#scatter([cor(U[N+1:end, i],U[1:N, i])*std(U[1:N, i])./std(U[N+1:end, i]) for i = 1:2*N])
+
+# empirical loadings for 1965
+datagaps = log.([l0d ./ l0; χ0d ./ χ0])
+emploadings = U^-1 * datagaps
+range = vec(2:2*N)#[vec(2:N); vec(N+2:2*N)]
+emploadings = 400 * abs.(emploadings[range]) ./ sum(abs.(emploadings[range]))
+plt = plotspectrum()
+plot!(range, emploadings, line=:purple, alpha=1.0, label=&quot;&quot;)
+scatter!(range, emploadings, marker=:square, color=:purple, alpha=1.0, label=&quot;Loadings of the $(years[t0]) gap from steady-state (scaled)&quot;)
+Plots.savefig(plt, &quot;figures/spectrum.pdf&quot;)
+
+# empirical loadings for 1965-2015 shocks
+
+L1 = F^-1 * fdata
+L1 = 400 * abs.(L1[range]) ./ sum(abs.(L1[range]))
+plot!(range, L1, line=:darkgreen, alpha=0.7, label=&quot;&quot;)
+scatter!(range, L1, color=:darkgreen, marker=:diamond, alpha=0.7, label=&quot;Loadings of the $(years[t0])-2015 shocks (scaled)&quot;)
+hline!([0.0], label=&quot;&quot;, color=:black)
+Plots.savefig(plt, &quot;figures/Figure_3.pdf&quot;)
+
+#======================================================================#
+# analysis of eigen-components
+#======================================================================#
+
+halflives = -5 * (log(2) ./ log.(real.(λ[1:end])))
+eigenN = 2 * N
+
+rng = [vec(2:N); vec(N+2:2*N)] # vec(2:2*N) #[vec(1:N-1); vec(N+1:2*N-1)]
+
+# plot slopes
+x = halflives[rng]
+getslope(X, y) = (X&#39; * X)^-1 * (X&#39; * y)
+plt = Plots.scatter([getslope([ones(N) U[N+1:end, i]], U[1:N, i])[2] for i in rng],
+        x,
+        color=:black,
+        xlabel=&quot;Regression slope: L-SS-gap on K-SS-gap&quot;,
+        ylabel=&quot;Half-life of eigen-component&quot;,
+        legend=:false,
+        foreground_color_legend=nothing,
+        markerstrokewidth=0,
+        alpha=0.3,
+        markersize=5
+)
+vline!([0.0], line=(:dash, :black))
+# Plots.savefig(plt, &quot;figures/components_slopes.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_S_6_9.pdf&quot;)
+
+# plot slopes in the shocks space
+plt = Plots.scatter([getslope([ones(N) F[1:N, i]], F[N+1:end, i])[2] for i in rng],
+        x,
+        color=:black,
+        xlabel=&quot;Regression slope: amenity shocks on productivity shocks&quot;,
+        ylabel=&quot;Half-life of eigen-component&quot;,
+        legend=:false,
+        foreground_color_legend=nothing,
+        markerstrokewidth=0,
+        alpha=0.3,
+        markersize=5
+)
+vline!([0.0], line=(:dash, :black))
+# Plots.savefig(plt, &quot;figures/component-shocks_slopes.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_S_6_10.pdf&quot;)
+
+#======================================================================#
+# plot halflives for different parameters
+#======================================================================#
+
+#year = 2000
+t1 = findfirst(years .== 1975)
+Neig = 2 * N - 1
+Nlines = 10
+
+function halflives_func(params::Vector, eis::Float64; onlylabor=false)
+
+        Ptemp, Rtemp = Pmat(S0, D0, params, eis=eis)
+
+        if !onlylabor
+                Ptemp = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * Ptemp * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+                Rtemp = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * Rtemp
+        else
+                Ptemp = (I - Qmat(D0)) * Ptemp
+                Rtemp = (I - Qmat(D0)) * Rtemp
+
+        end
+        Λ = real(eigen(Ptemp).values)
+        halflives = -5 * (log(2) ./ log.(real.(Λ[2:end])))
+        return halflives
+end
+
+colorange = cgrad([:cornflowerblue, :coral3], Nlines).colors.colors;
+
+### 6 plots with limiting labor share
+
+ψrange = LinRange(0.5, 4.0, 10)
+ρrange = LinRange(1.0, 5.0, 10)
+βrange = LinRange(0.5, 0.9, 10)
+θrange = LinRange(2.0, 20.0, 10)
+μrange = LinRange(0.1, 0.99, 10)
+γrange = LinRange(0.1, 0.9, 10)
+δrange = LinRange(0.1, 0.9, 10)
+
+hl_diffψ = [(halflives_func([baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t1]], ψ)) for ψ in ψrange]
+hl_diffρ = [(halflives_func([baseβ, ρ, baseθ, baseμ, baseξ, baseδ, γdata[t1]], 1.0)) for ρ in ρrange]
+hl_diffβ = [(halflives_func([β, baseρ, baseθ, baseμ, baseξ, baseδ, γdata[t1]], 1.0)) for β in βrange]
+hl_diffθ = [(halflives_func([baseβ, baseρ, θ, baseμ, baseξ, baseδ, γdata[t1]], 1.0)) for θ in θrange]
+hl_diffμ = [(halflives_func([baseβ, baseρ, baseθ, μ, baseξ, baseδ, γdata[t1]], 1.0)) for μ in μrange]
+hl_diffγ = [(halflives_func([baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, γ], 1.0)) for γ in γrange]
+hl_diffδ = [(halflives_func([baseβ, baseρ, baseθ, baseμ, baseξ, δ, γdata[t1]], 1.0)) for δ in δrange]
+
+plt1 = Plots.plot(hl_diffψ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;ψ=$(ψrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;ψ=$(ψrange[end])&quot;]]),
+        title=&quot;EIS&quot;
+)
+plt2 = Plots.plot(hl_diffρ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;ρ=$(ρrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;ρ=$(ρrange[end])&quot;]]),
+        title=&quot;Migration elasticity&quot;
+)
+plt3 = Plots.plot(hl_diffβ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;β=$(βrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;β=$(βrange[end])&quot;]]),
+        title=&quot;Discount factor&quot;
+)
+plt4 = Plots.plot(hl_diffμ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;μ=$(μrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;μ=$(μrange[end])&quot;]]),
+        title=&quot;Labor share&quot;
+)
+plot!((N+1):(2*N-1), (halflives_func([baseβ, baseρ, baseθ, 1.0, baseξ, baseδ, baseγ], 1.0, onlylabor=true)), label=&quot;No Capital&quot;, line=(:black, :dot, 2.0))
+plt5 = Plots.plot(hl_diffθ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;θ=$(θrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;θ=$(θrange[end])&quot;]]),
+        title=&quot;Trade elasticity&quot;
+)
+plt6 = Plots.plot(hl_diffγ,
+        color=permutedims([colorange[i] for i = 1:Nlines]),
+        label=permutedims([[&quot;γ=$(γrange[1])&quot;]; fill(&quot;&quot;, Nlines - 2); [&quot;γ=$(γrange[end])&quot;]]),
+        title=&quot;Share of tradables&quot;
+)
+plt = Plots.plot(plt1, plt2, plt3, plt4, plt5, plt6,
+        legend=:topleft,
+        foreground_color_legend=nothing,
+        titlefont=8, legendfont=6, ytickfont=6, xtickfont=6, yguidefontsize=6, xguidefontsize=6,
+        xlabel=&quot;Eigencomponent&quot;,
+        ylabel=&quot;Half-life&quot;,
+        alpha=0.5
+)
+# Plots.savefig(plt, &quot;figures/halflifes_by_parameter_withnoK.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_7.pdf&quot;)
+
+#=========================================================================================#
+# Decompose the initial gaps
+#=========================================================================================#
+
+# compute eigencomponents
+P, R = Pmat(S0, D0, [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ])
+P = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * P * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+R = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * R
+
+# spectral decompositionrand(2,2)
+U = eigen(P).vectors
+V = U^-1
+λ = eigen(P).values
+Λ = diagm(λ)
+vals = -(log(2) ./ log.(real.(eigen(P).values[2:end])))
+valsd = -(log(2) ./ log.(real.(eigen(Pd).values[2:end])))
+
+function statescatter(x, y; w=100 * ldata[t0] .^ 0.5)
+
+        ### regression slope
+        #X = [ones(length(x)) x]
+        #b = (X&#39;X)^-1 * X&#39; * y
+        ols = lm(@formula(y ~ x), DataFrame(y=y, x=x))
+        note = &quot;Note: Slope coefficient: $(round(coef(ols)[2], digits=3)); standard error: $(round(stderror(ols)[2], digits=3)); R-squared: $(round(r2(ols), digits=3))&quot;
+
+        #coef(ols)
+        #stderror(temp)
+        #r2(temp)
+
+
+        plt = Plots.scatter(x, y,
+                markersize=w,
+                color_palette=[:cornflowerblue, :coral3, :gray, :crimson],
+                markercolor=:match,
+                markeralpha=0.6,
+                markerstrokecolor=:white,
+                markerstrokealpha=0.0,
+                series_annotations=Plots.text.(stateabrv, 8, :black, 0.5),
+                group=stateregions,
+                titlefont=9, legendfont=8, ytickfont=6, xtickfont=6, yguidefontsize=8, xguidefontsize=8,
+                legend=:topleft,
+                foreground_color_legend=nothing)
+        Plots.abline!(coef(ols)[2], coef(ols)[1], line=:dash, color=:black, label=&quot;Linear fit&quot;)
+        return plt, note
+end
+
+# function to center labor around 0 using labor in the data for the plots
+center0l(x::Vector) = x .- l0d&#39; * x
+
+# choose eigencomponent to split
+spliti = 89
+
+# plotting backend
+pyplot()
+
+datagaps = log.([l0d ./ l0; χ0d ./ χ0])
+emploadings = U^-1 * datagaps
+top_load_i = vec(1:98)
+Usubset = hcat([(U[:, i]) for i in top_load_i]...) * emploadings[top_load_i]
+auxnorm = [Qmat(D0) zeros(N, N); zeros(N, N) zeros(N, N)]
+plt1, note = statescatter(center0l(Usubset[1:N]), Usubset[N+1:2*N])
+plot!(ylabel=&quot;Capital gap from steady state&quot;, xlabel=&quot;Labor gap from steady state \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-2.0, 1.7)
+plot!(legend=:bottomright)
+title!(&quot;Gaps from steady state in $(years[t0])&quot;)
+Plots.savefig(plt1, &quot;figures/$(years[t0])_gaps_components_1-98.pdf&quot;)
+
+top_load_i = vec(spliti:98)
+Usubset = hcat([U[:, i] for i in top_load_i]...) * emploadings[top_load_i]
+plt2, note = statescatter(center0l(Usubset[1:N]), Usubset[N+1:2*N])
+plot!(ylabel=&quot;Capital gap from steady state&quot;, xlabel=&quot;Labor gap from steady state \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-2.0, 1.7)
+plot!(legend=:false)
+title!(&quot;Projection on the top 10 slowest-converging eigenvectors&quot;)
+Plots.savefig(plt2, &quot;figures/$(years[t0])_gaps_components_$(spliti)-98.pdf&quot;)
+
+top_load_i = vec(1:(spliti-1))
+Usubset = hcat([U[:, i] for i in top_load_i]...) * emploadings[top_load_i]
+plt3, note = statescatter(center0l(Usubset[1:N]), Usubset[N+1:2*N])
+plot!(ylabel=&quot;Capital gap from steady state&quot;, xlabel=&quot;Labor gap from steady state \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-2.0, 1.7)
+plot!(legend=:false)
+title!(&quot;Projection on all other eigenvectors&quot;)
+Plots.savefig(plt3, &quot;figures/$(years[t0])_gaps_components_1-$(spliti-1).pdf&quot;)
+
+plt = Plots.plot(plt1, plt2, plt3, layout=(1, 3), size=(1500, 500))
+# Plots.savefig(plt, &quot;figures/$(years[t0])_gaps_decomposition.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_4.pdf&quot;)
+
+#=========================================================================================#
+# Decompose the empirical shocks
+#=========================================================================================#
+
+emploadings = F^-1 * fdata #U^-1 * R * fdata
+top_load_i = vec(1:98)
+Fsubset = hcat([F[:, i] for i in top_load_i]...) * emploadings[top_load_i]
+plt1, note = statescatter(Fsubset[1:N], center0l(Fsubset[N+1:2*N]))
+plot!(ylabel=&quot;Amenity shocks&quot;, xlabel=&quot;Productivity shocks \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-0.9, 1.5)
+plot!(legend=:topright)
+title!(&quot;Empirical shocks $(years[t0])-2015&quot;)
+Plots.savefig(plt1, &quot;figures/$(years[t0])_shocks_components_1-98.pdf&quot;)
+
+top_load_i = vec(spliti:98)
+Fsubset = hcat([F[:, i] for i in top_load_i]...) * emploadings[top_load_i]
+plt2, note = statescatter(center0l(Fsubset[1:N]), Fsubset[N+1:2*N])
+plot!(ylabel=&quot;Amenity shocks&quot;, xlabel=&quot;Productivity shocks \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-0.9, 1.5)
+plot!(legend=:false)
+title!(&quot;Projection on the top 10 slowest-converging eigenshocks&quot;)
+Plots.savefig(plt2, &quot;figures/$(years[t0])_shocks_components_$(spliti)-98.pdf&quot;)
+
+top_load_i = vec(1:(spliti-1))
+Fsubset = hcat([F[:, i] for i in top_load_i]...) * emploadings[top_load_i]
+plt3, note = statescatter(center0l(Fsubset[1:N]), Fsubset[N+1:2*N])
+plot!(ylabel=&quot;Amenity shocks&quot;, xlabel=&quot;Productivity shocks \n \n $(note)&quot;, size=(500, 500))
+hline!([0], color=:gray, label=&quot;&quot;)
+vline!([0], color=:gray, label=&quot;&quot;)
+xlims!(-0.9, 1.5)
+plot!(legend=:false)
+title!(&quot;Projection on all other eigenshocks&quot;)
+Plots.savefig(plt3, &quot;figures/$(years[t0])_shocks_components_1-$(spliti-1).pdf&quot;)
+
+plt = Plots.plot(plt1, plt2, plt3, layout=(1, 3), size=(1500, 500))
+# Plots.savefig(plt, &quot;figures/$(years[t0])_shocks_decomposition.pdf&quot;)
+Plots.savefig(plt, &quot;figures/Figure_5.pdf&quot;)
+#=========================================================================================#
+# Plot linear transitions
+#=========================================================================================#
+
+T = 100
+P_raw, R_raw, A, B, Π, Ψ, Γ, H = Pmat(S0, D0, [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ], moreMatrices=true, eis=1.0)
+#P = (I - auxnorm) * P_raw
+#R = (I - auxnorm) * R_raw
+P = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * P_raw * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+R = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * R_raw
+
+U = eigen(P).vectors
+V = U^-1
+λ = eigen(P).values
+
+# long-term shocks in the data
+fdata = log.([zvec[end-2] ./ zvec[1]; bvec[end-2] ./ bvec[1]])
+
+# define state groupings for MI and AZ
+state1 = in([&quot;MI&quot;,]).(stateabrv)
+group1 = in([&quot;OH&quot;, &quot;IN&quot;, &quot;IL&quot;, &quot;WI&quot;]).(stateabrv)
+other1 = Bool.(ones(N) .- state1 .- group1)
+state2 = in([&quot;AZ&quot;,]).(stateabrv)
+group2 = in([&quot;CA&quot;, &quot;NV&quot;, &quot;UT&quot;, &quot;CO&quot;, &quot;NM&quot;]).(stateabrv)
+other2 = Bool.(ones(N) .- state2 .- group2)
+other0 = Bool.(ones(N) .- state1 .- group1 .- state2 .- group2)
+
+# function for fast plot cleanup
+function plotclean()
+        plot!(size=(500, 500))
+        hline!([0.0], color=:black, line=:solid, label=&quot;&quot;)
+        plot!(titlefont=10, legendfont=8, ytickfont=10, xtickfont=10, yguidefontsize=10, xguidefontsize=10)
+        plot!(foreground_color_legend=nothing)
+        ylabel!(&quot;Log. deviation from initial steady state&quot;)
+        xlabel!(&quot;Time since shock&quot;)
+end
+
+# plotting function by sets of eigenvectors
+function plotsubseteig(f̃, choseneigs, shock_st; pltrange=1:100)
+
+        if shock_st == &quot;MI&quot;
+                state = in([&quot;MI&quot;,]).(stateabrv)
+                group = in([&quot;OH&quot;, &quot;IN&quot;, &quot;IL&quot;, &quot;WI&quot;]).(stateabrv)
+                other = Bool.(ones(N) .- state .- group)
+        elseif shock_st == &quot;AZ&quot;
+                state = in([&quot;AZ&quot;,]).(stateabrv)
+                group = in([&quot;CA&quot;, &quot;NV&quot;, &quot;UT&quot;, &quot;CO&quot;, &quot;NM&quot;]).(stateabrv)
+                other = Bool.(ones(N) .- state .- group)
+        end
+
+        markerrng = 5:10:length(pltrange)
+
+        # full path
+        xpath = zeros(2 * N, T)
+        for t = 2:T
+                #xpath[:, t] = (I - auxnorm) * (P * xpath[:, t-1] + R * f̃)
+                xpath[:, t] = (P * xpath[:, t-1] + R * f̃)
+        end
+        lpath_approx = sharefunc(exp.(xpath[1:N, :]) .* l0, dims=1)
+        #χpath_approx = exp.(xpath[N+1:end, :]) .* χ0
+        #kpath_approx = χpath_approx .* lpath_approx
+        kpath_approx = exp.(xpath[N+1:end, :]) .* (χ0 .* l0)
+
+        # partial path
+        loadings = V * R * f̃
+        xtild_decomp = [((1 - λ[h]^t) / (1 - λ[h])) * U[:, h] * loadings[h] for h = 1:2*N, t = 1:T-1]
+
+        shock_stid = stateabrv .== shock_st
+
+        xtild_rec = hcat(sum(xtild_decomp[choseneigs, :], dims=1)...)
+        lpath_rec = [l0 sharefunc(l0 .* exp.(xtild_rec[1:N, :]), dims=1)]
+        χpath_rec = [χ0 χ0 .* exp.(xtild_rec[N+1:end, :])]
+        kpath_rec = χpath_rec .* lpath_rec
+
+
+        plt1 = Plots.plot(log.(lpath_approx[shock_stid, pltrange] ./ l0[shock_stid])&#39;, color=:black, alpha=0.8, label=&quot;$(shock_st) labor&quot;)
+        if choseneigs != vec(1:98)
+                plot!(log.(lpath_rec[shock_stid, pltrange] ./ l0[shock_stid])&#39;, color=:black, line=:dash, label=&quot;$(shock_st) L - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot;)
+        end
+        plotclean()
+        plot!(legend=:outerbottom)
+
+        plt2 = Plots.plot()
+
+        # other states
+        plot!(log.(lpath_approx[other, pltrange] ./ l0[other])&#39;, color=:gray, alpha=0.2, label=&quot;&quot;)
+
+        # neighbours
+        plot!(log.(lpath_approx[group, pltrange] ./ l0[group])&#39;, color=:navy, alpha=0.8, label=&quot;&quot;)
+        scatter!(markerrng, log.((lpath_approx[group, pltrange] ./ l0[group])&#39;)[markerrng, :], marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.8, markeralpha=0.0, label=&quot;&quot;)
+        plot!([1], [0], color=:navy, marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.8, markeralpha=0.0, alpha=0.8, label=&quot;$(shock_st) neighbours labor&quot;)
+        #label=[&quot;MI neighbours labor&quot; permutedims(fill(&quot;&quot;, sum(group1) - 1))]
+        if choseneigs != vec(1:98)
+                plot!(log.(lpath_rec[group, pltrange] ./ l0[group])&#39;, color=:navy, line=:dash, label=&quot;&quot;)
+                scatter!(markerrng, log.((lpath_rec[group, pltrange] ./ l0[group])&#39;)[markerrng, :], marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.5, markeralpha=0.0, label=&quot;&quot;)
+                plot!([1], [0], line=:dash, color=:navy, marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.5, markeralpha=0.0, alpha=0.8, label=&quot;$(shock_st) neighbours labor - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot;)
+                #[&quot;MI neighbours L - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot; permutedims(fill(&quot;&quot;, sum(group1) - 1))]
+        end
+
+        plot!([1], [0], color=:gray, alpha=0.2, label=[&quot;Other states labor&quot; permutedims(fill(&quot;&quot;, sum(other) - 1))])
+
+        plotclean()
+        plot!(legend=:outerbottom)
+
+
+        plt3 = Plots.plot(log.(kpath_approx[shock_stid, pltrange] ./ k0[shock_stid])&#39;, color=:black, alpha=0.8, label=&quot;$(shock_st) capital&quot;)
+        if choseneigs != vec(1:98)
+                plot!(log.(kpath_rec[shock_stid, pltrange] ./ k0[shock_stid])&#39;, color=:black, line=:dash, label=&quot;$(shock_st) K - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot;)
+        end
+        plotclean()
+        plot!(legend=:outerbottom)
+
+        plt4 = Plots.plot()
+
+        # other states
+        plot!(log.(kpath_approx[other, pltrange] ./ k0[other])&#39;, color=:gray, alpha=0.2, label=&quot;&quot;)
+
+        # neighbours
+        plot!(log.(kpath_approx[group, pltrange] ./ k0[group])&#39;, color=:navy, alpha=0.8, label=&quot;&quot;)
+        scatter!(markerrng, log.((kpath_approx[group, pltrange] ./ k0[group])&#39;)[markerrng, :], marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.8, markeralpha=0.0, label=&quot;&quot;)
+        plot!([1], [0], color=:navy, marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.8, markeralpha=0.0, alpha=0.8, label=&quot;$(shock_st) neighbours capital&quot;)
+        #label=[&quot;MI neighbours labor&quot; permutedims(fill(&quot;&quot;, sum(group1) - 1))]
+        if choseneigs != vec(1:98)
+                plot!(log.(kpath_rec[group, pltrange] ./ k0[group])&#39;, color=:navy, line=:dash, label=&quot;&quot;)
+                scatter!(markerrng, log.((kpath_rec[group, pltrange] ./ k0[group])&#39;)[markerrng, :], marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.5, markeralpha=0.0, label=&quot;&quot;)
+                plot!([1], [0], line=:dash, color=:navy, marker=:o, markerstrokecolor=:navy, markerstrokealpha=0.5, markeralpha=0.0, alpha=0.8, label=&quot;$(shock_st) neighbours capital - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot;)
+                #[&quot;MI neighbours L - eigenvectors $(choseneigs[1])-$(choseneigs[end])&quot; permutedims(fill(&quot;&quot;, sum(group1) - 1))]
+        end
+
+        plot!([1], [0], color=:gray, alpha=0.2, label=[&quot;Other states capital&quot; permutedims(fill(&quot;&quot;, sum(other) - 1))])
+
+        plotclean()
+        plot!(legend=:outerbottom)
+
+        pltL, pltK = Plots.plot(plt1, plt2, size=(1000, 500), layout=(1, 2)), Plots.plot(plt3, plt4, size=(1000, 500), layout=(1, 2))
+
+end
+
+function genshock(state; z=true, scale=0.05)
+        if z
+                shock = scale * [Int.(stateabrv .== state); zeros(N)]
+        else
+                shock = scale * [zeros(N); Int.(stateabrv .== state)]
+        end
+        return shock
+end
+
+# choose eigencomponent to split
+spliti = 89
+
+pyplot()
+
+choseneigs = vec(1:98)
+pltL, pltK = plotsubseteig(genshock(&quot;MI&quot;, z=true, scale=fdata[21]), choseneigs, &quot;MI&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_6a.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_11a.pdf&quot;)
+pltL, pltK = plotsubseteig(genshock(&quot;AZ&quot;, z=false, scale=fdata[51]), choseneigs, &quot;AZ&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_S_6_12a.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_13a.pdf&quot;)
+choseneigs = vec(1:(spliti-1))
+pltL, pltK = plotsubseteig(genshock(&quot;MI&quot;, z=true, scale=fdata[21]), choseneigs, &quot;MI&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_6b.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_11b.pdf&quot;)
+pltL, pltK = plotsubseteig(genshock(&quot;AZ&quot;, z=false, scale=fdata[51]), choseneigs, &quot;AZ&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_S_6_12b.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_13b.pdf&quot;)
+choseneigs = vec(spliti:98)
+pltL, pltK = plotsubseteig(genshock(&quot;MI&quot;, z=true, scale=fdata[21]), choseneigs, &quot;MI&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_6c.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_11c.pdf&quot;)
+pltL, pltK = plotsubseteig(genshock(&quot;AZ&quot;, z=false, scale=fdata[51]), choseneigs, &quot;AZ&quot;)
+Plots.savefig(pltL, &quot;figures/Figure_S_6_12c.pdf&quot;)
+Plots.savefig(pltK, &quot;figures/Figure_S_6_13c.pdf&quot;)
+
+#=========================================================================================#
+# Compute halflifes for 1975 convergence and 1975-2015 shocks
+#=========================================================================================#
+
+
+# compute matrices
+P, R = Pmat(S0, D0, [baseβ, baseρ, baseθ, baseμ, baseξ, baseδ, baseγ])
+P = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * P * [(I-Qmat(D0)) zeros(N, N); -(I - Qmat(D0)) I]
+R = [(I-Qmat(D0)) zeros(N, N); (I-Qmat(D0)) I] * R
+hl = -(log(2) ./ log.(real.(eigen(P).values[2:end])))
+U = eigen(P).vectors
+
+# empirical shocks
+fdata = log.([zvec[end-2] ./ zvec[findfirst(years .== year0)]; bvec[end-2] ./ bvec[findfirst(years .== year0)]])
+
+# loading weighted halflives
+5 * [0.0; hl]&#39; * sharefunc(abs.(F^-1 * fdata))
+5 * [0.0; hl]&#39; * sharefunc(abs.(U^-1 * [log.(l0d ./ l0); log.((χ0d .* l0d) ./ (χ0 .* l0))]))</code></pre>
+</div>
 </div>
 </div>
 
