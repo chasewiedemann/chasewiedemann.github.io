@@ -9,11 +9,11 @@ output: html_document
 
 Welcome to my Personal Website. I am currently a 4th Year PhD student at WUSTL Olin Business School. My main field is Industrial Organization, focusing on how the structure of economies and markets impact their long term goals. I am currently studying these ideas in the context of Cities and Urban Economics. 
 
-What is the big question I am trying to answer? Consider my current home, the St. Louis Metropolitan Area. St. Louis is full of municipalities that are all competing against one an other in an effort to attract new firms and residents. But the St. Louis Metropolitan area also engages in competition with other urban areas such as Kansas City and Chicago for these exact same firms and residents. This makes for some interesting incentives. If I am the mayor of a municipality in St. Louis, I want to be competitive in the municipal market, but my fate is also tied to the fate of the region as a whole. Do I take these big picture objectives into mind when making decisions? What happens if I don't? Can we rely on "Invisible Hand" arguments to ensure that everything will go well? What if there are market failures? Can we as economists do anything to help?    
+What is the big question I am trying to answer? Consider my current home, the St. Louis Metropolitan Area. St. Louis is full of municipalities that are all competing against one an other in an effort to attract new firms and residents. But the St. Louis Metropolitan area also engages in competition with other urban areas such as Kansas City and Chicago for these exact same firms and residents. This makes for some interesting incentives. If I am the mayor of a municipality in St. Louis, I want to be competitive in the municipal market, but my fate is also tied to the fate of the region as a whole. Do I take these big picture objectives into mind when making decisions? What happens if I don't? Can we rely on "Invisible Hand" arguments to ensure that everything will go well? What if there are market failures? Can we as economists do anything to help? 
 
-I am currently working on this project as my Job Market Paper. You can check out the Projects tab above to see my progress. There are also some other (hopefully) interesting projects on that page that I am working on as well. You can also check out the blog, but beware, its mostly just me writing to-do lists to myself.
+I am currently investigating these questions in my Job Market Paper. You can check out the Projects tab above to see my progress. There are also some other (hopefully) interesting projects on that page that I am working on as well. You can also check out the blog, but beware, its mostly just me writing to-do lists to myself.
 
-If you ever want to reach out, Please Do! 
+If you ever want to reach out to discuss my research or economics in general, Please Do! 
 
 Cheers!
 
