@@ -164,7 +164,7 @@ createData = function(J,M){
   }
   return(do.call(rbind,df))
 }
-data = createData(5,3)
+#data = createData(5,3)
 ```
 
 ### Grid
@@ -186,7 +186,7 @@ createZ_utility = function(R,data){
   grid = createGrid(R)
   return(data[,4:5] %*% t(grid))
 }
-createZ_utility(5,data)
+#createZ_utility(5,data)
 ```
 
 The FKRB method requires us to transform utilities into choice probabilities before estimation

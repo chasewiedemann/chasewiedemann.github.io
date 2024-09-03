@@ -11,8 +11,10 @@ output: html_document
 
 ## Works in Progress
 
-- [Municipal Mergers in Dynamic Spatial General Equilbrium](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
-  + Examines how Market Inefficiencies in the Market for Municipalities can be Rectified by Municipal Mergers
+- [Estimating Effects of Municipal Structure on Urban Area Preformance Using Firm Expectations](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
+  + Decomposes The Effect of Municipal Structure on Firms Expectations for Urban Area Success
+- [Market Failures in Municipalities](https://chasewiedemann.github.io/Site/Projects/Muni_Market_Failures/Replication.html)
+  + Examines Sources of Market Market Failure in Municipalities 
 - [Unobserved Hetrogenity On Grids](https://chasewiedemann.github.io/Site/Projects/FKRB/Replication.html)
   + Examines Identification and Estimation of Unobserved Heterogeneity through the Use of Grids
 - [Deep Dive on Generating Random Vectors](https://chasewiedemann.github.io/Site/Projects/mvrnorm/mvrnorm_deep_dive.html)
