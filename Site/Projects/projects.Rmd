@@ -9,7 +9,7 @@ output: html_document
 [Blog](https://chasewiedemann.github.io/Site/blog.html) |
 
 
-## Works in Progress
+## Works in Progress 
 
 - [Estimating Effects of Municipal Structure on Urban Area Preformance Using Firm Expectations](https://chasewiedemann.github.io/Site/Projects/MuniProject/Replication.html)
   + Decomposes The Effect of Municipal Structure on Firms Expectations for Urban Area Success
