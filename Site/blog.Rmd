@@ -5,6 +5,52 @@ output: html_document
 
 [Home](https://chasewiedemann.github.io/index.html)  \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html)  \| [Blog](https://chasewiedemann.github.io/Site/blog.html) \|
 
+# 9/3/24 Post Labor Day
+
+Lets get to work. I want to rewrite the intro to my muniporject (again) the basic idea is that we need to first account for the urban area progress before we can say anything about the incentives of the municipalities that make up the urban area. I want to relate this all to the Oblivious equilbrium literature, where actions are taken with the long run stationary EQ in mind. A merger would be a way to alter this long run EQ.
+
+## Update
+
+Lets Call it a day. I think theres something here. I beleive that I have now split my dissertation into three chapters
+
+1. Deriving Firms Expectations Over Equilbrium Urban Area Structure
+
+2. Market Failures in Municipalities
+
+3. Estimating Subcenters
+
+1 and 2 relate directly to municipal mergers. The first paper, likely my job market paper (because it has fancy math) lets us find the effect of municipal market structure on urban area preformance. The second paper gives reasons why the municipal market would likely have market failures while higher levels of competititon would not. The third is techinical, but its just McMillen 2001 with modern tools.
+
+# 8/28/24
+
+What to do for DM
+
+- Throw more citiations in to the README chernuzukov for testing
+- its not non-smooth, (around where we switch moments)
+- output distribution of Tlist
+- preform, not perform
+- more bolier plate "test results at dm related parameter
+- test results below parameter
+- brackets around confidence sets
+- make a new dataset
+- say something about relative scale of parameters
+- max function is only for esitmtion and testing. Search through with MMM
+- To find confidence set, use TWO STEP
+- To test a particular point, use Max Functino
+- NEed a methdo in STATA to test a particular point
+- Point identified - use max for everything
+- IF we are below zero, switch form max to MMM
+- report identified set and confidence set
+- find identified set using search procedure
+- nice to know something about size of expectational error vs idoyncratic error
+- problem is in fixed effects
+- Optimizer is not working.
+- use MCMC with likelihood
+- only use max function for testing.
+
+- What did we do to get it working?
+  + 
+
 
 # 8/25/24 Monday, Monday
 
