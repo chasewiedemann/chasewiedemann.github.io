@@ -9,7 +9,7 @@ output: html_document
 
 Welcome to my Personal Website. I am currently a 5th Year PhD student at Olin Business School- WUSTL. My main research focus is on how the supply of public goods can be affected by the organization of local government.  
 
-A major application of my research is in local government mergers. Something new
+A major application of my research is in local government mergers. Trying again
 
 My job market paper, which you can check out the most recent version of in Projects tab above,   
 
