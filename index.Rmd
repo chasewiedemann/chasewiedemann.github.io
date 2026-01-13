@@ -3,7 +3,7 @@ title: "Personal Site For Chase Wiedemann"
 output: html_document
 ---
 
-[Home](https://chasewiedemann.github.io/index.html)  \| [Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) \| [Teaching](https://chasewiedemann.github.io/Site/Teaching/teaching.html)  
+[Home](https://chasewiedemann.github.io/index.html)  \| [Projects](https://chasewiedemann.github.io/_site/Projects/projects.html) \| [Teaching](https://chasewiedemann.github.io/Site/Teaching/teaching.html)  
 
 # Hello! 
 

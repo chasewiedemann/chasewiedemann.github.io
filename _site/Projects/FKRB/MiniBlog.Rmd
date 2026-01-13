@@ -1,0 +1,371 @@
+---
+title: "Mini-Blog"
+output: html_document
+---
+
+```{r,echo = F}
+base_dir = getwd()
+base_url = paste0("https://",substr(base_dir,8, nchar(base_dir)))
+wp_link = paste0(base_url,"/WorkingPaper.html")
+ws_link = paste0(base_url,"/WorkingSlides.html")
+rep_link = paste0(base_url,"/Replication.html")
+miniblog_link = paste0(base_url,"/MiniBlog.html")
+```
+
+[Home](https://chasewiedemann.github.io/index.html) |
+[Projects](https://chasewiedemann.github.io/Site/Projects/projects.html) |
+[Blog](https://chasewiedemann.github.io/Site/blog.html) |
+
+[Working Paper](`r wp_link`)|
+[Working Slides](`r ws_link`)|
+[Replication](`r rep_link`)|
+
+
+# Initial Posting
+
+I have been working on this project with my advisor for a while. All I want to do today is get all my work onto the site and organized. Lets go!
+
+## Data Creation
+
+```{r}
+N = 100000
+J = 5 
+M = 10
+nProdChar = 2 
+nConsumerTypes = 3 
+consumerPref = list(c(-1,-5),c(-1,5),c(-1,0)) 
+consumerPrefVar = list(c(1,1),c(1,1),c(1,1))
+consumerPrefDensity = c(1/3,1/3,1/3) 
+prodCharLb = c(0,0) 
+prodCharUb = c(5,5) 
+prodCharVarLb = c(-.05,0) 
+prodCharVarUb = c(.05,0)
+```
+
+Well this is a lot of Hashtags
+
+```{r}
+############################################################
+#################### createData() ##########################
+############################################################
+######## Simulates An Aggregate Choice DataSet #############
+############################################################
+############################################################
+createData = function(N, # Number of Consumers in Each Market (Integer)
+                      J,  # Number of Products Excluding Outside Option (Integer)
+                      M, # Number of Markets (Integer)
+                      nProdChar, # Number of Product Characteristics (Integer)
+                      consumerPref, #Consumer Preference (List of tupples: list(c(beta_11,beta_12),c(beta_21,beta_22)))
+                      consumerPrefVar, # Consumer Preference Variation (List of tupples: list(c(betaVar_11,betaVar_12),c(betaVar_21,betaVar_22)))
+                      consumerPrefDensity, #Density of Different Preferences (Vector)
+                      prodCharLb, #Lower Bound for Simulating Data (Integer)
+                      prodCharUb, # Upper Bound for Simulating Data (Integer)
+                      prodCharVarLb,#Lower Bound for Uniform Market Variation (Integer)
+                      prodCharVarUb # Upper Bound for Uniform Market Variation (Integer)
+                      ){
+############################################################
+##################### Libraries ############################
+############################################################
+require(MASS)  
+require(ordinal)
+require(Rfast)
+############################################################
+################## Creates Data Matrix #####################
+############################################################
+X = t(replicate(J,runif(nProdChar,prodCharLb,prodCharUb)))
+X = replicate(M,rbind(rep(0,nProdChar),X + t(replicate(J,runif(nProdChar,prodCharVarLb,prodCharVarUb)))))
+############################################################
+############### Creates Consumer Matrix ####################
+############################################################
+consumers = list()
+sigmaDiagList = lapply(consumerPrefVar,diag)
+nConsumerTypes = ceiling(N*consumerPrefDensity)
+for (i in 1:length(nConsumerTypes)) {
+  consumers[[i]] = mvrnorm(nConsumerTypes[i],consumerPref[[i]],sigmaDiagList[[i]])
+}
+consumers = do.call(rbind,consumers)
+############################################################
+######## Creates Market Shares & Combines Data #############
+############################################################
+data = list()
+for (i in 1:M) {
+  data[[i]] = cbind(as.numeric(i),seq(0,J),as.numeric(table(colMaxs(X[,,i] %*% t(consumers) + matrix(rnorm(sum(nConsumerTypes)*(J+1)),nrow = J+1))))/sum(nConsumerTypes),X[,,i])
+}
+data = do.call(rbind,data)
+############################################################
+################## Returns Data ############################
+############################################################
+return(data)}
+############################################################
+################ End of Function ###########################
+############################################################
+```
+
+Even before I start to try to optimize this, an obvious thing that would make this better is if it took a list of a vector as an argument. A little java-esque dependency injection
+
+## Helper Functions
+
+```{r}
+############################################################
+#################### Helper Functions ######################
+############################################################
+
+############################################################
+################# createBetaGrid() #########################
+############################################################
+createBetaGrid = function(nProdChar, # Number of Product Characteristics 
+                          gridLb, # Vector of grid Lower Bounds
+                          gridUb, # Vector of grid Upper Bounds
+                          gridDensity, # Vector of Number of Points Between Bounds
+                          center = NULL # Vector to Shift Grid 
+                          ){
+betaGrid = list()
+for (i in 1:nProdChar) {
+  betaGrid[[i]] = seq(gridLb[i],gridUb[i],length.out = gridDensity[i])
+}
+betaGrid = do.call(expand.grid,betaGrid)
+if (!is.null(center)) {
+  betaGrid = center + betaGrid
+}
+return(betaGrid)}
+############################################################
+################## createZMatrix() #########################
+############################################################
+createZMatrix = function(data, # Data in the Form of createData()
+                        betaGrid, # Grid of Points used in Estimation
+                        J, # Number of Inside Goods
+                        M # Number of Markets
+                        ){
+X = data[,4:ncol(data)]
+return(exp(X %*% t(betaGrid))/(matrix(rep(.colSums(exp(X %*% t(betaGrid)),J+1,dim(betaGrid)[1] *M),each = J+1),ncol = dim(betaGrid)[1])))}
+############################################################
+################## createZMatrix() #########################
+############################################################
+
+```
+
+The createZMatrix() is a great oneliner that I totally understand and am not mad at myself for writing
+
+## Estimators
+
+So I have three estimators here. One is straight FKRB, and the other two are some things that I was working on with inverting the market share differently. One thing that I want with this website is to get a closer connection between theory and computation, which is why markdown files are so cool.  Here are the estimators
+
+### FKRB
+
+```{r}
+############################################################
+###################### fitFKRB() ###########################
+############################################################
+################# Estimates FKRB Model #####################
+############################################################
+############################################################
+fitFKRB = function(data, ### Data in the Same Form as createData()
+                   betaGrid, ### Grid of Points to be used
+                   J, #Number of Inside Goods
+                   M ### Number of Markets
+){
+############################################################
+##################### Libraries ############################
+############################################################
+require(lsei)
+source("helperFunctions.R")
+############################################################
+################## Create Z Matrix #########################
+############################################################
+Z =  createZMatrix(data,betaGrid,J,M)
+############################################################
+############# Estimates FKRB Model #########################
+############################################################
+fit = pnnls(Z,mktShare,sum =1)
+############################################################
+############# Returns Following Items: #####################
+# $theta: Estimated Theta Vector
+# $estMktShare: Estimated Market Share
+############################################################
+return(list("theta" = fit$x, "estMktShare" = Z %*% fit$x))}
+############################################################
+################ End of Function ###########################
+############################################################
+
+```
+
+### My Initial Fit
+
+```{r}
+############################################################
+###################### fitCW() #############################
+############################################################
+################# Estimates CW Model #######################
+############################################################
+############################################################
+fitCW = function(data, ### Data in the Same Form as createData()
+                   betaGrid, ### Grid of Points to be used
+                   J, #Number of Inside Goods
+                   M ### Number of Markets
+){
+############################################################
+##################### Libraries ############################
+############################################################
+require(lsei)
+source("helperFunctions.R")
+############################################################
+################### Extract Data ##########################
+############################################################
+X = as.matrix(data[,4:ncol(data)][data[,2] != 0,])
+mktShare = as.matrix(data[,3][data[,2] != 0])
+outsideMktShare = data[,3][data[,2] == 0]
+############################################################
+############### Invert Market Share ########################
+############################################################
+insideUtilities = log(mktShare/rep(outsideMktShare,each = J))
+############################################################
+################ Estimates CW Model ########################
+############################################################
+fit = pnnls(X %*% t(betaGrid),insideUtilities,sum =1)
+############################################################
+################ Calculates Market Shares ##################
+############################################################
+estUtility = data[,4:ncol(data)] %*% t(betaGrid) %*% fit$x
+estMktShare = exp(estUtility)/rep(.colSums(exp(estUtility),J+1,M),each = J+1)
+############################################################
+############# Returns Following Items: #####################
+# $theta: Estimated Theta Vector
+# $EstMktShare: Estimated Market Share
+############################################################
+return(list("theta" = fit$x, "EstMktShare" = estMktShare))}
+############################################################
+################ End of Function ###########################
+############################################################
+```
+
+### My Experimental Fit
+
+```{r}
+############################################################
+###################### fitCWPlus() #########################
+############################################################
+############### Estimates CW Plus Model ####################
+############################################################
+############################################################
+fitCWPlus = function(data, ### Data in the Same Form as createData()
+                 betaGrid, ### Grid of Points to be used
+                 J, #Number of Inside Goods
+                 M, ### Number of Markets
+                 c = exp(1) #Base of second Expnent
+                 ){
+############################################################
+##################### Libraries ############################
+############################################################
+require(lsei)
+source("helperFunctions.R")
+############################################################
+################### Extract Data ##########################
+############################################################
+X = as.matrix(data[,4:ncol(data)][data[,2] != 0,])
+mktShare = as.matrix(data[,3][data[,2] != 0])
+outsideMktShare = data[,3][data[,2] == 0]
+############################################################
+############### Invert Market Share ########################
+############################################################
+insideUtilities =  (log(log(J)) - log(-log(mktShare)))/log(c)
+############################################################
+################ Estimates CW Model ########################
+############################################################
+fit = pnnls(X %*% t(betaGrid),insideUtilities,sum =1)
+############################################################
+################ Calculates Market Shares ##################
+############################################################
+estUtility = data[,4:ncol(data)] %*% t(betaGrid) %*% fit$x
+estMktShare = exp(estUtility)/rep(.colSums(exp(estUtility),J+1,M),each = J+1)
+############################################################
+############# Returns Following Items: #####################
+# $theta: Estimated Theta Vector
+# $EstMktShare: Estimated Market Share
+############################################################
+return(list("theta" = fit$x, "EstMktShare" = estMktShare))}
+############################################################
+################ End of Function ###########################
+############################################################
+
+```
+
+## An Implmentation
+
+```{r,eval = F}
+############################################################
+############# Runs Bootstrapped Horserace ##################
+############################################################
+
+############################################################
+#################### Source Functions ######################
+############################################################
+
+############################################################
+################### Bootstrap Hardcode #####################
+############################################################
+B = 100
+gridLb = c(-10,-10)
+gridUb = c(10,10)
+betaGridVals = list(c(5,5),c(10,10),c(15,15),c(25,25),c(50,50),c(75,75),c(100,100))
+############################################################
+################## Create Training Data ####################
+############################################################
+trainData = createData(N,J,M,nProdChar,consumerPref,consumerPrefVar,
+                  consumerPrefDensity, prodCharLb,prodCharUb,
+                  prodCharVarLb,prodCharVarUb)
+############################################################
+################## Create Testing Data #####################
+############################################################
+testData = createData(N,J,M,nProdChar,consumerPref,consumerPrefVar,
+                       consumerPrefDensity, prodCharLb,prodCharUb,
+                       prodCharVarLb,prodCharVarUb)
+############################################################
+#################### Create BetaGrid #######################
+############################################################
+betaGrid = createBetaGrid(nProdChar,gridLb,gridUb,betaGridVals[[1]])
+############################################################
+################### Estimate Models ########################
+############################################################
+fitFKRB = fitFKRB(data,betaGrid,J,M)
+fitCW = fitCW(data,betaGrid,J,M)
+fitCWPlus = fitCWPlus(data,betaGrid, J,M)
+############################################################
+############# Store Performance Results ####################
+############################################################
+```
+
+# What can we learn from choice probabilities
+
+So on the replication page, I have gotten pretty far with going from our model of $u(X_t;\beta_i)$ to $\delta_t$. But what if I went at it from the other direction. Lets start at $s_t$ and work backwards. The goal begin is that there is some middle ground where I can connect the two. 
+
+So if I have $J$ choice probabilities, that is just a $J\times 1$ vector. I am not going to be able to map bijectively into $J\times K$ matrix. But what information can I bijectively map into. What information do I want? I would like to know how much I like each of the goods in relation to the others. Thats a given and is pretty much all we are doing now. Can I show what products are close in $X$ space? How would I show that two patterns are close substitutes when I can only tell you the choice probabilities? Can I do it with just a single market? What can I tell you if I only get one $(s_t,X_t)$ pair. What can I tell you if I get a bunch of $s_t$ but $X$ stays constant? I think that goes against theory? What additional things can i tell you if I can to use multiple $s_t$ with variation in the $X_t$?
+
+These are the questions to answer. One market is restrictive. Lets say that I have a bunch of $s_t$, but I dont have any $X_t$. Can I still communicate which are substitutes? 
+
+So if I have a bunch of $s_t$, I need a way to glue them together. So I can take the average. Let $\overline s = \frac{1}{T}\sum_{t=1}^T s_t$. This is an interesting object. IF I knew nothing about $X$ my best guess at the choice probabilities would be $\overline s$
+
+There it is. Once I have two, there is no additional information. Only convergence. Hell yeah brother. Even with one, I get $s_1 = \overline s$ so $(s_1 - \overline s)^2 = 0$ matrix. Boom! 
+
+Okay, so now lets work with two choice proabilities. Everything else is just convergence. What do I get with two. Well i can calculate $\overline s$. What if $s_1 = s_2$? Then we get the zero matrix. If $X_1 \neq X_2$ then these are just bad $X$ matrices.
+
+Okay, so we assume that $s_1 \neq s_2$. What if $X_1 = X_2$. Again, bad. Theres stuff in my model that I can't see that is driving results. Isnt that unobserved heterogeneity? Yes. Can we estimate it? MAybe. Lets see what that looks like. Lets pretend we don't even see $X_1,X_2$. What can we get.
+
+Well we can get $\overline s$, we can get the difference vectors $s_1 - \overline s$. We need to talk about what information is actually in a probability vector. So we have the vector. Dope. Is that any different from knowing its inner product $s's$? I always forget what its range is. I know the what ever the minimize is, its at constant equal probability vector and the maximum is one of the identity matrix columns.
+
+$$ \min s's = \sum_{j=0}^J s_j^2 = \sum \frac{1}{J^2} = 1/J $$
+
+So the inner product is in $[\frac{1}{J}, 1)$. Kinda interesting that closed on the left hand side. Probably because thats the only unique one. The max is unique up to permutations. An induction prooof would be wild here. I wonder what is preventing it? But it seems like knowledge of a $N$ vector being unqiue couldnt give me much information about a $N+1$ because the values would have to change to remain as a probability vector.
+
+Ok. Uniqueness of inner products aside, does the outer product tell us anything. I dont think so. Not for regular vectors. This obviously gets more interesting when we start looking at the difference vectors. Lets do that now.
+
+What do we get from the two difference vectors. The inner product is given as $\sum (s_{ij} - \overline s_j)^2$. So if $s_{1j} = s_{2j}$, then $\overline s_j = s_{ij}$. Whats the formula
+
+$$
+\begin{aligned}
+\Delta s_i ' \Delta s_i &= \sum (s_{ij} - \overline s_j)^2 \\
+&= \sum s_{ij}^2 - 2 s_{ij}\overline s_i + \overline s_j^2 \\
+\end{aligned}
+$$
+
+
+Not immediately informative, but we carry on. What about the outer product. I think this is where we shine. What should the outer product tell us? It should tell us what two choice probabilities move together. If the difference is always negative, then shocking, they are substitutes. This is also an interesting way to get complements, but thats secondary in a lot of IO applicaitons. 

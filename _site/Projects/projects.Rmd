@@ -1,0 +1,14 @@
+---
+title: "Projects"
+output: html_document
+---
+
+[Home](https://chasewiedemann.github.io/index.html) \| [Projects](https://chasewiedemann.github.io/_site/Projects/projects.html)  \| [Teaching](https://chasewiedemann.github.io/_site/Teaching/teaching.html)  
+
+
+## Job Market Paper
+
+- [How Does the Organization of Local Government Affect Preformance? Evidence from U.S. Metros and Post Offices](https://chasewiedemann.github.io/_site/Projects/WIEDEMANN_IIOC.pdf)
+
+
+

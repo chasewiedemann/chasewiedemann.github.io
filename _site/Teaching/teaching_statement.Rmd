@@ -1,0 +1,24 @@
+---
+title: "Teaching Statement"
+author: "Chase Wiedemann"
+font-size: 12pt
+output: pdf_document
+header-includes:
+  - \usepackage{setspace}
+  - \doublespacing
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+My teaching philosophy is grounded in the belief that motivation is a necessary precondition for learning, and that effective teaching depends on instructors actively cultivating motivation in their students. In economics, early course material provides essential foundations, but student motivation is often difficult to establish because of an initial gap between theory and real-world application. The backward design of my courses is intended to bridge this gap early by first identifying the economic questions that are most engaging to students, establishing the link between those questions and their underlying economic concepts, and then aligning learning objectives with the tools and methods required to analyze those concepts.
+
+I identify engaging economic questions by investing early in understanding who my students are and how economics intersects with their goals. This begins with learning about their diverse backgrounds, interests, and career aspirations. The institutional context of the school also helps guide this investigation: What paths do most students pursue after graduation? What economic issues and policies are most relevant to the school community? Drawing on both sources of information allows me to frame course material around questions that students connect with and immediately recognize as relevant. The economic questions that best motivate students vary across courses and levels, but in all cases they serve as an entry point for introducing economic reasoning in a way that feels purposeful rather than abstract.
+
+Once these motivating questions are established, I emphasize what I view as one of the central skills of economics: recognizing complex real-world problems as specific instances of core economic concepts. I treat this distillation step as a recurring objective throughout the course. Doing so allows me to guide student learning by explicitly contrasting the applicability of different concepts across settings. Students are encouraged to ask why a particular concept is useful for understanding one economic question but not another, and which features of a problem determine the appropriate economic framework. The question-first structure helps establish a coherent flow between topics, as new questions highlight the limitations of previously introduced concepts and motivate the development of new concepts better suited to addressing them. As a result, this approach moves students away from treating economic concepts as distinct modules and toward developing judgment about how and when to apply economic reasoning, sustaining engagement as concepts accumulate and connect over time.
+
+I then design the progression of learning objectives so that formal tools and mathematical modeling are introduced precisely when they become necessary to fully analyze a concept. Because students are already motivated by the question and recognize it as an instance of a core economic concept, formal modeling is treated as the final step in solidifying existing intuition. This sequencing enables students to interpret mathematical results as disciplined representations of economic reasoning, reinforcing the link between economic concepts and mathematical models. This framing encourages students to focus on assumptions, interpretation, and scope, rather than treating formal results as answers in themselves.
+
+Throughout my teaching, motivation serves as the organizing principle that guides how material is selected, sequenced, and presented. By treating motivation as a prerequisite for learning rather than its byproduct, I design courses in which concepts and formal tools are introduced when students can see why they are needed. My goal is not simply for students to learn economic techniques, but for them to engage seriously with economic reasoning as a means of understanding arguments, clarifying assumptions, and informing real-world analysis.
+

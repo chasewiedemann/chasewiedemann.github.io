@@ -1,0 +1,11 @@
+---
+title: "Teaching"
+output: html_document
+---
+
+[Home](https://chasewiedemann.github.io/index.html) \| [Projects](https://chasewiedemann.github.io/_site/Projects/projects.html)  \| [Teaching](https://chasewiedemann.github.io/_site/Teaching/teaching.html)  
+
+My teaching statement can be found [here](https://chasewiedemann.github.io/_site/Teaching/teaching_statement.pdf)
+
+
+
