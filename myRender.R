@@ -2,7 +2,7 @@
 library(tools)
 
 
-smallRender = F
+smallRender = T
 
 if (smallRender) {
   toRender = shell("git status",intern = T)
