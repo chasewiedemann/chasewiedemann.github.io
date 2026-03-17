@@ -1,0 +1,14 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-01-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Economics is full of ideas that are initially unintuitive, but in the long run, better accomplish their goals than their more intuitive counterparts. A popular example is with information in the housing market. While norms were continuously changing, *Johnson v Davis (1985)* serves as a focal point in establishing mandatory seller disclosure. Under this policy, the seller of a house can face criminal penalties if they do not report known defects to potential buyers. The question is then: how does this policy effect housing prices? If we look at any individual house, buyers who now know about serious structural problems will obviously submit lower bids. This would suggest that the effect of the policy was to lower housing prices. But here is where the unintuitive economics comes in. Consider buying a house before mandatory seller disclosure. Just like now, you can see the curb appeal, know the number of bedrooms, and test drive the commute to work. Weighing each of these factors allows you to come up with the price you'd bid for the house. But gnawing in the back of your mind are those pesky structural issues. What if this house turns out to be a lemon? Fearing unforeseen renovations, you lower bid just a bit, just in case. But you are just like everyone else. Fearing the unknown, everyone shades their bids, just a bit, just in case. With the introduction of mandatory seller disclosure, potential buyers don't need to shade nearly as much. This small increase in bids for most houses swamps the decrease in price of the lemons. The effect of mandatory seller disclosure is to raise housing prices. 
+
+I want to talk about another unintuitive idea. 
+
