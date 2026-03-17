@@ -8,7 +8,7 @@ output: html_document
 
 ## Job Market Paper
 
-- [Coordination vs. Competition: Local Government Centralization and Metropolitan Growth](https://chasewiedemann.github.io/_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION.pdf)
+- [Coordination vs. Competition: Local Government Centralization and Metropolitan Growth](https://chasewiedemann.github.io/_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf)
 
 
 
