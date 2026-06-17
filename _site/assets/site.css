@@ -345,6 +345,11 @@ a:focus {
   overflow: hidden;
 }
 
+.solo-paper {
+  max-width: 860px;
+  margin-top: 1.5rem;
+}
+
 .paper-topline {
   display: flex;
   flex-wrap: wrap;
