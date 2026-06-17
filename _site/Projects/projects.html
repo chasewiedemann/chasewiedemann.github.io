@@ -11,7 +11,7 @@
 
 
 
-<title>Research</title>
+<title>Research | Chase Wiedemann</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -252,6 +252,511 @@ if (window.hljs) {
 
 
 
+<style type="text/css">:root {
+--ink: #202326;
+--muted: #5f686f;
+--paper: #fbfaf7;
+--panel: #ffffff;
+--line: #dedbd4;
+--accent: #2f6f63;
+--accent-soft: #e7f0ec;
+--warm: #8c5b2f;
+}
+html {
+scroll-behavior: smooth;
+}
+body {
+margin: 0;
+color: var(--ink);
+background: var(--paper);
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+font-size: 16px;
+line-height: 1.65;
+}
+.main-container {
+max-width: none !important;
+padding: 0 !important;
+}
+.title,
+.author,
+.date,
+.section h1:first-child {
+display: none;
+}
+a {
+color: var(--accent);
+text-decoration-thickness: 1px;
+text-underline-offset: 0.16em;
+}
+a:hover,
+a:focus {
+color: var(--warm);
+}
+.cw-shell {
+min-height: 100vh;
+}
+.site-nav {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1.5rem;
+max-width: 1040px;
+margin: 0 auto;
+padding: 1.15rem 1.25rem;
+border-bottom: 1px solid var(--line);
+}
+.brand {
+display: inline-flex;
+align-items: center;
+gap: 0.7rem;
+color: var(--ink);
+font-weight: 700;
+text-decoration: none;
+}
+.brand-mark {
+display: grid;
+width: 2.15rem;
+height: 2.15rem;
+place-items: center;
+color: #fff;
+background: var(--accent);
+border-radius: 5px;
+font-size: 0.84rem;
+letter-spacing: 0;
+}
+.brand-text {
+display: flex;
+flex-direction: column;
+line-height: 1.08;
+}
+.brand-text span:first-child {
+font-size: 0.98rem;
+}
+.brand-text span:last-child {
+color: var(--muted);
+font-size: 0.78rem;
+font-weight: 500;
+}
+.nav-links {
+display: flex;
+align-items: center;
+gap: 1rem;
+flex-wrap: wrap;
+justify-content: flex-end;
+}
+.nav-links a {
+color: var(--muted);
+font-size: 0.94rem;
+font-weight: 600;
+text-decoration: none;
+}
+.nav-links a:hover,
+.nav-links a:focus,
+.nav-links a.active {
+color: var(--ink);
+}
+.hero,
+.page-hero {
+max-width: 1040px;
+margin: 0 auto;
+padding: 4rem 1.25rem 3.25rem;
+}
+.hero {
+border-bottom: 1px solid var(--line);
+}
+.hero-inner,
+.page-hero-inner {
+max-width: 760px;
+}
+.eyebrow {
+margin-bottom: 0.75rem;
+color: var(--muted);
+font-size: 0.82rem;
+font-weight: 650;
+}
+.hero h1,
+.page-hero h1 {
+margin: 0;
+color: var(--ink);
+font-size: 3.65rem;
+font-weight: 760;
+line-height: 1.06;
+letter-spacing: 0;
+}
+.page-hero h1 {
+max-width: 860px;
+font-size: 3rem;
+}
+.hero-lede,
+.page-hero p {
+max-width: 690px;
+margin: 1rem 0 1.5rem;
+color: var(--muted);
+font-size: 1.12rem;
+line-height: 1.55;
+}
+.hero-actions,
+.action-row,
+.paper-links {
+display: flex;
+flex-wrap: wrap;
+gap: 0.65rem;
+align-items: center;
+}
+.button-link,
+.paper-links a,
+.inline-link {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-height: 2.35rem;
+padding: 0.45rem 0.78rem;
+color: var(--accent);
+background: var(--accent-soft);
+border: 1px solid #cadbd5;
+border-radius: 5px;
+font-size: 0.94rem;
+font-weight: 650;
+text-decoration: none;
+}
+.button-link:hover,
+.button-link:focus,
+.paper-links a:hover,
+.paper-links a:focus,
+.inline-link:hover,
+.inline-link:focus {
+color: #fff;
+background: var(--accent);
+border-color: var(--accent);
+text-decoration: none;
+}
+.button-link.secondary {
+color: var(--ink);
+background: transparent;
+border-color: var(--line);
+}
+.button-link.secondary:hover,
+.button-link.secondary:focus {
+color: var(--accent);
+background: #fff;
+border-color: #cadbd5;
+}
+.stat-strip {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 1rem;
+max-width: 1040px;
+margin: 1.5rem auto 0;
+padding: 0 1.25rem 2.5rem;
+border-bottom: 1px solid var(--line);
+}
+.stat {
+padding: 0;
+}
+.stat strong {
+display: block;
+color: var(--ink);
+font-size: 1.15rem;
+line-height: 1.25;
+}
+.stat span {
+display: block;
+margin-top: 0.25rem;
+color: var(--muted);
+font-size: 0.94rem;
+line-height: 1.4;
+}
+.content-band {
+max-width: 1040px;
+margin: 0 auto;
+padding: 3rem 1.25rem;
+}
+.content-band.tint {
+max-width: none;
+background: #f3f1ec;
+border-block: 1px solid var(--line);
+}
+.content-band.tint > * {
+max-width: 1040px;
+margin-left: auto;
+margin-right: auto;
+}
+.section-kicker {
+margin: 0 0 0.35rem;
+color: var(--warm);
+font-size: 0.8rem;
+font-weight: 700;
+}
+.section-title {
+margin: 0;
+max-width: 780px;
+color: var(--ink);
+font-size: 2.05rem;
+font-weight: 730;
+line-height: 1.18;
+letter-spacing: 0;
+}
+.section-lede {
+max-width: 760px;
+margin: 0.85rem 0 0;
+color: var(--muted);
+font-size: 1.02rem;
+}
+.grid-two {
+display: grid;
+grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
+gap: 2rem;
+align-items: start;
+margin-top: 1.6rem;
+}
+.grid-three {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 1rem;
+margin-top: 1.5rem;
+}
+.feature-card,
+.paper-card,
+.teaching-card,
+.contact-panel,
+.note-panel,
+.profile-card {
+background: var(--panel);
+border: 1px solid var(--line);
+border-radius: 6px;
+}
+.feature-card,
+.teaching-card,
+.contact-panel,
+.note-panel {
+padding: 1rem;
+}
+.feature-card h3,
+.teaching-card h3,
+.note-panel h3,
+.contact-panel h3 {
+margin: 0 0 0.35rem;
+color: var(--ink);
+font-size: 1.05rem;
+font-weight: 700;
+line-height: 1.25;
+}
+.feature-card p,
+.teaching-card p,
+.note-panel p,
+.contact-panel p {
+margin: 0;
+color: var(--muted);
+font-size: 0.96rem;
+line-height: 1.5;
+}
+.paper-card {
+overflow: hidden;
+}
+.paper-topline {
+display: flex;
+flex-wrap: wrap;
+gap: 0.45rem;
+padding: 1rem 1rem 0;
+}
+.tag {
+display: inline-flex;
+align-items: center;
+min-height: 1.55rem;
+padding: 0.18rem 0.45rem;
+color: var(--muted);
+background: #f7f6f2;
+border: 1px solid var(--line);
+border-radius: 4px;
+font-size: 0.76rem;
+font-weight: 650;
+}
+.tag.gold,
+.tag.coral {
+color: var(--muted);
+background: #f7f6f2;
+border-color: var(--line);
+}
+.paper-body {
+padding: 0.9rem 1rem 1rem;
+}
+.paper-body h2 {
+margin: 0;
+color: var(--ink);
+font-size: 1.85rem;
+font-weight: 730;
+line-height: 1.2;
+letter-spacing: 0;
+}
+.paper-body p {
+margin: 0.8rem 0;
+color: var(--muted);
+}
+.paper-body .abstract {
+color: #3c4247;
+}
+.profile-card {
+overflow: hidden;
+}
+.profile-card img {
+display: block;
+width: 100%;
+aspect-ratio: 4 / 5;
+object-fit: cover;
+object-position: 50% 34%;
+}
+.profile-card-body {
+padding: 0.95rem;
+}
+.profile-card-body h3 {
+margin: 0;
+font-size: 1.05rem;
+font-weight: 700;
+}
+.profile-card-body p {
+margin: 0.25rem 0 0;
+color: var(--muted);
+font-size: 0.92rem;
+line-height: 1.4;
+}
+.note-panel p + p {
+margin-top: 0.65rem;
+}
+.contact-list {
+display: grid;
+gap: 0.55rem;
+margin-top: 0.9rem;
+}
+.contact-list a,
+.contact-list span {
+color: var(--ink);
+font-weight: 600;
+text-decoration: none;
+}
+.timeline {
+display: grid;
+gap: 0;
+margin-top: 1.5rem;
+border-top: 1px solid var(--line);
+}
+.timeline-item {
+display: grid;
+grid-template-columns: 8.5rem minmax(0, 1fr);
+gap: 1rem;
+padding: 1rem 0;
+border-bottom: 1px solid var(--line);
+}
+.timeline-item .time {
+color: var(--muted);
+font-size: 0.84rem;
+font-weight: 650;
+}
+.timeline-item h3 {
+margin: 0;
+font-size: 1.05rem;
+font-weight: 700;
+}
+.timeline-item p {
+margin: 0.3rem 0 0;
+color: var(--muted);
+}
+.quote-band {
+max-width: 1040px;
+margin: 0 auto;
+padding: 2rem 1.25rem;
+border-top: 1px solid var(--line);
+border-bottom: 1px solid var(--line);
+}
+.quote-band blockquote {
+max-width: 780px;
+margin: 0;
+padding: 0;
+border-left: 3px solid var(--accent);
+padding-left: 1rem;
+color: var(--muted);
+font-size: 1.1rem;
+font-weight: 500;
+line-height: 1.55;
+}
+.quote-band cite {
+display: block;
+margin-top: 0.5rem;
+color: var(--muted);
+font-size: 0.9rem;
+font-style: normal;
+}
+.footer {
+max-width: 1040px;
+margin: 0 auto;
+padding: 2rem 1.25rem;
+color: var(--muted);
+border-top: 1px solid var(--line);
+}
+.footer-inner {
+display: flex;
+justify-content: space-between;
+gap: 1rem;
+flex-wrap: wrap;
+}
+.footer a {
+color: var(--muted);
+text-decoration: none;
+}
+@media (max-width: 820px) {
+.site-nav {
+align-items: flex-start;
+flex-direction: column;
+gap: 0.75rem;
+}
+.nav-links {
+justify-content: flex-start;
+}
+.hero,
+.page-hero,
+.content-band {
+padding-block: 2.4rem;
+}
+.hero h1 {
+font-size: 2.8rem;
+}
+.page-hero h1 {
+font-size: 2.45rem;
+}
+.section-title {
+font-size: 1.75rem;
+}
+.paper-body h2 {
+font-size: 1.55rem;
+}
+.stat-strip,
+.grid-two,
+.grid-three {
+grid-template-columns: 1fr;
+}
+.timeline-item {
+grid-template-columns: 1fr;
+gap: 0.2rem;
+}
+}
+@media (max-width: 520px) {
+.brand-text span:last-child {
+display: none;
+}
+.nav-links {
+gap: 0.7rem;
+}
+.hero h1,
+.page-hero h1 {
+font-size: 2.15rem;
+}
+.section-title {
+font-size: 1.5rem;
+}
+.paper-body h2 {
+font-size: 1.35rem;
+}
+}
+</style>
 
 
 
@@ -297,17 +802,23 @@ overflow-y: auto;
 border: 1px solid #ddd;
 border-radius: 4px;
 }
-.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-content: "\e259";
+.tabset-dropdown > .nav-tabs > li.active:before {
+content: "";
 font-family: 'Glyphicons Halflings';
 display: inline-block;
 padding: 10px;
 border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-content: "\e258";
-font-family: 'Glyphicons Halflings';
+content: "";
 border: none;
+}
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+content: "";
+font-family: 'Glyphicons Halflings';
+display: inline-block;
+padding: 10px;
+border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs > li.active {
 display: block;
@@ -348,50 +859,240 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Research</h1>
+<h1 class="title toc-ignore">Research | Chase Wiedemann</h1>
 
 </div>
 
 
-<p><a href="https://chasewiedemann.github.io/index.html">Home</a> | <a href="https://chasewiedemann.github.io/_site/Projects/projects.html">Research</a>
-| <a href="https://chasewiedemann.github.io/_site/Teaching/teaching.html">Teaching</a></p>
-<div id="job-market-paper" class="section level2">
-<h2>Job Market Paper</h2>
-<ul>
-<li><a href="https://chasewiedemann.github.io/_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Coordination
-vs. Competition: Local Government Centralization and Metropolitan
-Growth</a>
-<ul>
-<li><strong>Abstract</strong>: How does the organization of local
-government affect population growth? Is growth promoted in centralized
+<div class="cw-shell">
+<nav class="site-nav" aria-label="Main navigation">
+<a class="brand" href="../../index.html"> <span class="brand-mark">CW</span> <span class="brand-text"> <span>Chase
+Wiedemann</span> <span>Economics PhD Candidate</span> </span> </a>
+<div class="nav-links">
+<p><a href="../../index.html">Home</a>
+<a class="active" href="projects.html">Research</a>
+<a href="../Teaching/teaching.html">Teaching</a>
+<a href="mailto:c.j.wiedemann@wustl.edu">Contact</a></p>
+</div>
+</nav>
+<header class="page-hero">
+<div class="page-hero-inner">
+<div class="eyebrow">
+Research
+</div>
+<h1>
+Local institutions, public goods, and metropolitan growth.
+</h1>
+<p>
+My research studies how the organization of local government changes
+incentives, coordination, fiscal capacity, and growth across U.S.
+metropolitan areas.
+</p>
+</div>
+</header>
+<section class="content-band">
+<p class="section-kicker">
+Job Market Paper
+</p>
+<h2 class="section-title">
+Coordination vs. Competition
+</h2>
+<p class="section-lede">
+The central question is whether growth is promoted by centralized
 governments concentrated in a few large units or decentralized
-governments consisting of many smaller units? The literature provides
-conflicting answers to these questions. On one hand, decentralization
-can promote competition between local governments, providing a
-market-like mechanism to obtain efficiency in the supply of public
-goods. On the other, externalities can foster coordination failures that
-undermine competition. Which of these two opposing forces is more
-important for local government? In this paper, I use local government
-employment data from the metropolitan statistical areas of the United
-States and an IV strategy to estimate the causal effect of local
-government centralization on growth. I then examine the effect of
-centralization on local government employment, finances, and the siting
-decisions of data centers to determine which mechanisms drive the effect
-on growth. My instrument is derived from a complete history of post
-offices in the United States and leverages a historical policy change,
-the implementation of Rural Free Delivery in 1902, to measure the
-presence of small communities and dispersed populations. I show that the
-instrument shifts the organization of local government toward
-decentralization and argue that this shift is plausibly exogenous to the
-modern outcomes I examine. Using the variation induced by the
-instrument, I find that centralization causes higher population growth
-rates, higher total local government employment, more tax revenue to be
-collected, and fewer data centers to locate in the metropolitan area.
-Based on these empirical results, I argue that centralized local
-governments best promote growth, with the most likely mechanism being
-the resolution of coordination failures.</li>
-</ul></li>
-</ul>
+governments made up of many smaller units.
+</p>
+<div class="grid-two">
+<article class="paper-card">
+<div class="paper-topline">
+<p><span class="tag coral">Job market paper</span> <span class="tag">IV
+strategy</span> <span class="tag gold">U.S. metropolitan
+areas</span></p>
+</div>
+<div class="paper-body">
+<h2>
+Coordination vs. Competition: Local Government Centralization and
+Metropolitan Growth
+</h2>
+<p class="abstract">
+<strong>Abstract.</strong> How does the organization of local government
+affect population growth? Is growth promoted in centralized governments
+concentrated in a few large units or decentralized governments
+consisting of many smaller units? The literature provides conflicting
+answers to these questions. On one hand, decentralization can promote
+competition between local governments, providing a market-like mechanism
+to obtain efficiency in the supply of public goods. On the other,
+externalities can foster coordination failures that undermine
+competition.
+</p>
+<p class="abstract">
+In this paper, I use local government employment data from the
+metropolitan statistical areas of the United States and an IV strategy
+to estimate the causal effect of local government centralization on
+growth. I then examine the effect of centralization on local government
+employment, finances, and the siting decisions of data centers to
+determine which mechanisms drive the effect on growth.
+</p>
+<p class="abstract">
+My instrument is derived from a complete history of post offices in the
+United States and leverages a historical policy change, the
+implementation of Rural Free Delivery in 1902, to measure the presence
+of small communities and dispersed populations. Using the variation
+induced by the instrument, I find that centralization causes higher
+population growth rates, higher total local government employment, more
+tax revenue to be collected, and fewer data centers to locate in the
+metropolitan area.
+</p>
+<div class="paper-links">
+<p><a href="WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Download PDF</a>
+<a href="../../index.html">Back to home</a></p>
+</div>
+</div>
+</article>
+<aside class="note-panel">
+<h3>
+Paper details
+</h3>
+<p>
+<strong>Setting:</strong> U.S. metropolitan statistical areas.
+</p>
+<p>
+<strong>Instrument:</strong> historical post office patterns and Rural
+Free Delivery in 1902.
+</p>
+<p>
+<strong>Mechanisms:</strong> local government employment, finances, and
+data center location decisions.
+</p>
+</aside>
+</div>
+</section>
+<section class="content-band tint">
+<p class="section-kicker">
+What The Paper Measures
+</p>
+<h2 class="section-title">
+From institutional structure to economic outcomes.
+</h2>
+<div class="grid-three">
+<article class="feature-card">
+<h3>
+Growth
+</h3>
+<p>
+Population growth in U.S. metropolitan areas provides the main outcome
+for evaluating the net effect of local government centralization.
+</p>
+</article>
+<article class="feature-card">
+<h3>
+Government Capacity
+</h3>
+<p>
+Employment and revenue outcomes help evaluate whether centralization
+changes the scale and capacity of local public provision.
+</p>
+</article>
+<article class="feature-card">
+<h3>
+Firm Location
+</h3>
+<p>
+Data center siting decisions offer an additional mechanism for
+understanding how local structure shapes development.
+</p>
+</article>
+</div>
+</section>
+<section class="content-band">
+<p class="section-kicker">
+Empirical Design
+</p>
+<h2 class="section-title">
+A historical instrument for modern local government organization.
+</h2>
+<div class="timeline">
+<div class="timeline-item">
+<div class="time">
+Historical source
+</div>
+<div>
+<h3>
+Post office history
+</h3>
+<p>
+The instrument uses a complete history of U.S. post offices to measure
+the historical presence of small communities and dispersed populations.
+</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="time">
+Policy change
+</div>
+<div>
+<h3>
+Rural Free Delivery in 1902
+</h3>
+<p>
+The design leverages the implementation of Rural Free Delivery as a
+historical shift that affected the organization of local communities.
+</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="time">
+Modern outcomes
+</div>
+<div>
+<h3>
+Metropolitan structure and growth
+</h3>
+<p>
+The resulting variation shifts modern local government organization
+toward decentralization, allowing the paper to estimate causal effects
+on growth and related mechanisms.
+</p>
+</div>
+</div>
+</div>
+</section>
+<section class="content-band tint">
+<div class="grid-two">
+<div>
+<p class="section-kicker">
+Research Conversation
+</p>
+<h2 class="section-title">
+Questions, comments, and workshop feedback are welcome.
+</h2>
+<p class="section-lede">
+I am especially interested in feedback on identification, local public
+finance mechanisms, and how to connect the empirical results to theories
+of metropolitan governance.
+</p>
+</div>
+<aside class="contact-panel">
+<h3>
+Contact
+</h3>
+<p>
+Email me to discuss the paper or related work.
+</p>
+<div class="contact-list">
+<p><a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
+<span>Olin Business School, Washington University in
+St. Louis</span></p>
+</div>
+</aside>
+</div>
+</section>
+<footer class="footer">
+<div class="footer-inner">
+<p><span>Chase Wiedemann</span>
+<a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a></p>
+</div>
+</footer>
 </div>
 
 

@@ -1,16 +1,132 @@
 ---
-title: "Research"
-output: html_document
+title: "Research | Chase Wiedemann"
+output:
+  html_document:
+    css: ../assets/site.css
 ---
 
-[Home](https://chasewiedemann.github.io/index.html) \| [Research](https://chasewiedemann.github.io/_site/Projects/projects.html)  \| [Teaching](https://chasewiedemann.github.io/_site/Teaching/teaching.html)  
-
-
-## Job Market Paper
-
-- [Coordination vs. Competition: Local Government Centralization and Metropolitan Growth](https://chasewiedemann.github.io/_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf)
-  + **Abstract**: How does the organization of local government affect population growth? Is growth promoted in centralized governments concentrated in a few large units or decentralized governments consisting of many smaller units? The literature provides conflicting answers to these questions. On one hand, decentralization can promote competition between local governments, providing a market-like mechanism to obtain efficiency in the supply of public goods. On the other, externalities can foster coordination failures that undermine competition. Which of these two opposing forces is more important for local government? In this paper, I use local government employment data from the metropolitan statistical areas of the United States and an IV strategy to estimate the causal effect of local government centralization on growth. I then examine the effect of centralization on local government employment, finances, and the siting decisions of data centers to determine which mechanisms drive the effect on growth. My instrument is derived from a complete history of post offices in the United States and leverages a historical policy change, the implementation of Rural Free Delivery in 1902, to measure the presence of small communities and dispersed populations. I show that the instrument shifts the organization of local government toward decentralization and argue that this shift is plausibly exogenous to the modern outcomes I examine. Using the variation induced by the instrument, I find that centralization causes higher population growth rates, higher total local government employment, more tax revenue to be collected, and fewer data centers to locate in the metropolitan area. Based on these empirical results, I argue that centralized local governments best promote growth, with the most likely mechanism being the resolution of coordination failures.
-
-
-
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+<div class="cw-shell">
+<nav class="site-nav" aria-label="Main navigation">
+<a class="brand" href="../../index.html">
+<span class="brand-mark">CW</span>
+<span class="brand-text">
+<span>Chase Wiedemann</span>
+<span>Economics PhD Candidate</span>
+</span>
+</a>
+<div class="nav-links">
+<a href="../../index.html">Home</a>
+<a class="active" href="projects.html">Research</a>
+<a href="../Teaching/teaching.html">Teaching</a>
+<a href="mailto:c.j.wiedemann@wustl.edu">Contact</a>
+</div>
+</nav>
+<header class="page-hero">
+<div class="page-hero-inner">
+<div class="eyebrow">Research</div>
+<h1>Local institutions, public goods, and metropolitan growth.</h1>
+<p>My research studies how the organization of local government changes incentives, coordination, fiscal capacity, and growth across U.S. metropolitan areas.</p>
+</div>
+</header>
+<section class="content-band">
+<p class="section-kicker">Job Market Paper</p>
+<h2 class="section-title">Coordination vs. Competition</h2>
+<p class="section-lede">The central question is whether growth is promoted by centralized governments concentrated in a few large units or decentralized governments made up of many smaller units.</p>
+<div class="grid-two">
+<article class="paper-card">
+<div class="paper-topline">
+<span class="tag coral">Job market paper</span>
+<span class="tag">IV strategy</span>
+<span class="tag gold">U.S. metropolitan areas</span>
+</div>
+<div class="paper-body">
+<h2>Coordination vs. Competition: Local Government Centralization and Metropolitan Growth</h2>
+<p class="abstract"><strong>Abstract.</strong> How does the organization of local government affect population growth? Is growth promoted in centralized governments concentrated in a few large units or decentralized governments consisting of many smaller units? The literature provides conflicting answers to these questions. On one hand, decentralization can promote competition between local governments, providing a market-like mechanism to obtain efficiency in the supply of public goods. On the other, externalities can foster coordination failures that undermine competition.</p>
+<p class="abstract">In this paper, I use local government employment data from the metropolitan statistical areas of the United States and an IV strategy to estimate the causal effect of local government centralization on growth. I then examine the effect of centralization on local government employment, finances, and the siting decisions of data centers to determine which mechanisms drive the effect on growth.</p>
+<p class="abstract">My instrument is derived from a complete history of post offices in the United States and leverages a historical policy change, the implementation of Rural Free Delivery in 1902, to measure the presence of small communities and dispersed populations. Using the variation induced by the instrument, I find that centralization causes higher population growth rates, higher total local government employment, more tax revenue to be collected, and fewer data centers to locate in the metropolitan area.</p>
+<div class="paper-links">
+<a href="WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Download PDF</a>
+<a href="../../index.html">Back to home</a>
+</div>
+</div>
+</article>
+<aside class="note-panel">
+<h3>Paper details</h3>
+<p><strong>Setting:</strong> U.S. metropolitan statistical areas.</p>
+<p><strong>Instrument:</strong> historical post office patterns and Rural Free Delivery in 1902.</p>
+<p><strong>Mechanisms:</strong> local government employment, finances, and data center location decisions.</p>
+</aside>
+</div>
+</section>
+<section class="content-band tint">
+<p class="section-kicker">What The Paper Measures</p>
+<h2 class="section-title">From institutional structure to economic outcomes.</h2>
+<div class="grid-three">
+<article class="feature-card">
+<h3>Growth</h3>
+<p>Population growth in U.S. metropolitan areas provides the main outcome for evaluating the net effect of local government centralization.</p>
+</article>
+<article class="feature-card">
+<h3>Government Capacity</h3>
+<p>Employment and revenue outcomes help evaluate whether centralization changes the scale and capacity of local public provision.</p>
+</article>
+<article class="feature-card">
+<h3>Firm Location</h3>
+<p>Data center siting decisions offer an additional mechanism for understanding how local structure shapes development.</p>
+</article>
+</div>
+</section>
+<section class="content-band">
+<p class="section-kicker">Empirical Design</p>
+<h2 class="section-title">A historical instrument for modern local government organization.</h2>
+<div class="timeline">
+<div class="timeline-item">
+<div class="time">Historical source</div>
+<div>
+<h3>Post office history</h3>
+<p>The instrument uses a complete history of U.S. post offices to measure the historical presence of small communities and dispersed populations.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="time">Policy change</div>
+<div>
+<h3>Rural Free Delivery in 1902</h3>
+<p>The design leverages the implementation of Rural Free Delivery as a historical shift that affected the organization of local communities.</p>
+</div>
+</div>
+<div class="timeline-item">
+<div class="time">Modern outcomes</div>
+<div>
+<h3>Metropolitan structure and growth</h3>
+<p>The resulting variation shifts modern local government organization toward decentralization, allowing the paper to estimate causal effects on growth and related mechanisms.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="content-band tint">
+<div class="grid-two">
+<div>
+<p class="section-kicker">Research Conversation</p>
+<h2 class="section-title">Questions, comments, and workshop feedback are welcome.</h2>
+<p class="section-lede">I am especially interested in feedback on identification, local public finance mechanisms, and how to connect the empirical results to theories of metropolitan governance.</p>
+</div>
+<aside class="contact-panel">
+<h3>Contact</h3>
+<p>Email me to discuss the paper or related work.</p>
+<div class="contact-list">
+<a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
+<span>Olin Business School, Washington University in St. Louis</span>
+</div>
+</aside>
+</div>
+</section>
+<footer class="footer">
+<div class="footer-inner">
+<span>Chase Wiedemann</span>
+<a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
+</div>
+</footer>
+</div>
