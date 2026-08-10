@@ -1,0 +1,16 @@
+title: Chase Wiedemann
+description: Economics PhD Candidate at Washington University in St. Louis
+url: https://chasewiedemann.github.io
+baseurl: ""
+markdown: kramdown
+permalink: pretty
+
+exclude:
+  - .RData
+  - .Rhistory
+  - .Rproj.user
+  - EDIT_SITE.md
+  - chasewiedemann.github.io.Rproj
+  - index.Rmd
+  - myRender.R
+  - photos

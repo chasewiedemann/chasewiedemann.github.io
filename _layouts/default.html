@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ site.description }}">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+</head>
+<body class="page-{{ page.nav | default: 'default' }}">
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="site-title" href="{{ '/' | relative_url }}">Chase Wiedemann</a>
+      <nav class="top-nav" aria-label="Main navigation">
+        <a{% if page.nav == 'about' %} class="active"{% endif %} href="{{ '/' | relative_url }}">About</a>
+        <a{% if page.nav == 'research' %} class="active"{% endif %} href="{{ '/research/' | relative_url }}">Research</a>
+        <a{% if page.nav == 'teaching' %} class="active"{% endif %} href="{{ '/teaching/' | relative_url }}">Teaching</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    {% include profile.html %}
+    <main class="page-content">
+      {{ content }}
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>&copy; {{ 'now' | date: '%Y' }} Chase Wiedemann</span>
+    <a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
+  </footer>
+</body>
+</html>
