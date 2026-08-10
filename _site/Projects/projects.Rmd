@@ -9,50 +9,52 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 <div class="cw-shell">
-<nav class="site-nav" aria-label="Main navigation">
-<a class="brand" href="../../index.html">
-<span class="brand-mark">CW</span>
-<span class="brand-text">
-<span>Chase Wiedemann</span>
-<span>Economics PhD Candidate</span>
-</span>
+<aside class="site-sidebar">
+<a class="portrait-link" href="../../index.html" aria-label="Chase Wiedemann home">
+<img class="sidebar-portrait" src="../assets/headshot.jpg" alt="Chase Wiedemann">
 </a>
-<div class="nav-links">
-<a href="../../index.html">Home</a>
+<div class="sidebar-identity">
+<a href="../../index.html">Chase Wiedemann</a>
+<span>Economics PhD Candidate</span>
+<span>Washington University in St. Louis</span>
+</div>
+<nav class="sidebar-nav" aria-label="Main navigation">
+<a href="../../index.html">About</a>
 <a class="active" href="projects.html">Research</a>
 <a href="../Teaching/teaching.html">Teaching</a>
 <a href="mailto:c.j.wiedemann@wustl.edu">Contact</a>
-</div>
 </nav>
-<header class="page-hero">
-<div class="page-hero-inner">
-<div class="eyebrow">Research</div>
+</aside>
+<main class="site-main">
+<section class="page-section">
 <h1>Research</h1>
-<p>My current research focuses on local government organization and metropolitan growth.</p>
-</div>
-</header>
-<section class="content-band">
-<p class="section-kicker">Job Market Paper</p>
-<h2 class="section-title">Coordination vs. Competition: Local Government Centralization and Metropolitan Growth</h2>
-<article class="paper-card solo-paper">
-<div class="paper-topline">
-<span class="tag coral">Job market paper</span>
-</div>
-<div class="paper-body">
-<h2>Coordination vs. Competition: Local Government Centralization and Metropolitan Growth</h2>
-<p class="abstract"><strong>Abstract.</strong> How does the organization of local government affect population growth? Is growth promoted in centralized governments concentrated in a few large units or decentralized governments consisting of many smaller units? The literature provides conflicting answers to these questions. On one hand, decentralization can promote competition between local governments, providing a market-like mechanism to obtain efficiency in the supply of public goods. On the other, externalities can foster coordination failures that undermine competition.</p>
-<p class="abstract">In this paper, I use local government employment data from the metropolitan statistical areas of the United States and an IV strategy to estimate the causal effect of local government centralization on growth. I then examine the effect of centralization on local government employment, finances, and the siting decisions of data centers to determine which mechanisms drive the effect on growth.</p>
-<p class="abstract">My instrument is derived from a complete history of post offices in the United States and leverages a historical policy change, the implementation of Rural Free Delivery in 1902, to measure the presence of small communities and dispersed populations. Using the variation induced by the instrument, I find that centralization causes higher population growth rates, higher total local government employment, more tax revenue to be collected, and fewer data centers to locate in the metropolitan area.</p>
-<div class="paper-links">
-<a href="WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Read paper</a>
-</div>
-</div>
-</article>
+<p class="section-intro">My research focuses on local public finance, urban economics, and political economy.</p>
+<h2>Papers</h2>
+<div id="research-papers" class="paper-list" data-paper-list></div>
+<script>
+window.CW_PAPER_CONFIG = {
+  mode: "list",
+  target: "#research-papers",
+  basePath: ""
+};
+(function loadPaperScripts(paths) {
+  paths.reduce(function (chain, path) {
+    return chain.then(function () {
+      return new Promise(function (resolve, reject) {
+        var script = document.createElement("script");
+        script.src = path;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
+    });
+  }, Promise.resolve());
+})(["papers.js", "papers-render.js"]);
+</script>
 </section>
 <footer class="footer">
-<div class="footer-inner">
 <span>Chase Wiedemann</span>
 <a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
-</div>
 </footer>
+</main>
 </div>

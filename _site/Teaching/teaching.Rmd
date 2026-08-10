@@ -9,40 +9,31 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 <div class="cw-shell">
-<nav class="site-nav" aria-label="Main navigation">
-<a class="brand" href="../../index.html">
-<span class="brand-mark">CW</span>
-<span class="brand-text">
-<span>Chase Wiedemann</span>
-<span>Economics PhD Candidate</span>
-</span>
+<aside class="site-sidebar">
+<a class="portrait-link" href="../../index.html" aria-label="Chase Wiedemann home">
+<img class="sidebar-portrait" src="../assets/headshot.jpg" alt="Chase Wiedemann">
 </a>
-<div class="nav-links">
-<a href="../../index.html">Home</a>
+<div class="sidebar-identity">
+<a href="../../index.html">Chase Wiedemann</a>
+<span>Economics PhD Candidate</span>
+<span>Washington University in St. Louis</span>
+</div>
+<nav class="sidebar-nav" aria-label="Main navigation">
+<a href="../../index.html">About</a>
 <a href="../Projects/projects.html">Research</a>
 <a class="active" href="teaching.html">Teaching</a>
 <a href="mailto:c.j.wiedemann@wustl.edu">Contact</a>
-</div>
 </nav>
-<header class="page-hero">
-<div class="page-hero-inner">
-<div class="eyebrow">Teaching</div>
+</aside>
+<main class="site-main">
+<section class="page-section">
 <h1>Teaching</h1>
-<p>I teach economics by connecting formal tools to clear economic questions and emphasizing interpretation, assumptions, and judgment.</p>
-</div>
-</header>
-<section class="content-band">
-<p class="section-kicker">Teaching Statement</p>
-<h2 class="section-title">Teaching statement</h2>
-<p class="section-lede">My teaching statement describes how I motivate economics through concrete questions, then use models and quantitative tools to sharpen reasoning.</p>
-<div class="action-row" style="margin-top: 1.5rem;">
-<a class="inline-link" href="teaching_statement.pdf">Read teaching statement</a>
-</div>
+<p class="section-intro">I teach economics by starting with concrete questions and using formal tools to sharpen economic reasoning, interpretation, and judgment.</p>
+<p><a class="text-link" href="teaching_statement.pdf">Read my teaching statement</a></p>
 </section>
 <footer class="footer">
-<div class="footer-inner">
 <span>Chase Wiedemann</span>
 <a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
-</div>
 </footer>
+</main>
 </div>

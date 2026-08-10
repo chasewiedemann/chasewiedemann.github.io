@@ -9,125 +9,40 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 <div class="cw-shell">
-<nav class="site-nav" aria-label="Main navigation">
-<a class="brand" href="index.html">
-<span class="brand-mark">CW</span>
-<span class="brand-text">
-<span>Chase Wiedemann</span>
-<span>Economics PhD Candidate</span>
-</span>
+<aside class="site-sidebar">
+<a class="portrait-link" href="index.html" aria-label="Chase Wiedemann home">
+<img class="sidebar-portrait" src="_site/assets/headshot.jpg" alt="Chase Wiedemann">
 </a>
-<div class="nav-links">
-<a class="active" href="index.html">Home</a>
+<div class="sidebar-identity">
+<a href="index.html">Chase Wiedemann</a>
+<span>Economics PhD Candidate</span>
+<span>Washington University in St. Louis</span>
+</div>
+<nav class="sidebar-nav" aria-label="Main navigation">
+<a class="active" href="index.html">About</a>
 <a href="_site/Projects/projects.html">Research</a>
 <a href="_site/Teaching/teaching.html">Teaching</a>
 <a href="mailto:c.j.wiedemann@wustl.edu">Contact</a>
-</div>
 </nav>
-<header class="hero">
-<div class="hero-inner">
-<div class="eyebrow">Olin Business School - Washington University in St. Louis</div>
+</aside>
+<main class="site-main">
+<section class="page-section intro-section">
 <h1>Chase Wiedemann</h1>
-<p class="hero-lede">I study how local government organization shapes public goods, coordination, and metropolitan growth.</p>
-<div class="hero-actions">
-<a class="button-link" href="_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Job market paper</a>
-<a class="button-link secondary" href="_site/Projects/projects.html">Research</a>
+<div class="utility-links" aria-label="Profile links">
+<a href="mailto:c.j.wiedemann@wustl.edu">Email</a>
+<span aria-hidden="true">·</span>
+<a href="_site/Projects/projects.html">Research</a>
+<span aria-hidden="true">·</span>
+<a href="_site/Teaching/teaching.html">Teaching</a>
 </div>
-</div>
-</header>
-<section class="stat-strip" aria-label="Professional highlights">
-<div class="stat">
-<strong>PhD Candidate</strong>
-<span>Olin Business School, Washington University in St. Louis</span>
-</div>
-<div class="stat">
-<strong>Research Fields</strong>
-<span>local public finance, urban economics, and political economy</span>
-</div>
-<div class="stat">
-<strong>Current Work</strong>
-<span>local government organization and metropolitan growth</span>
-</div>
-</section>
-<section class="content-band">
-<p class="section-kicker">About</p>
-<h2 class="section-title">I study local government organization and public goods.</h2>
-<div class="grid-two">
-<div>
-<p class="section-lede">My work asks how the organization of local governments affects the provision of public goods and the growth of U.S. metropolitan areas. I am especially interested in cases where institutional boundaries look administrative on paper, but change the coordination problem faced by residents, firms, and public officials.</p>
-<p class="section-lede">That makes local government a useful meeting point for economics, finance, political economy, urban policy, and public administration. The empirical question is practical: when should fragmented jurisdictions compete, and when does growth require coordination across the whole metro area?</p>
-<div class="action-row" style="margin-top: 1.5rem;">
-<a class="inline-link" href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
-<a class="inline-link" href="_site/Projects/projects.html">Research page</a>
-</div>
-</div>
-<aside class="profile-card" aria-label="Profile photo and affiliation">
-<img src="_site/assets/headshot.jpg" alt="Chase Wiedemann">
-<div class="profile-card-body">
-<h3>Chase Wiedemann</h3>
-<p>PhD candidate in economics at Olin Business School, Washington University in St. Louis.</p>
-</div>
-</aside>
-</div>
-</section>
-<section class="content-band tint">
-<p class="section-kicker">Current Research</p>
-<h2 class="section-title">Local government centralization and metropolitan growth.</h2>
-<article class="paper-card solo-paper">
-<div class="paper-topline">
-<span class="tag coral">Job market paper</span>
-<span class="tag">Local public finance</span>
-<span class="tag gold">Growth</span>
-</div>
-<div class="paper-body">
-<h2>Coordination vs. Competition: Local Government Centralization and Metropolitan Growth</h2>
-<p class="abstract">The paper estimates how centralization in local government affects population growth in U.S. metropolitan areas. It uses local government employment data and an IV strategy based on historical post office patterns around Rural Free Delivery to separate coordination from competition.</p>
-<div class="paper-links">
-<a href="_site/Projects/WIEDEMANN_MUNI_CENTRALIZATION_2026.pdf">Read the paper</a>
-<a href="_site/Projects/projects.html">View research page</a>
-</div>
-</div>
-</article>
-</section>
-<section class="content-band">
-<p class="section-kicker">Research Themes</p>
-<h2 class="section-title">Research themes</h2>
-<div class="grid-three">
-<article class="feature-card">
-<h3>Coordination</h3>
-<p>When public goods spill across jurisdictional borders, fragmented governments can struggle to internalize metro-wide benefits.</p>
-</article>
-<article class="feature-card">
-<h3>Competition</h3>
-<p>Decentralized governments may discipline each other through resident and firm mobility, creating pressure for efficient provision.</p>
-</article>
-<article class="feature-card">
-<h3>Mechanisms</h3>
-<p>Employment, fiscal capacity, tax revenue, and firm location decisions help identify the channels behind observed growth effects.</p>
-</article>
-</div>
-</section>
-<section class="content-band tint">
-<div class="grid-two">
-<div>
-<p class="section-kicker">Contact</p>
-<h2 class="section-title">Contact</h2>
-<p class="section-lede">I am happy to discuss research and related work in economics.</p>
-</div>
-<aside class="contact-panel">
-<h3>Reach out</h3>
-<p>Email is best.</p>
-<div class="contact-list">
-<a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
-<span>Olin Business School, Washington University in St. Louis</span>
-</div>
-</aside>
-</div>
+<p class="intro-copy">I am a PhD candidate in economics at Olin Business School, Washington University in St. Louis. My research focuses on local public finance, urban economics, and political economy.</p>
+<p>I study how the organization of local governments affects public goods and the growth of U.S. metropolitan areas. In particular, I am interested in the tradeoffs between coordination across jurisdictions and competition among them.</p>
+<p>My current work examines local government centralization and metropolitan growth.</p>
+<p>Feel free to reach out at <a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>.</p>
 </section>
 <footer class="footer">
-<div class="footer-inner">
 <span>Chase Wiedemann</span>
-<a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a>
-</div>
+<span>Olin Business School · Washington University in St. Louis</span>
 </footer>
+</main>
 </div>
