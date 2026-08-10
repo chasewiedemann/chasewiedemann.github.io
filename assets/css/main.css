@@ -198,6 +198,169 @@ a:focus {
   color: #363b3f;
 }
 
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-top: 1.55rem;
+  font-size: 0.92rem;
+}
+
+.page-cv .page-shell {
+  width: min(100% - 2.5rem, 960px);
+  grid-template-columns: 1fr;
+  padding-top: 2.2rem;
+}
+
+.page-cv .profile {
+  display: none;
+}
+
+.page-cv .page-content {
+  max-width: none;
+}
+
+.page-cv .page-content > h1:first-child {
+  margin-bottom: 0.2rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.35rem;
+  text-align: center;
+}
+
+.cv-tagline,
+.cv-contact,
+.cv-actions,
+.cv-updated,
+.cv-logo {
+  text-align: center;
+}
+
+.cv-logo {
+  margin: 0 0 0.55rem !important;
+}
+
+.cv-logo img {
+  display: inline-block;
+  width: min(100%, 290px);
+  height: auto;
+}
+
+.cv-tagline {
+  margin-bottom: 0.25rem !important;
+  color: var(--link);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cv-contact {
+  margin-bottom: 0.8rem !important;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.cv-actions {
+  margin: 1.05rem 0 2rem !important;
+}
+
+.cv-download {
+  display: inline-block;
+  padding: 0.48rem 0.8rem;
+  color: #fff;
+  border: 1px solid var(--link);
+  border-radius: 3px;
+  background: var(--link);
+  font-size: 0.84rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.cv-download:hover,
+.cv-download:focus {
+  color: #fff;
+  border-color: #205c71;
+  background: #205c71;
+}
+
+.page-cv .page-content h2 {
+  margin-top: 2.15rem;
+  padding-bottom: 0.28rem;
+  color: var(--link);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.18rem;
+  letter-spacing: 0.025em;
+}
+
+.page-cv .page-content h3 {
+  margin: 1.2rem 0 0.35rem;
+  color: var(--link);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.page-cv .page-content p,
+.page-cv .page-content td {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.page-cv .page-content table {
+  width: 100%;
+  margin: 0.7rem 0 1rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.page-cv .page-content thead {
+  display: none;
+}
+
+.page-cv .page-content td {
+  padding: 0.25rem 0 0.8rem;
+  border: 0;
+  vertical-align: top;
+  line-height: 1.48;
+}
+
+.page-cv .page-content td:first-child {
+  width: 80%;
+  padding-right: 1.4rem;
+}
+
+.page-cv .page-content td:last-child {
+  width: 20%;
+  color: var(--muted);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.82rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.page-cv #references + table td {
+  width: 50%;
+  padding-right: 1.6rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.88rem;
+  text-align: left;
+  white-space: normal;
+}
+
+.cv-updated {
+  margin-top: 2rem !important;
+  color: #8a9095;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+  font-size: 0.76rem;
+}
+
+.page-cv .site-footer {
+  width: min(100% - 2.5rem, 960px);
+  padding-left: 0;
+}
+
 .site-footer {
   display: flex;
   width: min(100% - 2.5rem, 1220px);
@@ -226,8 +389,8 @@ a:focus {
 
   .top-nav a {
     min-width: auto;
-    padding: 0 0.55rem;
-    font-size: 0.86rem;
+    padding: 0 0.48rem;
+    font-size: 0.83rem;
   }
 
   .page-shell {
@@ -266,6 +429,39 @@ a:focus {
 
   .page-content h1 {
     font-size: 1.8rem;
+  }
+
+  .page-cv .page-shell {
+    width: min(100% - 2rem, 680px);
+  }
+
+  .page-cv .page-content table,
+  .page-cv .page-content tbody,
+  .page-cv .page-content tr,
+  .page-cv .page-content td {
+    display: block;
+    width: 100%;
+  }
+
+  .page-cv .page-content tr {
+    margin-bottom: 0.8rem;
+  }
+
+  .page-cv .page-content td:first-child,
+  .page-cv .page-content td:last-child,
+  .page-cv #references + table td {
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .page-cv .page-content td:last-child {
+    margin-top: 0.15rem;
+  }
+
+  .page-cv #references + table td {
+    margin-bottom: 1.1rem;
   }
 
   .site-footer {

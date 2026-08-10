@@ -5,6 +5,11 @@ The public pages are ordinary Markdown files:
 - `index.md` is the About page.
 - `research.md` is the Research page.
 - `teaching.md` is the Teaching page.
+- `cv.md` is the source for the web and PDF versions of the CV.
+
+## Update the CV
+
+Edit `cv.md`, then run `./build-cv.ps1` in PowerShell to regenerate `files/Chase_Wiedemann_CV.pdf` before publishing the site.
 
 ## Add or edit a paper
 
