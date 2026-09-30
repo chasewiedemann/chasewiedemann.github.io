@@ -140,8 +140,8 @@ def make_styles():
             "CVName",
             parent=base["Title"],
             fontName=BOLD_FONT,
-            fontSize=21,
-            leading=23,
+            fontSize=22,
+            leading=24,
             alignment=TA_CENTER,
             textColor=INK,
             spaceAfter=2,
@@ -150,8 +150,8 @@ def make_styles():
             "CVTagline",
             parent=base["Normal"],
             fontName=BOLD_FONT,
-            fontSize=9,
-            leading=10.2,
+            fontSize=9.2,
+            leading=10.5,
             alignment=TA_CENTER,
             textColor=ACCENT,
             spaceAfter=2,
@@ -160,8 +160,8 @@ def make_styles():
             "CVContact",
             parent=base["Normal"],
             fontName=BODY_FONT,
-            fontSize=8.1,
-            leading=9.8,
+            fontSize=8.25,
+            leading=10,
             alignment=TA_CENTER,
             textColor=MUTED,
             linkColor=ACCENT,
@@ -171,11 +171,11 @@ def make_styles():
             "CVSection",
             parent=base["Heading2"],
             fontName=BOLD_FONT,
-            fontSize=9.7,
-            leading=11,
+            fontSize=10,
+            leading=11.4,
             textColor=ACCENT,
-            spaceBefore=4,
-            spaceAfter=2,
+            spaceBefore=5.5,
+            spaceAfter=2.5,
             keepWithNext=True,
             borderWidth=0,
         ),
@@ -183,29 +183,73 @@ def make_styles():
             "CVSubsection",
             parent=base["Heading3"],
             fontName="Helvetica-Bold",
-            fontSize=7.9,
-            leading=9.2,
+            fontSize=8.15,
+            leading=9.6,
             textColor=ACCENT,
-            spaceBefore=2,
-            spaceAfter=1,
+            spaceBefore=4.5,
+            spaceAfter=2,
             keepWithNext=True,
+        ),
+        "abstract_section": ParagraphStyle(
+            "CVAbstractSection",
+            parent=base["Heading2"],
+            fontName=BOLD_FONT,
+            fontSize=11.2,
+            leading=13,
+            textColor=ACCENT,
+            spaceBefore=0,
+            spaceAfter=4,
+            keepWithNext=True,
+            borderWidth=0,
+        ),
+        "abstract_subsection": ParagraphStyle(
+            "CVAbstractSubsection",
+            parent=base["Heading3"],
+            fontName="Helvetica-Bold",
+            fontSize=9.2,
+            leading=11,
+            textColor=ACCENT,
+            spaceBefore=7,
+            spaceAfter=3,
+            keepWithNext=True,
+        ),
+        "abstract_title": ParagraphStyle(
+            "CVAbstractTitle",
+            parent=base["BodyText"],
+            fontName=BODY_FONT,
+            fontSize=9.4,
+            leading=11.6,
+            textColor=INK,
+            linkColor=ACCENT,
+            spaceAfter=7,
+            keepWithNext=True,
+        ),
+        "abstract_body": ParagraphStyle(
+            "CVAbstractBody",
+            parent=base["BodyText"],
+            fontName=BODY_FONT,
+            fontSize=9.25,
+            leading=12.6,
+            textColor=INK,
+            linkColor=ACCENT,
+            spaceAfter=10,
         ),
         "body": ParagraphStyle(
             "CVBody",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=8.2,
-            leading=10,
+            fontSize=8.5,
+            leading=10.4,
             textColor=INK,
-            spaceAfter=2.8,
+            spaceAfter=4,
             linkColor=ACCENT,
         ),
         "cell": ParagraphStyle(
             "CVCell",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=7.9,
-            leading=9.35,
+            fontSize=8.15,
+            leading=9.7,
             textColor=INK,
             linkColor=ACCENT,
         ),
@@ -213,8 +257,8 @@ def make_styles():
             "CVDate",
             parent=base["BodyText"],
             fontName=ITALIC_FONT,
-            fontSize=7.5,
-            leading=8.8,
+            fontSize=7.8,
+            leading=9.2,
             alignment=TA_RIGHT,
             textColor=MUTED,
         ),
@@ -222,8 +266,8 @@ def make_styles():
             "CVReference",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=7.5,
-            leading=8.8,
+            fontSize=7.8,
+            leading=9.25,
             textColor=INK,
             linkColor=ACCENT,
         ),
@@ -291,17 +335,18 @@ def build_story(markdown_text: str):
 
         if line.startswith("## "):
             current_section = line[3:].strip()
-            if current_section == "Teaching Experience":
+            if current_section == "Research Abstracts":
                 story.append(PageBreak())
-            heading = Paragraph(clean_inline(current_section.upper()), styles["section"])
+            heading_style = styles["abstract_section"] if current_section == "Research Abstracts" else styles["section"]
+            heading = Paragraph(clean_inline(current_section.upper()), heading_style)
             rule = Table([[heading]], colWidths=[CONTENT_WIDTH])
             rule.setStyle(
                 TableStyle(
                     [
                         ("LEFTPADDING", (0, 0), (-1, -1), 0),
                         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-                        ("TOPPADDING", (0, 0), (-1, -1), 0),
-                        ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
+                        ("TOPPADDING", (0, 0), (-1, -1), 1.5),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
                         ("LINEBELOW", (0, 0), (-1, -1), 0.65, RULE),
                     ]
                 )
@@ -311,7 +356,8 @@ def build_story(markdown_text: str):
             continue
 
         if line.startswith("### "):
-            story.append(Paragraph(clean_inline(line[4:].strip()), styles["subsection"]))
+            subsection_style = styles["abstract_subsection"] if current_section == "Research Abstracts" else styles["subsection"]
+            story.append(Paragraph(clean_inline(line[4:].strip()), subsection_style))
             i += 1
             continue
 
@@ -336,8 +382,8 @@ def build_story(markdown_text: str):
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("LEFTPADDING", (0, 0), (-1, -1), 0),
                     ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-                    ("TOPPADDING", (0, 0), (-1, -1), 1),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("TOPPADDING", (0, 0), (-1, -1), 1.5),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 5.5),
                 ]
                 table.setStyle(TableStyle(commands))
             else:
@@ -354,8 +400,8 @@ def build_story(markdown_text: str):
                             ("LEFTPADDING", (0, 0), (-1, -1), 0),
                             ("RIGHTPADDING", (0, 0), (0, -1), 10),
                             ("RIGHTPADDING", (1, 0), (1, -1), 0),
-                            ("TOPPADDING", (0, 0), (-1, -1), 1),
-                            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                            ("TOPPADDING", (0, 0), (-1, -1), 1.5),
+                            ("BOTTOMPADDING", (0, 0), (-1, -1), 4.5),
                         ]
                     )
                 )
@@ -378,7 +424,11 @@ def build_story(markdown_text: str):
             paragraph_lines.append(candidate)
             i += 1
         joined = " ".join(paragraph_lines)
-        story.append(Paragraph(clean_inline(joined), styles["body"]))
+        if current_section == "Research Abstracts":
+            paragraph_style = styles["abstract_title"] if joined.startswith("**") else styles["abstract_body"]
+        else:
+            paragraph_style = styles["body"]
+        story.append(Paragraph(clean_inline(joined), paragraph_style))
 
     return story
 
