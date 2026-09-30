@@ -11,7 +11,7 @@ permalink: /cv/
 
 <p class="cv-tagline">2026-2027 Academic Job Market Candidate</p>
 <p class="cv-contact">Olin Business School, Washington University in St. Louis<br><a href="mailto:c.j.wiedemann@wustl.edu">c.j.wiedemann@wustl.edu</a> &middot; (248) 909-6675 &middot; <a href="https://chasewiedemann.github.io">chasewiedemann.github.io</a><br>Citizenship: United States</p>
-<p class="cv-actions"><a class="cv-download" href="{{ '/files/Chase_Wiedemann_CV.pdf' | relative_url }}?v=20260930-r7">Download CV as PDF</a></p>
+<p class="cv-actions"><a class="cv-download" href="{{ '/files/Chase_Wiedemann_CV.pdf' | relative_url }}?v=20260930-r8">Download CV as PDF</a></p>
 
 ## Research Fields
 
@@ -34,7 +34,7 @@ permalink: /cv/
 
 ### Working Paper
 
-**The Organization of Local Government and Economic Dynamism**, with Avinash Sattiraju
+**Economic Dynamism and Local Government Centralization**, with Avinash Sattiraju
 
 ### Work in Progress
 
@@ -78,7 +78,7 @@ This paper examines how local government organization affects metropolitan growt
 
 ### Working Paper
 
-**The Organization of Local Government and Economic Dynamism**, with Avinash Sattiraju
+**Economic Dynamism and Local Government Centralization**, with Avinash Sattiraju
 
 Economic dynamism, the reallocation of economic resources through establishment entry and exit, exhibits persistent cross-sectional variation across U.S. metropolitan areas. While recent spatial macroeconomic models explain the divergence across city sizes via scale-biased technology adoption and worker sorting, they do not account for why metropolitan areas of comparable population, land area, and human capital sustain permanently different rates of dynamism. We show that the local government organization is a central driver of this variation. Using historical post office closures from the 1902 rollout of Rural Free Delivery to instrument for contemporary local government centralization, we find that a one-standard-deviation increase in centralization raises economic dynamism by over half a standard deviation. Centralization also predicts three downstream features of dynamic economies: higher generative AI adoption, greater labor specialization, and larger unemployment spikes during recessions. Contrary to the view that jurisdictional competition necessarily disciplines local governance, our evidence suggests that fragmented metropolitan governance weakens extensive-margin market selection by reducing entry and exit and shifting activity toward older incumbents, a pattern consistent with incumbent protection as a source of misallocation.
 
