@@ -38,6 +38,8 @@ This paper examines how local government organization affects metropolitan growt
 
 **The Organization of Local Government and Economic Dynamism**, with Avinash Sattiraju
 
+Economic dynamism, the reallocation of economic resources through establishment entry and exit, exhibits persistent cross-sectional variation across U.S. metropolitan areas. While recent spatial macroeconomic models explain the divergence across city sizes via scale-biased technology adoption and worker sorting, they do not account for why metropolitan areas of comparable population, land area, and human capital sustain permanently different rates of dynamism. We show that the local government organization is a central driver of this variation. Using historical post office closures from the 1902 rollout of Rural Free Delivery to instrument for contemporary local government centralization, we find that a one-standard-deviation increase in centralization raises economic dynamism by over half a standard deviation. Centralization also predicts three downstream features of dynamic economies: higher generative AI adoption, greater labor specialization, and larger unemployment spikes during recessions. Contrary to the view that jurisdictional competition necessarily disciplines local governance, our evidence suggests that fragmented metropolitan governance weakens extensive-margin market selection by reducing entry and exit and shifting activity toward older incumbents, a pattern consistent with incumbent protection as a source of misallocation.
+
 ### Work in Progress
 
 **Local Government Organization and Endogenous Policy Choice in Public Safety**
@@ -63,11 +65,6 @@ This paper examines how local government organization affects metropolitan growt
 
 **Programming:** R, Java
 
-## Honors and Activities
-
-**Lawrence University Men's Ice Hockey**, NCAA Division III student-athlete, 2016-2020<br>
-Three-time Northern Collegiate Hockey Association All-Academic Team honoree, 2018-2020
-
 ## References
 
 | | |
@@ -75,4 +72,4 @@ Three-time Northern Collegiate Hockey Association All-Academic Team honoree, 201
 | **Stephen P. Ryan**<br>Myron Northrop Professor of Economics<br>Senior Associate Dean of Doctoral Programs<br>Olin Business School, Washington University in St. Louis<br><a href="mailto:stephen.p.ryan@wustl.edu">stephen.p.ryan@wustl.edu</a> | **Barton H. Hamilton**<br>Robert Brookings Smith Distinguished Professor of Economics, Management & Entrepreneurship<br>Olin Business School, Washington University in St. Louis<br><a href="mailto:hamiltonb@wustl.edu">hamiltonb@wustl.edu</a> |
 | **Brad Larsen**<br>Associate Professor of Economics<br>Olin Business School, Washington University in St. Louis<br><a href="mailto:blarsen@wustl.edu">blarsen@wustl.edu</a> | **David Ahn**<br>Professor of Economics and Area Chair<br>Olin Business School, Washington University in St. Louis<br><a href="mailto:ahnd@wustl.edu">ahnd@wustl.edu</a> |
 
-<p class="cv-updated">Updated August 2026</p>
+<p class="cv-updated">Updated September 2026</p>

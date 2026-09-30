@@ -13,5 +13,9 @@ I study how local government organization shapes public-good provision and metro
 
 1. [**Coordination vs. Competition: Local Government Centralization and Metropolitan Growth**]({{ '/files/MUNI_PAPER.pdf' | relative_url }})  
    *Job Market Paper*
+   
+2. [**Economic Dynamism and Local Government Centralization**]({{ '/files/ED_PAPER.pdf' | relative_url }})  
+   *with Avinash Sattiraju*
+
 
 

@@ -18,6 +18,7 @@ from reportlab.platypus import (
     Frame,
     Image,
     KeepTogether,
+    PageBreak,
     PageTemplate,
     Paragraph,
     Spacer,
@@ -127,7 +128,7 @@ def footer(canvas, doc) -> None:
     canvas.line(doc.leftMargin, 0.47 * inch, LETTER[0] - doc.rightMargin, 0.47 * inch)
     canvas.setFont(BODY_FONT, 7.4)
     canvas.setFillColor(MUTED)
-    canvas.drawString(doc.leftMargin, 0.31 * inch, "Chase Wiedemann - Curriculum Vitae - Updated August 2026")
+    canvas.drawString(doc.leftMargin, 0.31 * inch, "Chase Wiedemann - Curriculum Vitae - Updated September 2026")
     canvas.drawRightString(LETTER[0] - doc.rightMargin, 0.31 * inch, str(doc.page))
     canvas.restoreState()
 
@@ -139,8 +140,8 @@ def make_styles():
             "CVName",
             parent=base["Title"],
             fontName=BOLD_FONT,
-            fontSize=20,
-            leading=22,
+            fontSize=21,
+            leading=23,
             alignment=TA_CENTER,
             textColor=INK,
             spaceAfter=2,
@@ -149,8 +150,8 @@ def make_styles():
             "CVTagline",
             parent=base["Normal"],
             fontName=BOLD_FONT,
-            fontSize=8.6,
-            leading=9.6,
+            fontSize=9,
+            leading=10.2,
             alignment=TA_CENTER,
             textColor=ACCENT,
             spaceAfter=2,
@@ -159,8 +160,8 @@ def make_styles():
             "CVContact",
             parent=base["Normal"],
             fontName=BODY_FONT,
-            fontSize=7.7,
-            leading=9.4,
+            fontSize=8.1,
+            leading=9.8,
             alignment=TA_CENTER,
             textColor=MUTED,
             linkColor=ACCENT,
@@ -170,8 +171,8 @@ def make_styles():
             "CVSection",
             parent=base["Heading2"],
             fontName=BOLD_FONT,
-            fontSize=9.15,
-            leading=10.4,
+            fontSize=9.7,
+            leading=11,
             textColor=ACCENT,
             spaceBefore=4,
             spaceAfter=2,
@@ -182,8 +183,8 @@ def make_styles():
             "CVSubsection",
             parent=base["Heading3"],
             fontName="Helvetica-Bold",
-            fontSize=7.4,
-            leading=8.7,
+            fontSize=7.9,
+            leading=9.2,
             textColor=ACCENT,
             spaceBefore=2,
             spaceAfter=1,
@@ -193,8 +194,8 @@ def make_styles():
             "CVBody",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=7.75,
-            leading=9.35,
+            fontSize=8.2,
+            leading=10,
             textColor=INK,
             spaceAfter=2.8,
             linkColor=ACCENT,
@@ -203,8 +204,8 @@ def make_styles():
             "CVCell",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=7.35,
-            leading=8.65,
+            fontSize=7.9,
+            leading=9.35,
             textColor=INK,
             linkColor=ACCENT,
         ),
@@ -212,8 +213,8 @@ def make_styles():
             "CVDate",
             parent=base["BodyText"],
             fontName=ITALIC_FONT,
-            fontSize=7.0,
-            leading=8.2,
+            fontSize=7.5,
+            leading=8.8,
             alignment=TA_RIGHT,
             textColor=MUTED,
         ),
@@ -221,8 +222,8 @@ def make_styles():
             "CVReference",
             parent=base["BodyText"],
             fontName=BODY_FONT,
-            fontSize=6.9,
-            leading=8.1,
+            fontSize=7.5,
+            leading=8.8,
             textColor=INK,
             linkColor=ACCENT,
         ),
@@ -290,6 +291,8 @@ def build_story(markdown_text: str):
 
         if line.startswith("## "):
             current_section = line[3:].strip()
+            if current_section == "Teaching Experience":
+                story.append(PageBreak())
             heading = Paragraph(clean_inline(current_section.upper()), styles["section"])
             rule = Table([[heading]], colWidths=[CONTENT_WIDTH])
             rule.setStyle(
