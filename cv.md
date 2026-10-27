@@ -32,13 +32,15 @@ permalink: /cv/
 
 **[Coordination vs. Competition: Local Government Centralization and Metropolitan Growth](https://chasewiedemann.github.io/files/JMP_WIEDEMANN.pdf)**
 
-### Working Paper
+### Working Papers
 
 **Economic Dynamism and Local Government Centralization**, with Avinash Sattiraju
 
-### Work in Progress
+### Works in Progress
 
 **Local Government Organization and Endogenous Policy Choice in Public Safety**
+
+**The Role of Organization in Local Government Labor Markets**
 
 ## Teaching Experience
 
@@ -76,10 +78,10 @@ permalink: /cv/
 
 This paper examines how local government organization affects metropolitan growth. My focus is on local government centralization, which I measure using the distribution of local government employment across jurisdictions within U.S. metropolitan statistical areas. As local government is only a subset of the larger institutional framework operating in metropolitan areas, the relationship between organization and growth may be endogenous. To address this, I use an instrumental variables strategy based on post office closures following the introduction of Rural Free Delivery in 1902. In both the OLS and IV specifications, I find that more centralized MSAs experience greater population and private employment growth. Examining mechanisms, I find that centralized metros employ more local government workers, collect more revenue, and are less likely to host data centers, a highly tax-sensitive form of mobile capital. The findings suggest that, at the metropolitan scale, internalizing cross-jurisdictional externalities may be more important for growth than increased competition between governments.
 
-### Working Paper
+### Working Papers
 
 **Economic Dynamism and Local Government Centralization**, with Avinash Sattiraju
 
 Economic dynamism, the reallocation of economic resources through establishment entry and exit, exhibits persistent cross-sectional variation across U.S. metropolitan areas. While recent spatial macroeconomic models explain the divergence across city sizes via scale-biased technology adoption and worker sorting, they do not account for why metropolitan areas of comparable population, land area, and human capital sustain permanently different rates of dynamism. We show that the local government organization is a central driver of this variation. Using historical post office closures from the 1902 rollout of Rural Free Delivery to instrument for contemporary local government centralization, we find that a one-standard-deviation increase in centralization raises economic dynamism by over half a standard deviation. Centralization also predicts three downstream features of dynamic economies: higher generative AI adoption, greater labor specialization, and larger unemployment spikes during recessions. Contrary to the view that jurisdictional competition necessarily disciplines local governance, our evidence suggests that fragmented metropolitan governance weakens extensive-margin market selection by reducing entry and exit and shifting activity toward older incumbents, a pattern consistent with incumbent protection as a source of misallocation.
 
-<p class="cv-updated">Updated September 2026</p>
+<p class="cv-updated">Updated October 2026</p>

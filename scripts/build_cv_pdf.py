@@ -128,7 +128,7 @@ def footer(canvas, doc) -> None:
     canvas.line(doc.leftMargin, 0.47 * inch, LETTER[0] - doc.rightMargin, 0.47 * inch)
     canvas.setFont(BODY_FONT, 7.4)
     canvas.setFillColor(MUTED)
-    canvas.drawString(doc.leftMargin, 0.31 * inch, "Chase Wiedemann - Curriculum Vitae - Updated September 2026")
+    canvas.drawString(doc.leftMargin, 0.31 * inch, "Chase Wiedemann - Curriculum Vitae - Updated October 2026")
     canvas.drawRightString(LETTER[0] - doc.rightMargin, 0.31 * inch, str(doc.page))
     canvas.restoreState()
 
@@ -174,7 +174,7 @@ def make_styles():
             fontSize=10,
             leading=11.4,
             textColor=ACCENT,
-            spaceBefore=5.5,
+            spaceBefore=5.0,
             spaceAfter=2.5,
             keepWithNext=True,
             borderWidth=0,
@@ -383,7 +383,7 @@ def build_story(markdown_text: str):
                     ("LEFTPADDING", (0, 0), (-1, -1), 0),
                     ("RIGHTPADDING", (0, 0), (-1, -1), 10),
                     ("TOPPADDING", (0, 0), (-1, -1), 1.5),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 5.5),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
                 ]
                 table.setStyle(TableStyle(commands))
             else:
@@ -441,7 +441,7 @@ def main() -> None:
         pagesize=LETTER,
         leftMargin=0.55 * inch,
         rightMargin=0.55 * inch,
-        topMargin=0.40 * inch,
+        topMargin=0.30 * inch,
         bottomMargin=0.53 * inch,
         title="Chase Wiedemann - Curriculum Vitae",
         author="Chase Wiedemann",
